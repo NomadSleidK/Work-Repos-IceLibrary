@@ -1,4 +1,4 @@
-﻿<Window x:Class="MyIceLibrary.CurrentObjectForm"
+﻿<Window x:Class="MyIceLibrary.View.CurrentObjectForm"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -24,23 +24,26 @@
             </Grid.ColumnDefinitions>
 
             <Label Content="ОБЪЕКТ:" HorizontalAlignment="Left" VerticalAlignment="Top" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" Grid.Row="0" Grid.Column="1" FontWeight="Bold"/>
-            <Label x:Name="ObjectName" Content="ОБЪЕКТ Name" HorizontalAlignment="Left" VerticalAlignment="Center" Width="235" FontSize="14" FontFamily="Arial Black" Foreground="#FF646464" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Background="White"/>
+            <Label x:Name="ObjectName" Content="{Binding CurrentObjectName}"  HorizontalAlignment="Left" VerticalAlignment="Center" Width="235" FontSize="14" FontFamily="Arial Black" Foreground="#FF646464" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Background="White"/>
 
 
             <Label Content="РОДИТЕЛЬСКИЙ ОБЪЕКТ:" HorizontalAlignment="Left" VerticalAlignment="Top" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF7B7777" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Background="White"/>
-            <Label x:Name="ParentNameLabel" Content="Родительский Объект Имя" PreviewMouseDoubleClick="ParentDoubleClick" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" FontSize="10" FontFamily="Arial Black"  Foreground="#FF6371F7" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Background="White">
-           
+            <Label x:Name="ParentNameLabel" Content="{Binding ParentObjectName}" PreviewMouseDoubleClick="ParentDoubleClick" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" FontSize="10" FontFamily="Arial Black"  Foreground="#FF6371F7" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Background="White">
+                <Label.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick"
+                    Command="{Binding GoToParentCommand}"/>
+                </Label.InputBindings>
             </Label>
 
 
             <Label Content="ОБЩАЯ ИНФОРМАЦИЯ:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" FontWeight="Bold" Grid.Row="2" Grid.Column="1"/>
 
-            <DataGrid x:Name="MainInfoDataGrid" AutoGenerateColumns="False" Grid.Row="3" Grid.Column="1"/>
+            <DataGrid x:Name="MainInfoDataGrid" ItemsSource="{Binding CurrentObjectMainInfoValues}" AutoGenerateColumns="True" Grid.Row="3" Grid.Column="1"/>
 
             
             <Label Content="АТРИБУТЫ:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="238" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" FontWeight="Bold" Grid.Row="4" Grid.Column="1"/>
-        
-            <DataGrid x:Name="AttributesDataGrid" AutoGenerateColumns="False" Grid.Row="5" Grid.Column="1" />
+
+            <DataGrid x:Name="AttributesDataGrid" ItemsSource="{Binding CurrentObjectAttributesValue}" AutoGenerateColumns="True" Grid.Row="5" Grid.Column="1" />
 
         </Grid>
     </Grid>

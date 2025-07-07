@@ -7,10 +7,22 @@ namespace MyIceLibrary
         public string AttributeName { get; set; }
         public List<object> Values { get; set; }
 
-        public AttributeValues(string attributeName, List<object> values)
+        public AttributeValues(string attributeName, List<object> values = null)
         {
             AttributeName = attributeName;
-            Values = values;
+            Values = values ?? new List<object>();
+        }
+    }
+
+    public struct AttributeValue
+    {
+        public string AttributeName { get; set; }
+        public object Value { get; set; }
+
+        public AttributeValue(string attributeName, object value)
+        {
+            AttributeName = attributeName;
+            Value = value;
         }
     }
 

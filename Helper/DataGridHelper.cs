@@ -6,7 +6,7 @@ using System.Windows.Data;
 
 namespace MyIceLibrary
 {
-    public static class DataGridLoadInfoHelper
+    public static class DataGridHelper
     {
         #region Load Attributes Objects ToGrid
 
@@ -49,11 +49,10 @@ namespace MyIceLibrary
             }     
         }
 
-        private static IEnumerable<AttributeValues> BringTogetherAllAttributes(IDictionary<string, object>[] inputData)
+        public static IEnumerable<AttributeValues> BringTogetherAllAttributes(IDictionary<string, object>[] inputData)
         {
             try
             {
-                // Собираем все уникальные атрибуты из всех словарей
                 var allAttributes = inputData
                     .SelectMany(dict => dict.Keys)
                     .Distinct()
@@ -70,7 +69,6 @@ namespace MyIceLibrary
                         Values = new List<object>()
                     };
 
-                    // Для каждого словаря ищем значение атрибута
                     foreach (var dict in inputData)
                     {
                         row.Values.Add(dict.ContainsKey(attr) ? dict[attr] : "-");
