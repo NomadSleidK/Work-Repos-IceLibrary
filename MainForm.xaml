@@ -22,7 +22,7 @@
 
             <Label Content="ОБЩАЯ ИНФОРМАЦИЯ:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" FontWeight="Bold" Grid.Row="0" Grid.Column="1"/>
 
-            <DataGrid Name="MainInfoDataGrid" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1"/>
+            <DataGrid Name="MainInfoDataGrid" MouseDoubleClick="MainInfoDataGridDoubleClick" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1"/>
 
             <DataGrid x:Name="AttributesDataGrid" AutoGenerateColumns="False" Grid.Row="3" Grid.Column="1" />
 
