@@ -1,16 +1,14 @@
 ﻿using Ascon.Pilot.SDK;
 using Ascon.Pilot.SDK.Menu;
-using MyIceLibrary.View;
 using MyIceLibrary.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 
 namespace MyIceLibrary
 {
     [Export(typeof(IMenu<ObjectsViewContext>))]
-    public class App : IMenu<ObjectsViewContext>
+    internal class App : IMenu<ObjectsViewContext>
     {
         private const string CUSTOM_BUTTON_NAME = "CustomProperties";
         private const string CUSTOM_BUTTON_HEADER = "My Object Info";
@@ -18,17 +16,18 @@ namespace MyIceLibrary
         private IMenuItemBuilder _customButton;
         private IObjectModifier _modifier;
         private IObjectsRepository _objectsRepository;
+        private IPilotDialogService _pilotDialogService;
 
         private MainMenuDataGridVM _mainMenuDataGridVM;
 
         #region IMenu <ObjectsViewContext>
 
         [ImportingConstructor]
-        public App(IObjectModifier modifier, IObjectsRepository objectsRepository)
+        public App(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService)
         {
             _modifier = modifier;
             _objectsRepository = objectsRepository;
-            _mainMenuDataGridVM = new MainMenuDataGridVM(modifier, objectsRepository);
+            _pilotDialogService = pilotDialogService;
         }
 
         public void Build(IMenuBuilder builder, ObjectsViewContext context)
@@ -45,9 +44,8 @@ namespace MyIceLibrary
             {
                 if (name == CUSTOM_BUTTON_NAME)
                 {
+                    _mainMenuDataGridVM = new MainMenuDataGridVM(_modifier, _objectsRepository, _pilotDialogService);
                     _mainMenuDataGridVM.OpenMainInfoFormCommand.Execute(context.SelectedObjects.ToArray());
-
-                    //OnInfoButtonClick(context);
                 }
             }
             catch (Exception ex)
@@ -56,75 +54,5 @@ namespace MyIceLibrary
             }
         }
         #endregion
-
-        //#region Click Reactions
-        //private void OnInfoButtonClick(ObjectsViewContext context)
-        //{
-        //    IDataObject[] objects = context.SelectedObjects.ToArray();
-
-        //    OpenMainWindow(objects);
-        //}
-
-        //private void OpenMainWindow(IDataObject[] objects)
-        //{
-        //    IPerson person = _objectsRepository.GetCurrentPerson();
-
-        //    MainForm mainWindow = new MainForm();
-
-        //    if (person.IsAdmin)
-        //    {
-        //        mainWindow.OnDeleteButtonClick += OnDeleteByIdHandler;
-        //        mainWindow.OnOpenNewWindow += OpenCurrentObjectForm;
-        //    }
-
-        //    mainWindow.ShowDialog();
-        //}
-
-        //private void OpenCurrentObjectForm(Guid objectGuid)
-        //{
-        //    Guid[] guids = new Guid[] { objectGuid };
-
-        //    var dataObjects = _objectsRepository.SubscribeObjects(guids);
-        //    ObserverFindedObjects observer = new ObserverFindedObjects(OnObjectsFind);          
-        //    dataObjects.Subscribe(observer);
-        //}
-
-        //private void OnObjectsFind(IDataObject[] obj)
-        //{
-        //    CurrentObjectForm currentObjectForm = new CurrentObjectForm(obj);
-
-        //    Guid[] guids = new Guid[] { obj[0].ParentId };
-
-        //    var dataObjects = _objectsRepository.SubscribeObjects(guids);
-        //    ObserverFindedObjects observer = new ObserverFindedObjects(currentObjectForm.SetParentObject);
-
-        //    currentObjectForm.OnOpenNewWindow += OpenCurrentObjectForm;
-
-        //    dataObjects.Subscribe(observer);
-
-        //    currentObjectForm.ShowDialog();
-        //}
-
-        //private void OnDeleteByIdHandler(IEnumerable<Guid> selectedGuids)
-        //{
-        //    try
-        //    {
-        //        foreach (var obj in selectedGuids)
-        //        {
-        //            _modifier.DeleteById(obj);
-        //            _modifier.Apply();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error: " + ex.Message);
-        //    }
-        //    finally
-        //    {
-        //        System.Windows.MessageBox.Show($"{selectedGuids.Count()} Объекта успешно удалены ");
-        //        //_mainWindow?.Close();
-        //    }
-        //}
-        //#endregion
     }
 }

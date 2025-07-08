@@ -28,7 +28,7 @@
 
 
             <Label Content="РОДИТЕЛЬСКИЙ ОБЪЕКТ:" HorizontalAlignment="Left" VerticalAlignment="Top" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF7B7777" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Background="White"/>
-            <Label x:Name="ParentNameLabel" Content="{Binding ParentObjectName}" PreviewMouseDoubleClick="ParentDoubleClick" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" FontSize="10" FontFamily="Arial Black"  Foreground="#FF6371F7" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Background="White">
+            <Label x:Name="ParentNameLabel" Content="{Binding ParentObjectName}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" FontSize="10" FontFamily="Arial Black"  Foreground="#FF6371F7" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Background="White">
                 <Label.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick"
                     Command="{Binding GoToParentCommand}"/>

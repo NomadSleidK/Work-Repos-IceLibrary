@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.SDK;
 using MyIceLibrary.Command;
+using MyIceLibrary.Model;
 using MyIceLibrary.View;
 using System;
 using System.Collections;
@@ -49,12 +50,18 @@ namespace MyIceLibrary.ViewModel
         private IObjectsRepository _objectsRepository;
         private IDataObject[] _dataObjects;
 
+        private IPilotDialogService _pilotDialogService;
+
         private MainForm _mainForm;
 
-        public MainMenuDataGridVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
+        public MainMenuDataGridVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService)
         {
             _modifier = modifier;
             _objectsRepository = objectsRepository;
+            _pilotDialogService = pilotDialogService;
+
+            LoadJediThemeCommand.Execute(null);
+            //SetStyle();
         }
 
         public ICommand OpenMainInfoFormCommand => new RelayCommand<IDataObject[]>(OpenMainInfoForm);
@@ -92,9 +99,9 @@ namespace MyIceLibrary.ViewModel
 
                 AttributesValues = observableCollection;
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
 
@@ -102,27 +109,11 @@ namespace MyIceLibrary.ViewModel
         {
             try
             {
-                var content = new List<MainInfoValue>();
-
-                foreach (var dataObject in _dataObjects)
-                {
-                    content.Add(new MainInfoValue
-                    {
-                        DisplayName = dataObject?.DisplayName,
-                        ID = dataObject?.Id,
-                        Created = dataObject?.Created,
-                        Creator = dataObject.Creator?.DisplayName,
-                        Type = dataObject.Type?.Title,
-                    });
-                }
-
-                ObservableCollection<MainInfoValue> observableCollection = new ObservableCollection<MainInfoValue>(content);
-
-                MainInfoValues = observableCollection;
+                MainInfoValues = DataGridHelper.GetMainInfoObservableCollection(_dataObjects);
             }
-            catch 
+            catch (Exception ex)
             {
-
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
 
@@ -167,5 +158,40 @@ namespace MyIceLibrary.ViewModel
 
             currentObjectFormVM.OpenCurrentObjectFormCommand.Execute(obj[0]);
         }
+
+
+        #region Form Style Change (Not Work)
+        private void SetStyle()
+        {
+            var text = _pilotDialogService.Theme;
+
+            if (text == Ascon.Pilot.Themes.ThemeNames.Jedi)
+            {
+
+            }
+        }
+
+        private System.Windows.ResourceDictionary _currentTheme;
+        public System.Windows.ResourceDictionary CurrentTheme
+        {
+            get => _currentTheme;
+            set
+            {
+                _currentTheme = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand LoadJediThemeCommand => new RelayCommand<object>(_ => LoadJediTheme());
+
+        private void LoadJediTheme()
+        {
+            var jediTheme = new System.Windows.ResourceDictionary
+            {
+                Source = new Uri("/MyIceLibrary.ext2;component/Style/JediStyle.xaml", UriKind.Relative)
+            };
+            CurrentTheme = jediTheme;
+        }
+        #endregion
     }
 }

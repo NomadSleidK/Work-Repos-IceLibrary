@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:control="clr-namespace:Ascon.Pilot.Theme;assembly=Ascon.Pilot.Theme"
              xmlns:local="clr-namespace:MyIceLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
         <Grid>
             <Grid.RowDefinitions>
@@ -22,7 +24,7 @@
 
             <Label Content="ОБЩАЯ ИНФОРМАЦИЯ:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" FontWeight="Bold" Grid.Row="0" Grid.Column="1"/>
 
-            <DataGrid x:Name="MainInfoDataGrid" ItemsSource="{Binding MainInfoValues}" IsReadOnly="True" MouseDoubleClick="MainInfoDataGridDoubleClick" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1">
+            <DataGrid x:Name="MainInfoDataGrid" ItemsSource="{Binding MainInfoValues}" IsReadOnly="True" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1">
                 <DataGrid.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick"
                       Command="{Binding RowDoubleClickCommand}"
@@ -30,22 +32,13 @@
                 </DataGrid.InputBindings>
             </DataGrid>
             
-            <DataGrid x:Name="AttributesDataGrid" IsReadOnly="True"
-                     ItemsSource="{Binding AttributesValues}" 
-                     AutoGenerateColumns="False"
-                     Grid.Row="3" Grid.Column="1">
+            <DataGrid x:Name="AttributesDataGrid" IsReadOnly="True" ItemsSource="{Binding AttributesValues}" AutoGenerateColumns="False" Grid.Row="3" Grid.Column="1">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Attribute Name" 
-                                        Binding="{Binding AttributeName}"
-                                        Width="Auto"
-                                        MinWidth="150"/>
-
-                        <DataGridTemplateColumn Header="Values" Width="*">
+                    <DataGridTextColumn Header="Attribute Name" Binding="{Binding AttributeName}" Width="Auto" MinWidth="150"/>
+                    <DataGridTemplateColumn Header="Values" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ItemsControl ItemsSource="{Binding Values}"
-                                        Margin="-6,0,0,0"
-                                        Padding="0">
+                                    <ItemsControl ItemsSource="{Binding Values}" Margin="-6,0,0,0" Padding="0">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <StackPanel Orientation="Horizontal"/>
@@ -53,11 +46,7 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding .}" 
-                                                     Width="200" 
-                                                     Margin="10,0,0,0"
-                                                     Padding="0"
-                                                     TextAlignment="Left"/>
+                                                <TextBlock Text="{Binding .}" Width="200" Margin="10,0,0,0" Padding="0" TextAlignment="Left"/>
                                         </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -69,7 +58,7 @@
 
             <Label Content="АТРИБУТЫ:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="238" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" FontWeight="Bold" Grid.Row="2" Grid.Column="1"/>
 
-            <Button x:Name="DeleteButton" Click="DeleteButtonClick"  Content="УДАЛИТЬ ВЫДЕЛЕННЫЕ ОБЪЕКТЫ" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 5 0 0" Grid.Row="2" Grid.Column="1" Width="200" Height="24" Background="#FFE45757" FontFamily="Bahnschrift" FontWeight="Bold" FontSize="10" Foreground="White"
+            <Button x:Name="DeleteButton" Content="УДАЛИТЬ ВЫДЕЛЕННЫЕ ОБЪЕКТЫ" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 5 0 0" Grid.Row="2" Grid.Column="1" Width="200" Height="24" Background="#FFE45757" FontFamily="Bahnschrift" FontWeight="Bold" FontSize="10" Foreground="White"
                 Command="{Binding DeleteSelectedCommand}"
                 CommandParameter="{Binding SelectedItems, ElementName=MainInfoDataGrid}"
             />

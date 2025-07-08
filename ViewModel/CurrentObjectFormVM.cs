@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.SDK;
 using MyIceLibrary.Command;
+using MyIceLibrary.Model;
 using MyIceLibrary.View;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace MyIceLibrary.ViewModel
 {
     internal class CurrentObjectFormVM : INotifyPropertyChanged
     {
+        #region Observable
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ObservableCollection<AttributeValue> _attributesValue;
@@ -62,10 +64,11 @@ namespace MyIceLibrary.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
 
         public ICommand OpenCurrentObjectFormCommand => new RelayCommand<IDataObject>(OpenCurrentObjectForm);
         public ICommand GoToParentCommand => new RelayCommand<object>(_ => GoToParent());
-        public ICommand ChangeObjectNameLabelContentCommand => new RelayCommand<string>(UpdateLabel);
+        public ICommand ChangeObjectNameLabelContentCommand => new RelayCommand<string>(ChangeObjectNameLabelContent);
         public ICommand ChangeParentNameLabelContentCommand => new RelayCommand<string>(ChangeParentNameLabelContent);
         public ICommand LoadAttributesCommand => new RelayCommand<object>(_ => LoadAttributes());
         public ICommand LoadMainInfoCommand => new RelayCommand<object>(_ => LoadMainInfo());
@@ -75,6 +78,7 @@ namespace MyIceLibrary.ViewModel
         private IDataObject _dataObject;
         private IDataObject _parentDataObject;
 
+        private CurrentObjectForm _currentForm;
 
         public CurrentObjectFormVM(IObjectsRepository objectsRepository)
         {
@@ -83,7 +87,7 @@ namespace MyIceLibrary.ViewModel
 
         private void OpenCurrentObjectForm(IDataObject dataObjects)
         {
-            CurrentObjectForm currentObjectForm = new CurrentObjectForm();
+            _currentForm = new CurrentObjectForm();
 
             _dataObject = dataObjects;
 
@@ -93,28 +97,28 @@ namespace MyIceLibrary.ViewModel
 
             FindObjectById(_dataObject.ParentId);
 
-            currentObjectForm.DataContext = this;
-            currentObjectForm.Show();
+            _currentForm.DataContext = this;
+            _currentForm.Show();
         }
 
         private void LoadAttributes()
         {
             try
             {
-                List<AttributeValue> atr = new List<AttributeValue>();
+                List<AttributeValue> attributes = new List<AttributeValue>();
                 
                 foreach (var item in _dataObject.Attributes)
                 {
-                    atr.Add(new AttributeValue(item.Key, item.Value));
+                    attributes.Add(new AttributeValue(item.Key, item.Value));
                 }
 
-                ObservableCollection<AttributeValue> observableCollection = new ObservableCollection<AttributeValue>(atr);
+                ObservableCollection<AttributeValue> observableCollection = new ObservableCollection<AttributeValue>(attributes);
 
                 CurrentObjectAttributesValue = observableCollection;
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
 
@@ -122,32 +126,31 @@ namespace MyIceLibrary.ViewModel
         {
             try
             {
-                var content = new List<MainInfoValue>();
-
-                content.Add(new MainInfoValue
-                {
-                    DisplayName = _dataObject?.DisplayName,
-                    ID = _dataObject?.Id,
-                    Created = _dataObject?.Created,
-                    Creator = _dataObject.Creator?.DisplayName,
-                    Type = _dataObject.Type?.Title,
-                });
-
-                ObservableCollection<MainInfoValue> observableCollection = new ObservableCollection<MainInfoValue>(content);
-
-                CurrentObjectMainInfoValues = observableCollection;
+                CurrentObjectMainInfoValues = DataGridHelper.GetMainInfoObservableCollection(new IDataObject[] { _dataObject });
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
         
-        private void UpdateLabel(string newName)
+        private void ChangeObjectNameLabelContent(string newName)
         {
             CurrentObjectName = newName;
         }
 
+        private void ChangeParentNameLabelContent(string newName)
+        {
+            ParentObjectName = newName;
+        }
+
+        private void GoToParent()
+        {
+            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectsRepository);
+            currentObjectFormVM.OpenCurrentObjectFormCommand.Execute(_parentDataObject);
+        }
+
+        #region Find Object
         private void FindObjectById(Guid id)
         {
             Guid[] guids = new Guid[] { id };
@@ -162,16 +165,6 @@ namespace MyIceLibrary.ViewModel
             _parentDataObject = obj[0];
             ChangeParentNameLabelContentCommand.Execute(obj[0].DisplayName);
         }
-
-        private void ChangeParentNameLabelContent(string newName)
-        {
-            ParentObjectName = newName;
-        }
-
-        private void GoToParent()
-        {
-            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectsRepository);
-            currentObjectFormVM.OpenCurrentObjectFormCommand.Execute(_parentDataObject);
-        }
+        #endregion
     }
 }

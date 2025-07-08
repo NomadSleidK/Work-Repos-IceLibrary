@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Users\artem\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
+    <OutputPath>..\..\..\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -110,9 +110,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command\CommandService.cs" />
     <Compile Include="Command\RelayCommand.cs" />
     <Compile Include="Model\AttributeValues.cs" />
+    <Compile Include="Model\AttributeValue.cs" />
+    <Compile Include="Model\MainInfoValue.cs" />
     <Compile Include="ViewModel\CurrentObjectFormVM.cs" />
     <Compile Include="ViewModel\MainMenuDataGridVM.cs" />
     <Compile Include="View\CurrentObjectForm.xaml.cs">
@@ -145,6 +146,14 @@
     <None Include="Resources\money.svg" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Style\SithStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Style\JediStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\CurrentObjectForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -157,6 +166,7 @@
   <ItemGroup>
     <None Include="Resources\InfoSquare.svg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -9,12 +9,12 @@ namespace MyIceLibrary
         private List<IDataObject> _dataObjects;
 
         public delegate void LoadObjectsHandler(IDataObject[] dataObjects);
-        private LoadObjectsHandler _loadObjects;
+        private LoadObjectsHandler _loadObject;
 
-        public ObserverFindedObjects(LoadObjectsHandler revert)
+        public ObserverFindedObjects(LoadObjectsHandler loadObject)
         {
             _dataObjects = new List<IDataObject>();
-            _loadObjects = revert;
+            _loadObject = loadObject;
         }
 
         public void OnCompleted()
@@ -30,7 +30,7 @@ namespace MyIceLibrary
         public void OnNext(IDataObject value)
         {
             _dataObjects.Add(value);
-            _loadObjects(_dataObjects.ToArray());
+            _loadObject(_dataObjects.ToArray());
         }
 
         public IEnumerable<IDataObject> GetDataObjects()
