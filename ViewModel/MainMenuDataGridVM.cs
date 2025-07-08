@@ -60,7 +60,8 @@ namespace MyIceLibrary.ViewModel
             _objectsRepository = objectsRepository;
             _pilotDialogService = pilotDialogService;
 
-            LoadJediThemeCommand.Execute(null);
+            LoadJediTheme();
+            //LoadJediThemeCommand.Execute(null);
             //SetStyle();
         }
 
@@ -160,7 +161,7 @@ namespace MyIceLibrary.ViewModel
         }
 
 
-        #region Form Style Change (Not Work)
+        #region Form Style Change (Not Work) - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
         private void SetStyle()
         {
             var text = _pilotDialogService.Theme;
@@ -186,11 +187,19 @@ namespace MyIceLibrary.ViewModel
 
         private void LoadJediTheme()
         {
+            ///.Current.Resources.MergedDictionaries[0] = CurrentTheme;
+            _mainForm.Resources.MergedDictionaries[0] = _currentTheme;
+
             var jediTheme = new System.Windows.ResourceDictionary
             {
+                //Source = (Style)this.Resources["redButtonStyle"];
                 Source = new Uri("/MyIceLibrary.ext2;component/Style/JediStyle.xaml", UriKind.Relative)
+
+                //Source = new Uri("pack://application:,,,/Dictionary1.xaml")
             };
             CurrentTheme = jediTheme;
+
+            _mainForm.Resources.MergedDictionaries[0] = CurrentTheme;
         }
         #endregion
     }

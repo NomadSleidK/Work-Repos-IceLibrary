@@ -4,6 +4,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyIceLibrary", "MyIceLibrary.csproj", "{C9F28C69-9D1F-4E5D-A9A6-198242D71BF4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1BFB0E3B-E4BD-4B7D-B509-C2F8A1152757} = {1BFB0E3B-E4BD-4B7D-B509-C2F8A1152757}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ascon.Pilot.SDK.Controls", "..\..\..\Desktop\Pilot ПО\SDK\Client\Pilot\Samples\Ascon.Pilot.SDK.Controls\Ascon.Pilot.SDK.Controls.csproj", "{1BFB0E3B-E4BD-4B7D-B509-C2F8A1152757}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ascon.Pilot.SDK.WPFSample", "..\..\..\Desktop\Pilot ПО\SDK\Client\Pilot\Samples\Ascon.Pilot.SDK.WPFSample\Ascon.Pilot.SDK.WPFSample.csproj", "{A31C293C-C077-40FA-9E8E-16921DE81756}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatsControlProviderSample", "..\..\..\Desktop\Pilot ПО\SDK\Client\Pilot\Samples\ChatsControlProviderSample\ChatsControlProviderSample.csproj", "{3577D51A-D19F-4ACF-9145-7DAF5AF526CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +24,18 @@ Global
 		{C9F28C69-9D1F-4E5D-A9A6-198242D71BF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9F28C69-9D1F-4E5D-A9A6-198242D71BF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9F28C69-9D1F-4E5D-A9A6-198242D71BF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BFB0E3B-E4BD-4B7D-B509-C2F8A1152757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BFB0E3B-E4BD-4B7D-B509-C2F8A1152757}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BFB0E3B-E4BD-4B7D-B509-C2F8A1152757}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BFB0E3B-E4BD-4B7D-B509-C2F8A1152757}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A31C293C-C077-40FA-9E8E-16921DE81756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A31C293C-C077-40FA-9E8E-16921DE81756}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A31C293C-C077-40FA-9E8E-16921DE81756}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A31C293C-C077-40FA-9E8E-16921DE81756}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3577D51A-D19F-4ACF-9145-7DAF5AF526CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3577D51A-D19F-4ACF-9145-7DAF5AF526CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3577D51A-D19F-4ACF-9145-7DAF5AF526CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3577D51A-D19F-4ACF-9145-7DAF5AF526CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

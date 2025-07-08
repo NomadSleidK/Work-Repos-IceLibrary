@@ -166,7 +166,12 @@
   <ItemGroup>
     <None Include="Resources\InfoSquare.svg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Desktop\Pilot ПО\SDK\Client\Pilot\Samples\Ascon.Pilot.SDK.Controls\Ascon.Pilot.SDK.Controls.csproj">
+      <Project>{1bfb0e3b-e4bd-4b7d-b509-c2f8a1152757}</Project>
+      <Name>Ascon.Pilot.SDK.Controls</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

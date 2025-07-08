@@ -3,10 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:control="clr-namespace:Ascon.Pilot.Theme;assembly=Ascon.Pilot.Theme"
+             
+             xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
+             xmlns:controls="clr-namespace:Ascon.Pilot.Theme.Controls;assembly=Ascon.Pilot.Theme"
              xmlns:local="clr-namespace:MyIceLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+     
+    <Window.Resources>
+        <ResourceDictionary Source="/MyIceLibrary.ext2;component/Style/JediStyle.xaml"  />
+    </Window.Resources>
+    <!--<Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/StandardControls.xaml"/>
+                <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/sharedresources/sharedresources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="ButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyleBase}">
+                <Setter Property="Background"  Value="{DynamicResource NormalBackground}"/>
+                <Setter Property="BorderThickness"  Value="0"/>
+                <Setter Property="MinWidth" Value="32" />
+                <Setter Property="Padding" Value="0" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>-->
+
 
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
         <Grid>
@@ -62,6 +83,9 @@
                 Command="{Binding DeleteSelectedCommand}"
                 CommandParameter="{Binding SelectedItems, ElementName=MainInfoDataGrid}"
             />
+
+            <Button x:Name="Button" Content="HFGHHD" HorizontalAlignment="Center" Width="238" Grid.Row="2" Grid.Column="1" />
         </Grid>
     </Grid>
 </Window>
+<!--Style="{StaticResource ButtonStyle}" xmlns:control="clr-namespace:Ascon.Pilot.Theme;assembly=Ascon.Pilot.Theme"-->
