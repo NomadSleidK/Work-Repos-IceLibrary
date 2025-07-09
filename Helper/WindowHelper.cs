@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyIceLibrary.View;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -6,10 +7,10 @@ namespace MyIceLibrary.Helper
 {
     public static class WindowHelper
     {
-        public static Window CreateWindowWithUserControl<T>() where T : UserControl, new()
+        public static InfoWindow CreateWindowWithUserControl<T>() where T : UserControl, new()
         {
-            Window window = new Window();
-
+            InfoWindow window = new InfoWindow();
+            
             try
             {
                 window.Content = new T();

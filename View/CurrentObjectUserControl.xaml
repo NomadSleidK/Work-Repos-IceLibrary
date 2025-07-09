@@ -3,47 +3,159 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
+             xmlns:controls="clr-namespace:Ascon.Pilot.Theme.Controls;assembly=Ascon.Pilot.Theme"
              xmlns:local="clr-namespace:MyIceLibrary"
-             mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
-    
+             mc:Ignorable="d"
+             Background="{DynamicResource NormalBackground}"
+             d:DesignHeight="800" d:DesignWidth="1000">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/StandardControls.xaml"/>
+                <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/sharedresources/SharedResources.xaml"/>
+                <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/standardcontrols/togglebutton.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="5*"/>
-                <RowDefinition Height="20*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="45*"/>
+                <RowDefinition Height="36*"/>
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="96*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            
+            
+
+            <TreeView 
+                Grid.Row="1" Grid.Column="1"
+                Margin="20 20 20 20"
+                Background="{DynamicResource NormalBackground}"
+                
+                ItemsSource="{Binding TreeItems}">
+
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Name}"/>
+                    </HierarchicalDataTemplate>
+
+                </TreeView.ItemTemplate>
+
+            </TreeView>
+
+        </Grid>
+        
+        <Grid>
+                      
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1.2*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="48*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="48*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Content="ОБЪЕКТ:" HorizontalAlignment="Left" VerticalAlignment="Top" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" Grid.Row="0" Grid.Column="1" FontWeight="Bold"/>
-            <Label x:Name="ObjectName" Content="{Binding CurrentObjectName}"  HorizontalAlignment="Left" VerticalAlignment="Center" Width="235" FontSize="14" FontFamily="Arial Black" Foreground="#FF646464" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Background="White"/>
+            <Label
+                Content="ОБЪЕКТ:"
+                Grid.Row="0" Grid.Column="1"              
+                HorizontalAlignment="Left"
+                FontWeight="Bold"
+                FontFamily="Ascon Complex"
+                
+                Background="{DynamicResource NormalBackground}"
+                Foreground="{DynamicResource NormalForeground}"/>
 
+            <Label 
+                x:Name="ObjectName"
+                Grid.Row="1" Grid.Column="1"               
+                HorizontalAlignment="Left" 
+                FontWeight="Bold"
+                Foreground="#FF6771D1" 
+                FontFamily="Ascon Complex"
 
-            <Label Content="РОДИТЕЛЬСКИЙ ОБЪЕКТ:" HorizontalAlignment="Left" VerticalAlignment="Top" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF7B7777" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Background="White"/>
-            <Label x:Name="ParentNameLabel" Content="{Binding ParentObjectName}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" FontSize="10" FontFamily="Arial Black"  Foreground="#FF6371F7" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Background="White">
-                <Label.InputBindings>
-                    <MouseBinding MouseAction="LeftDoubleClick"
-                    Command="{Binding GoToParentCommand}"/>
-                </Label.InputBindings>
-            </Label>
+                Content="{Binding CurrentObjectName}"
+                Background="{DynamicResource NormalBackground}"/>
 
+            <Label
+                Content="РОДИТЕЛЬСКИЙ ОБЪЕКТ:"
+                Grid.Row="2" Grid.Column="1"              
+                HorizontalAlignment="Left"
+                FontWeight="Bold"
+                FontFamily="Ascon Complex"
+                
+                Background="{DynamicResource NormalBackground}"
+                Foreground="{DynamicResource NormalForeground}"/>
 
-            <Label Content="ОБЩАЯ ИНФОРМАЦИЯ:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="235" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" FontWeight="Bold" Grid.Row="2" Grid.Column="1"/>
+            <ToggleButton
+                x:Name="ParentNameLabel" 
+                Grid.Row="3" Grid.Column="1"
+                HorizontalAlignment="Left" 
+                FontWeight="Bold"
+                FontStyle="Italic"
+                Foreground="#FF4658FF"
+                
+                Command="{Binding GoToParentCommand}"
+                Content="{Binding ParentObjectName}"             
+                Style="{StaticResource PseudoHyperlinkToggleButtonStyle}"/>
 
-            <DataGrid x:Name="MainInfoDataGrid" ItemsSource="{Binding CurrentObjectMainInfoValues}" AutoGenerateColumns="True" Grid.Row="3" Grid.Column="1"/>
+            <Label
+                Content="ОБЩАЯ ИНФОРМАЦИЯ:"
+                Grid.Row="4" Grid.Column="1"               
+                HorizontalAlignment="Left"
+                FontWeight="Bold"
+
+                FontFamily="{DynamicResource TitleFontFamily}"
+                Background="{DynamicResource NormalBackground}"
+                Foreground="{DynamicResource NormalForeground}"/>
+
+            <DataGrid
+                x:Name="MainInfoDataGrid"
+                Grid.Row="5" Grid.Column="1"            
+                AutoGenerateColumns="True"
+                
+                ItemsSource="{Binding CurrentObjectMainInfoValues}"/>
 
             
-            <Label Content="АТРИБУТЫ:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="238" FontSize="10" FontFamily="Arial Black" Foreground="#FF383838" FontWeight="Bold" Grid.Row="4" Grid.Column="1"/>
+            <Label 
+                Content="АТРИБУТЫ:" 
+                Grid.Row="6" Grid.Column="1"
+                HorizontalAlignment="Left"
+                FontWeight="Bold"
+                
+                FontFamily="{DynamicResource TitleFontFamily}"
+                Background="{DynamicResource NormalBackground}"
+                Foreground="{DynamicResource NormalForeground}"/>
 
-            <DataGrid x:Name="AttributesDataGrid" ItemsSource="{Binding CurrentObjectAttributesValue}" AutoGenerateColumns="True" Grid.Row="5" Grid.Column="1" />
+            <DataGrid 
+                x:Name="AttributesDataGrid" 
+                AutoGenerateColumns="True" 
+                Grid.Row="7" Grid.Column="1"
+                
+                ItemsSource="{Binding CurrentObjectAttributesValue}"/>
 
         </Grid>
     </Grid>

@@ -44,7 +44,7 @@ namespace MyIceLibrary
                 if (name == CUSTOM_BUTTON_NAME)
                 {
                     _mainMenuDataGridVM = new MainMenuDataGridVM(_modifier, _objectsRepository, _pilotDialogService);
-                    _mainMenuDataGridVM.OpenMainInfoFormCommand.Execute(context.SelectedObjects.ToArray());
+                    _mainMenuDataGridVM.OpenFormCommand.Execute(context.SelectedObjects.ToArray());
                 }
             }
             catch (Exception ex)

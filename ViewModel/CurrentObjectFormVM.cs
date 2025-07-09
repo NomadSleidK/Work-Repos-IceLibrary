@@ -8,13 +8,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using System.Windows.Input;
+using static MyIceLibrary.ObserverFindObjectById;
 
 namespace MyIceLibrary.ViewModel
 {
     internal class CurrentObjectFormVM : INotifyPropertyChanged
     {
-        #region Observable
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ObservableCollection<AttributeValue> _attributesValue;
@@ -61,13 +62,25 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
+        public bool IsExpanded => true;
+
+        private ObservableCollection<TreeItem> _treeItems;
+        public ObservableCollection<TreeItem> TreeItems
+        {
+            get => _treeItems;
+            set
+            {
+                _treeItems = value;
+                OnPropertyChanged();
+            }
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
 
-        public ICommand OpenCurrentObjectFormCommand => new RelayCommand<IDataObject>(OpenCurrentObjectForm);
+        public ICommand OpenCommand => new RelayCommand<IDataObject>(OpenForm);
         public ICommand GoToParentCommand => new RelayCommand<object>(_ => GoToParent());
         public ICommand ChangeObjectNameLabelContentCommand => new RelayCommand<string>(ChangeObjectNameLabelContent);
         public ICommand ChangeParentNameLabelContentCommand => new RelayCommand<string>(ChangeParentNameLabelContent);
@@ -85,7 +98,7 @@ namespace MyIceLibrary.ViewModel
             _objectsRepository = objectsRepository;
         }
 
-        private void OpenCurrentObjectForm(IDataObject dataObjects)
+        private void OpenForm(IDataObject dataObjects)
         {
             _dataObject = dataObjects;
 
@@ -95,7 +108,9 @@ namespace MyIceLibrary.ViewModel
             LoadMainInfoCommand.Execute(null);
             ChangeObjectNameLabelContentCommand.Execute(dataObjects.DisplayName);
 
-            FindObjectById(_dataObject.ParentId);
+            FindObjectById(_dataObject.ParentId, OnObjectsFind);
+
+            UpdateTree(_dataObject);
 
             _currentWindow.DataContext = this;
             _currentWindow.Show();
@@ -147,18 +162,18 @@ namespace MyIceLibrary.ViewModel
         private void GoToParent()
         {
             CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectsRepository);
-            currentObjectFormVM.OpenCurrentObjectFormCommand.Execute(_parentDataObject);
+            currentObjectFormVM.OpenCommand.Execute(_parentDataObject);
         }
 
         #region Find Object
-        private void FindObjectById(Guid id)
+        private void FindObjectById(Guid id, LoadObjectsHandler loadObjectsHandler)
         {
             try
             {
                 Guid[] guids = new Guid[] { id };
 
                 var dataObjects = _objectsRepository.SubscribeObjects(guids);
-                ObserverFindObjectById observer = new ObserverFindObjectById(OnObjectsFind);
+                ObserverFindObjectById observer = new ObserverFindObjectById(loadObjectsHandler);
                 dataObjects.Subscribe(observer);
             }
             catch (Exception ex)
@@ -171,6 +186,45 @@ namespace MyIceLibrary.ViewModel
         {
             _parentDataObject = obj;
             ChangeParentNameLabelContentCommand.Execute(obj.DisplayName);
+        }
+        #endregion
+
+        #region 
+        //Начало 00000001-0001-0001-0001-000000000001
+
+        private void AddTreeElement(IDataObject dataObject)
+        {
+
+            if (dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001"))
+            {
+                var dataObjects = _objectsRepository.SubscribeObjects(new Guid[] { dataObject.ParentId });
+                ObserverFindObjectById observer = new ObserverFindObjectById(UpdateTree);
+                dataObjects.Subscribe(observer);
+            }
+        }
+
+        private void UpdateTree(IDataObject dataObject)
+        {
+            TreeItem treeItem;
+
+            if (TreeItems != null)
+            {
+                treeItem = TreeItems[0];
+
+                TreeItems = new ObservableCollection<TreeItem>
+                {
+                    new TreeItem { Name = dataObject.DisplayName, IsExpanded = true, Children = new List<TreeItem>() { treeItem } }
+                };
+            }
+            else
+            {
+                TreeItems = new ObservableCollection<TreeItem>
+                {
+                    new TreeItem { Name = dataObject.DisplayName, IsExpanded = true, Children = null }
+                };
+            } 
+
+            AddTreeElement(dataObject);
         }
         #endregion
     }

@@ -16,7 +16,6 @@ namespace MyIceLibrary.ViewModel
 {
     internal class MainMenuDataGridVM : INotifyPropertyChanged
     {
-        #region Observable
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ObservableCollection<AttributeValues> _attributesValues;
@@ -41,11 +40,32 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
+        private bool _deleteButtonEnabled;
+        public bool DeleteButtonEnabled
+        {
+            get => _deleteButtonEnabled;
+            set
+            {
+                _deleteButtonEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private System.Windows.Visibility _deleteButtonVisibility;
+        public System.Windows.Visibility DeleteButtonVisibility
+        {
+            get => _deleteButtonVisibility;
+            set
+            {
+                _deleteButtonVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
 
         private IObjectModifier _modifier;
         private IObjectsRepository _objectsRepository;
@@ -62,13 +82,14 @@ namespace MyIceLibrary.ViewModel
             _pilotDialogService = pilotDialogService;
         }
 
-        public ICommand OpenMainInfoFormCommand => new RelayCommand<IDataObject[]>(OpenMainInfoForm);
+        public ICommand OpenFormCommand => new RelayCommand<IDataObject[]>(OpenForm);
         public ICommand DeleteSelectedCommand => new RelayCommand<IList>(DeleteSelectedItems);
         public ICommand RowDoubleClickCommand => new RelayCommand<MainInfoValue>(OnRowDoubleClick);
         public ICommand LoadAttributesCommand => new RelayCommand<object>(_ => LoadAttributes());
         public ICommand LoadMainInfoCommand => new RelayCommand<object>(_ => LoadMainInfo());
+        public ICommand CheckCurrentPersonIsAdminCommand => new RelayCommand<object>(_ => CheckCurrentPersonIsAdmin());
 
-        private void OpenMainInfoForm(IDataObject[] dataObjects)
+        private void OpenForm(IDataObject[] dataObjects)
         {            
             _dataObjects = dataObjects;
 
@@ -77,6 +98,7 @@ namespace MyIceLibrary.ViewModel
 
             LoadAttributesCommand.Execute(null);
             LoadMainInfoCommand.Execute(null);
+            CheckCurrentPersonIsAdminCommand.Execute(null);
 
             _mainWindow.Show();
         }
@@ -93,9 +115,8 @@ namespace MyIceLibrary.ViewModel
                 }
 
                 var attributes = DataGridHelper.BringTogetherAllAttributes(attributesDictionaries.ToArray()).ToArray();
-                ObservableCollection<AttributeValues> observableCollection = new ObservableCollection<AttributeValues>(attributes);
 
-                AttributesValues = observableCollection;
+                AttributesValues = new ObservableCollection<AttributeValues>(attributes);
             }
             catch (Exception ex)
             {
@@ -141,20 +162,43 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
+        private void CheckCurrentPersonIsAdmin()
+        {
+            bool isAdmin = _objectsRepository.GetCurrentPerson().IsAdmin;
+            
+            if (isAdmin)
+            {
+                DeleteButtonVisibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                DeleteButtonVisibility = System.Windows.Visibility.Hidden;
+            }
+
+            DeleteButtonEnabled = _objectsRepository.GetCurrentPerson().IsAdmin;
+        }
+
         private void OnRowDoubleClick(MainInfoValue selectedItem)
         {
-            Guid[] guids = new Guid[] { Guid.Parse(selectedItem.ID.ToString()) };
+            try
+            {
+                Guid[] guids = new Guid[] { Guid.Parse(selectedItem.ID.ToString()) };
 
-            var dataObjects = _objectsRepository.SubscribeObjects(guids);
-            ObserverFindObjectById observer = new ObserverFindObjectById(OnObjectsFind);
-            dataObjects.Subscribe(observer);
+                var dataObjects = _objectsRepository.SubscribeObjects(guids);
+                ObserverFindObjectById observer = new ObserverFindObjectById(OnObjectsFind);
+                dataObjects.Subscribe(observer);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
         }
 
         private void OnObjectsFind(IDataObject obj)
         {
             CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectsRepository);
 
-            currentObjectFormVM.OpenCurrentObjectFormCommand.Execute(obj);
+            currentObjectFormVM.OpenCommand.Execute(obj);
         }
     }
 }
