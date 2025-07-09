@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.SDK;
 using MyIceLibrary.Command;
+using MyIceLibrary.Helper;
 using MyIceLibrary.Model;
 using MyIceLibrary.View;
 using System;
@@ -52,17 +53,13 @@ namespace MyIceLibrary.ViewModel
 
         private IPilotDialogService _pilotDialogService;
 
-        private MainForm _mainForm;
+        private System.Windows.Window _mainWindow;
 
         public MainMenuDataGridVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService)
         {
             _modifier = modifier;
             _objectsRepository = objectsRepository;
             _pilotDialogService = pilotDialogService;
-
-            LoadJediTheme();
-            //LoadJediThemeCommand.Execute(null);
-            //SetStyle();
         }
 
         public ICommand OpenMainInfoFormCommand => new RelayCommand<IDataObject[]>(OpenMainInfoForm);
@@ -72,16 +69,16 @@ namespace MyIceLibrary.ViewModel
         public ICommand LoadMainInfoCommand => new RelayCommand<object>(_ => LoadMainInfo());
 
         private void OpenMainInfoForm(IDataObject[] dataObjects)
-        {
-            _mainForm = new MainForm();
-            
+        {            
             _dataObjects = dataObjects;
+
+            _mainWindow = WindowHelper.CreateWindowWithUserControl<MainUserControl>();
+            _mainWindow.DataContext = this;
 
             LoadAttributesCommand.Execute(null);
             LoadMainInfoCommand.Execute(null);
 
-            _mainForm.DataContext = this;
-            _mainForm.Show();
+            _mainWindow.Show();
         }
 
         private void LoadAttributes()
@@ -140,7 +137,7 @@ namespace MyIceLibrary.ViewModel
             finally
             {
                 System.Windows.MessageBox.Show($"Объекты успешно удалены ");
-                _mainForm?.Close();
+                _mainWindow?.Close();
             }
         }
 
@@ -149,58 +146,15 @@ namespace MyIceLibrary.ViewModel
             Guid[] guids = new Guid[] { Guid.Parse(selectedItem.ID.ToString()) };
 
             var dataObjects = _objectsRepository.SubscribeObjects(guids);
-            ObserverFindedObjects observer = new ObserverFindedObjects(OnObjectsFind);
+            ObserverFindObjectById observer = new ObserverFindObjectById(OnObjectsFind);
             dataObjects.Subscribe(observer);
         }
 
-        private void OnObjectsFind(IDataObject[] obj)
+        private void OnObjectsFind(IDataObject obj)
         {
             CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectsRepository);
 
-            currentObjectFormVM.OpenCurrentObjectFormCommand.Execute(obj[0]);
+            currentObjectFormVM.OpenCurrentObjectFormCommand.Execute(obj);
         }
-
-
-        #region Form Style Change (Not Work) - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-        private void SetStyle()
-        {
-            var text = _pilotDialogService.Theme;
-
-            if (text == Ascon.Pilot.Themes.ThemeNames.Jedi)
-            {
-
-            }
-        }
-
-        private System.Windows.ResourceDictionary _currentTheme;
-        public System.Windows.ResourceDictionary CurrentTheme
-        {
-            get => _currentTheme;
-            set
-            {
-                _currentTheme = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ICommand LoadJediThemeCommand => new RelayCommand<object>(_ => LoadJediTheme());
-
-        private void LoadJediTheme()
-        {
-            ///.Current.Resources.MergedDictionaries[0] = CurrentTheme;
-            _mainForm.Resources.MergedDictionaries[0] = _currentTheme;
-
-            var jediTheme = new System.Windows.ResourceDictionary
-            {
-                //Source = (Style)this.Resources["redButtonStyle"];
-                Source = new Uri("/MyIceLibrary.ext2;component/Style/JediStyle.xaml", UriKind.Relative)
-
-                //Source = new Uri("pack://application:,,,/Dictionary1.xaml")
-            };
-            CurrentTheme = jediTheme;
-
-            _mainForm.Resources.MergedDictionaries[0] = CurrentTheme;
-        }
-        #endregion
     }
 }

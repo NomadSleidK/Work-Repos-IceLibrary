@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.SDK;
 using MyIceLibrary.Command;
+using MyIceLibrary.Helper;
 using MyIceLibrary.Model;
 using MyIceLibrary.View;
 using System;
@@ -74,11 +75,10 @@ namespace MyIceLibrary.ViewModel
         public ICommand LoadMainInfoCommand => new RelayCommand<object>(_ => LoadMainInfo());
 
         private IObjectsRepository _objectsRepository;
-
         private IDataObject _dataObject;
         private IDataObject _parentDataObject;
 
-        private CurrentObjectForm _currentForm;
+        private System.Windows.Window _currentWindow;
 
         public CurrentObjectFormVM(IObjectsRepository objectsRepository)
         {
@@ -87,9 +87,9 @@ namespace MyIceLibrary.ViewModel
 
         private void OpenCurrentObjectForm(IDataObject dataObjects)
         {
-            _currentForm = new CurrentObjectForm();
-
             _dataObject = dataObjects;
+
+            _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>();
 
             LoadAttributesCommand.Execute(null);
             LoadMainInfoCommand.Execute(null);
@@ -97,8 +97,8 @@ namespace MyIceLibrary.ViewModel
 
             FindObjectById(_dataObject.ParentId);
 
-            _currentForm.DataContext = this;
-            _currentForm.Show();
+            _currentWindow.DataContext = this;
+            _currentWindow.Show();
         }
 
         private void LoadAttributes()
@@ -153,17 +153,24 @@ namespace MyIceLibrary.ViewModel
         #region Find Object
         private void FindObjectById(Guid id)
         {
-            Guid[] guids = new Guid[] { id };
+            try
+            {
+                Guid[] guids = new Guid[] { id };
 
-            var dataObjects = _objectsRepository.SubscribeObjects(guids);
-            ObserverFindedObjects observer = new ObserverFindedObjects(OnObjectsFind);
-            dataObjects.Subscribe(observer);
+                var dataObjects = _objectsRepository.SubscribeObjects(guids);
+                ObserverFindObjectById observer = new ObserverFindObjectById(OnObjectsFind);
+                dataObjects.Subscribe(observer);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
         }
 
-        private void OnObjectsFind(IDataObject[] obj)
+        private void OnObjectsFind(IDataObject obj)
         {
-            _parentDataObject = obj[0];
-            ChangeParentNameLabelContentCommand.Execute(obj[0].DisplayName);
+            _parentDataObject = obj;
+            ChangeParentNameLabelContentCommand.Execute(obj.DisplayName);
         }
         #endregion
     }

@@ -33,7 +33,6 @@ namespace MyIceLibrary
         public void Build(IMenuBuilder builder, ObjectsViewContext context)
         {
             _customButton = builder.AddItem(CUSTOM_BUTTON_NAME, builder.Count);
-
             _customButton.WithIcon(Properties.Resources.InfoSquare);
             _customButton.WithHeader(CUSTOM_BUTTON_HEADER);
         }
