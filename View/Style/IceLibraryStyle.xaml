@@ -1,0 +1,79 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
+                    xmlns:controls="clr-namespace:Ascon.Pilot.Theme.Controls;assembly=Ascon.Pilot.Theme">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/StandardControls.xaml"/>
+        <ResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/sharedresources/SharedResources.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="Label" x:Key="TitleLabel" >
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Margin" Value="10 0 0 0"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="FontFamily" Value="{DynamicResource TitleFontFamily}"/>
+        <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
+    </Style>
+
+    <Style TargetType="Button" x:Key="DeleteButton" >
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Background" Value="#FFE45757"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Width" Value="220"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        
+    </Style>
+
+    <Style TargetType="Label" x:Key="InfoLabel">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="FontStyle" Value="Italic"/>
+        <Setter Property="Foreground" Value="{DynamicResource NormalBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
+        
+    </Style>
+
+    <Style TargetType="ToggleButton" x:Key="LinkTogleButton" BasedOn="{StaticResource PseudoHyperlinkToggleButtonStyle}">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontStyle" Value="Italic"/>
+        <Setter Property="Foreground" Value="#FF4658FF"/>
+    </Style>
+
+    <Style TargetType="Rectangle" x:Key="NormalRectangle">
+        <Setter Property="Fill" Value="{DynamicResource NormalForeground}"/>
+        <Setter Property="StrokeThickness" Value="4"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+
+    <Style TargetType="TreeView" x:Key="NormalTreeView">
+        <Setter Property="Margin" Value="20 20 20 20"/>
+        <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+    </Style>
+
+    <Style TargetType="TabControl" x:Key="NormalTabControl">
+        <Setter Property="Margin" Value="20 20 20 20"/>
+        <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="NormalTextBlock">
+        <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
+    </Style>
+
+</ResourceDictionary>
+
+<!-- <Style TargetType="" x:Key=""> -->
+<!-- <Setter Property="" Value=""/> -->

@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
+using Ascon.Pilot.Theme.Controls;
 using MyIceLibrary.Command;
 using MyIceLibrary.Helper;
 using MyIceLibrary.Model;
@@ -29,8 +30,8 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
-        private ObservableCollection<MainInfoValue> _mainInfoValues;
-        public ObservableCollection<MainInfoValue> CurrentObjectMainInfoValues
+        private ObservableCollection<CurrentObjectInfo> _mainInfoValues;
+        public ObservableCollection<CurrentObjectInfo> CurrentObjectMainInfoValues
         {
             get => _mainInfoValues;
             set
@@ -58,6 +59,17 @@ namespace MyIceLibrary.ViewModel
             set
             {
                 _parentObjectName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private System.Windows.Visibility _parentLabelVisibility;
+        public System.Windows.Visibility ParentLabelVisibility
+        {
+            get => _parentLabelVisibility;
+            set
+            {
+                _parentLabelVisibility = value;
                 OnPropertyChanged();
             }
         }
@@ -91,7 +103,7 @@ namespace MyIceLibrary.ViewModel
         private IDataObject _dataObject;
         private IDataObject _parentDataObject;
 
-        private System.Windows.Window _currentWindow;
+        private DialogWindow _currentWindow;
 
         public CurrentObjectFormVM(IObjectsRepository objectsRepository)
         {
@@ -108,8 +120,8 @@ namespace MyIceLibrary.ViewModel
             LoadMainInfoCommand.Execute(null);
             ChangeObjectNameLabelContentCommand.Execute(dataObjects.DisplayName);
 
-            FindObjectById(_dataObject.ParentId, OnObjectsFind);
-
+            FindObjectById(_dataObject.ParentId, OnParentFind);
+            CheckRootParent();
             UpdateTree(_dataObject);
 
             _currentWindow.DataContext = this;
@@ -141,7 +153,7 @@ namespace MyIceLibrary.ViewModel
         {
             try
             {
-                CurrentObjectMainInfoValues = DataGridHelper.GetMainInfoObservableCollection(new IDataObject[] { _dataObject });
+                CurrentObjectMainInfoValues = DataGridHelper.GetMainInfoObservableCollectionByObject(_dataObject);
             }
             catch (Exception ex)
             {
@@ -165,6 +177,18 @@ namespace MyIceLibrary.ViewModel
             currentObjectFormVM.OpenCommand.Execute(_parentDataObject);
         }
 
+        private void CheckRootParent()
+        {
+            if (_dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001"))
+            {
+                ParentLabelVisibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                ParentLabelVisibility = System.Windows.Visibility.Hidden;
+            }
+        }
+
         #region Find Object
         private void FindObjectById(Guid id, LoadObjectsHandler loadObjectsHandler)
         {
@@ -182,20 +206,19 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
-        private void OnObjectsFind(IDataObject obj)
+        private void OnParentFind(IDataObject obj)
         {
             _parentDataObject = obj;
             ChangeParentNameLabelContentCommand.Execute(obj.DisplayName);
         }
         #endregion
 
-        #region 
-        //Начало 00000001-0001-0001-0001-000000000001
-
+        #region Tree View
         private void AddTreeElement(IDataObject dataObject)
         {
 
-            if (dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001"))
+            if (dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001")) //Начало 00000001-0001-0001-0001-000000000001
+
             {
                 var dataObjects = _objectsRepository.SubscribeObjects(new Guid[] { dataObject.ParentId });
                 ObserverFindObjectById observer = new ObserverFindObjectById(UpdateTree);

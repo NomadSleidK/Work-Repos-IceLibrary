@@ -114,17 +114,16 @@
     <Compile Include="Helper\WindowHelper.cs" />
     <Compile Include="Model\AttributeValues.cs" />
     <Compile Include="Model\AttributeValue.cs" />
+    <Compile Include="Model\CurrentObjectInfo.cs" />
     <Compile Include="Model\MainInfoValue.cs" />
     <Compile Include="Model\TreeItem.cs" />
     <Compile Include="ViewModel\CurrentObjectFormVM.cs" />
     <Compile Include="ViewModel\MainMenuDataGridVM.cs" />
+    <Compile Include="ViewModel\Pages\AttributesPageVM.cs" />
     <Compile Include="View\CurrentObjectUserControl.xaml.cs">
       <DependentUpon>CurrentObjectUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helper\DataGridHelper.cs" />
-    <Compile Include="View\InfoWindow.xaml.cs">
-      <DependentUpon>InfoWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\MainUserControl.xaml.cs">
       <DependentUpon>MainUserControl.xaml</DependentUpon>
     </Compile>
@@ -135,6 +134,24 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\AttributesPage.xaml.cs">
+      <DependentUpon>AttributesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\ChildrenPage.xaml.cs">
+      <DependentUpon>ChildrenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\CreatorPage.xaml.cs">
+      <DependentUpon>CreatorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\FilesPage.xaml.cs">
+      <DependentUpon>FilesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TabControl\TreeTabControl.xaml.cs">
+      <DependentUpon>TreeTabControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\TypePage.xaml.cs">
+      <DependentUpon>TypePage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -155,13 +172,37 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\InfoWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\MainUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\AttributesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\ChildrenPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\CreatorPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\FilesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TabControl\TreeTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\TypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Style\IceLibraryStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +213,9 @@
       <Project>{1bfb0e3b-e4bd-4b7d-b509-c2f8a1152757}</Project>
       <Name>Ascon.Pilot.SDK.Controls</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModel\TabControl\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
+using Ascon.Pilot.Theme.Controls;
 using MyIceLibrary.Command;
 using MyIceLibrary.Helper;
 using MyIceLibrary.Model;
@@ -73,7 +74,7 @@ namespace MyIceLibrary.ViewModel
 
         private IPilotDialogService _pilotDialogService;
 
-        private System.Windows.Window _mainWindow;
+        private DialogWindow _mainWindow;
 
         public MainMenuDataGridVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService)
         {
@@ -128,7 +129,7 @@ namespace MyIceLibrary.ViewModel
         {
             try
             {
-                MainInfoValues = DataGridHelper.GetMainInfoObservableCollection(_dataObjects);
+                MainInfoValues = DataGridHelper.GetMainInfoObservableCollectionByObjects(_dataObjects);
             }
             catch (Exception ex)
             {

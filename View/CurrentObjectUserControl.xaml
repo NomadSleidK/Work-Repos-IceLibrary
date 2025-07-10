@@ -2,11 +2,11 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"         
              xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
              xmlns:controls="clr-namespace:Ascon.Pilot.Theme.Controls;assembly=Ascon.Pilot.Theme"
              xmlns:local="clr-namespace:MyIceLibrary"
+             xmlns:pages="clr-namespace:MyIceLibrary.View.Pages"
              mc:Ignorable="d"
              Background="{DynamicResource NormalBackground}"
              d:DesignHeight="800" d:DesignWidth="1000">
@@ -14,149 +14,146 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/StandardControls.xaml"/>
-                <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/sharedresources/SharedResources.xaml"/>
                 <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/standardcontrols/togglebutton.xaml"/>
+                <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+                    
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
-        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="36*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="1" Grid.Column="0">
+
             <Grid.RowDefinitions>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="36*"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            
-            
-
-            <TreeView 
-                Grid.Row="1" Grid.Column="1"
-                Margin="20 20 20 20"
-                Background="{DynamicResource NormalBackground}"
-                
-                ItemsSource="{Binding TreeItems}">
-
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="TreeViewItem">
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                    </Style>
-                </TreeView.ItemContainerStyle>
-
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                        <TextBlock Text="{Binding Name}"/>
-                    </HierarchicalDataTemplate>
-
-                </TreeView.ItemTemplate>
-
-            </TreeView>
-
-        </Grid>
-        
-        <Grid>
-                      
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1.2*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="8*"/>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="8*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="0.1*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="48*"/>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="48*"/>
             </Grid.ColumnDefinitions>
 
             <Label
                 Content="ОБЪЕКТ:"
-                Grid.Row="0" Grid.Column="1"              
-                HorizontalAlignment="Left"
-                FontWeight="Bold"
-                FontFamily="Ascon Complex"
-                
-                Background="{DynamicResource NormalBackground}"
-                Foreground="{DynamicResource NormalForeground}"/>
+                Grid.Row="0" Grid.Column="1"                              
+                Style="{DynamicResource TitleLabel}"/>
 
             <Label 
                 x:Name="ObjectName"
-                Grid.Row="1" Grid.Column="1"               
-                HorizontalAlignment="Left" 
-                FontWeight="Bold"
-                Foreground="#FF6771D1" 
-                FontFamily="Ascon Complex"
-
-                Content="{Binding CurrentObjectName}"
-                Background="{DynamicResource NormalBackground}"/>
+                Grid.Row="1" Grid.Column="1"                                          
+                Style="{DynamicResource InfoLabel}"
+                
+                Content="{Binding CurrentObjectName}"/>
 
             <Label
                 Content="РОДИТЕЛЬСКИЙ ОБЪЕКТ:"
                 Grid.Row="2" Grid.Column="1"              
-                HorizontalAlignment="Left"
-                FontWeight="Bold"
-                FontFamily="Ascon Complex"
+                Style="{DynamicResource TitleLabel}" 
                 
-                Background="{DynamicResource NormalBackground}"
-                Foreground="{DynamicResource NormalForeground}"/>
+                FontFamily="{DynamicResource TitleFontFamily}"/>
 
             <ToggleButton
                 x:Name="ParentNameLabel" 
-                Grid.Row="3" Grid.Column="1"
-                HorizontalAlignment="Left" 
-                FontWeight="Bold"
-                FontStyle="Italic"
-                Foreground="#FF4658FF"
+                Grid.Row="3" Grid.Column="1"         
+                Style="{DynamicResource LinkTogleButton}"
                 
+                Visibility="{Binding ParentLabelVisibility}"
                 Command="{Binding GoToParentCommand}"
-                Content="{Binding ParentObjectName}"             
-                Style="{StaticResource PseudoHyperlinkToggleButtonStyle}"/>
+                Content="{Binding ParentObjectName}"/>
+
+            <Rectangle
+                Grid.Row="5" Grid.Column="1" 
+                Style="{DynamicResource NormalRectangle}"/>
 
             <Label
                 Content="ОБЩАЯ ИНФОРМАЦИЯ:"
-                Grid.Row="4" Grid.Column="1"               
-                HorizontalAlignment="Left"
-                FontWeight="Bold"
-
-                FontFamily="{DynamicResource TitleFontFamily}"
-                Background="{DynamicResource NormalBackground}"
-                Foreground="{DynamicResource NormalForeground}"/>
+                Grid.Row="6" Grid.Column="1"                         
+                Style="{DynamicResource TitleLabel}"/>
 
             <DataGrid
                 x:Name="MainInfoDataGrid"
-                Grid.Row="5" Grid.Column="1"            
+                Grid.Row="7" Grid.Column="1"    
                 AutoGenerateColumns="True"
                 
                 ItemsSource="{Binding CurrentObjectMainInfoValues}"/>
 
-            
+            <Rectangle
+                Grid.Row="9" Grid.Column="1" 
+                Style="{DynamicResource NormalRectangle}"/>
+
             <Label 
                 Content="АТРИБУТЫ:" 
-                Grid.Row="6" Grid.Column="1"
-                HorizontalAlignment="Left"
-                FontWeight="Bold"
-                
-                FontFamily="{DynamicResource TitleFontFamily}"
-                Background="{DynamicResource NormalBackground}"
-                Foreground="{DynamicResource NormalForeground}"/>
+                Grid.Row="10" Grid.Column="1"
+                Style="{DynamicResource TitleLabel}"/>
 
             <DataGrid 
                 x:Name="AttributesDataGrid" 
-                AutoGenerateColumns="True" 
-                Grid.Row="7" Grid.Column="1"
+                Grid.Row="11" Grid.Column="1"
+                AutoGenerateColumns="True"
                 
                 ItemsSource="{Binding CurrentObjectAttributesValue}"/>
 
         </Grid>
+
+
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <TreeView 
+                Grid.Row="0" Grid.Column="0"
+                Style="{DynamicResource NormalTreeView}"
+                
+                ItemsSource="{Binding TreeItems}">
+
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter
+                        Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock
+                        Text="{Binding Name}" 
+                        Style="{DynamicResource NormalTextBlock}"/>
+                </HierarchicalDataTemplate>
+
+            </TreeView.ItemTemplate>
+
+        </TreeView>
+
+            <pages:TreeTabControl
+                Grid.Row="1" Grid.Column="0"
+                x:Name="TreeTabControl"/>
+
+        </Grid>
+        
     </Grid>
+    
 </UserControl>

@@ -1,10 +1,9 @@
-﻿using MyIceLibrary.Model;
+﻿using Ascon.Pilot.SDK;
+using MyIceLibrary.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using Ascon.Pilot.SDK;
 
 namespace MyIceLibrary
 {
@@ -48,7 +47,7 @@ namespace MyIceLibrary
             }            
         }
 
-        public static ObservableCollection<MainInfoValue> GetMainInfoObservableCollection(Ascon.Pilot.SDK.IDataObject[] dataObjects)
+        public static ObservableCollection<MainInfoValue> GetMainInfoObservableCollectionByObjects(IDataObject[] dataObjects)
         {
             var content = new List<MainInfoValue>();
 
@@ -65,6 +64,19 @@ namespace MyIceLibrary
             }
 
             return new ObservableCollection<MainInfoValue>(content);
+        }
+
+        public static ObservableCollection<CurrentObjectInfo> GetMainInfoObservableCollectionByObject(IDataObject dataObject)
+        {
+            var content = new List<CurrentObjectInfo>();
+
+            content.Add(new CurrentObjectInfo { Name = "DisplayName", Value = dataObject?.DisplayName });
+            content.Add(new CurrentObjectInfo { Name = "ID", Value = dataObject?.Id });
+            content.Add(new CurrentObjectInfo { Name = "Created", Value = dataObject?.Created });
+            content.Add(new CurrentObjectInfo { Name = "Creator", Value = dataObject.Creator?.DisplayName });
+            content.Add(new CurrentObjectInfo { Name = "Type", Value = dataObject.Type?.Title });
+
+            return new ObservableCollection<CurrentObjectInfo>(content);
         }
     }
 }

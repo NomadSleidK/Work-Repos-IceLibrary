@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MyIceLibrary.View
+namespace MyIceLibrary.View.Pages
 {
     /// <summary>
-    /// Interaction logic for InfoWindow.xaml
+    /// Interaction logic for Files.xaml
     /// </summary>
-    public partial class InfoWindow : Window
+    public partial class FilesPage : UserControl
     {
-        public InfoWindow()
+        public FilesPage()
         {
             InitializeComponent();
         }

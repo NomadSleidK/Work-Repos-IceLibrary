@@ -1,4 +1,5 @@
-﻿using MyIceLibrary.View;
+﻿using Ascon.Pilot.Theme.Controls;
+using MyIceLibrary.View;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,9 +8,9 @@ namespace MyIceLibrary.Helper
 {
     public static class WindowHelper
     {
-        public static InfoWindow CreateWindowWithUserControl<T>() where T : UserControl, new()
+        public static DialogWindow CreateWindowWithUserControl<T>() where T : UserControl, new()
         {
-            InfoWindow window = new InfoWindow();
+            DialogWindow window = new DialogWindow();
             
             try
             {
