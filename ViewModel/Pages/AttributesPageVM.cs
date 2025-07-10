@@ -5,10 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MyIceLibrary.ViewModel.Pages
@@ -32,14 +29,11 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        public ICommand LoadAttributesCommand => new RelayCommand<IDataObject>(LoadObjectAtributes);
+        public ICommand LoadAttributesCommand => new RelayCommand<IDataObject>(LoadObjectAttributes);
 
-        public AttributesPageVM()
-        {
+        public AttributesPageVM() { }
 
-        }
-
-        private void LoadObjectAtributes(IDataObject dataObject)
+        private void LoadObjectAttributes(IDataObject dataObject)
         {
             try
             {

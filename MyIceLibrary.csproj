@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
+    <OutputPath>..\..\Users\artem\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -116,10 +116,13 @@
     <Compile Include="Model\AttributeValue.cs" />
     <Compile Include="Model\CurrentObjectInfo.cs" />
     <Compile Include="Model\MainInfoValue.cs" />
+    <Compile Include="Model\ObjectChild.cs" />
     <Compile Include="Model\TreeItem.cs" />
     <Compile Include="ViewModel\CurrentObjectFormVM.cs" />
+    <Compile Include="ViewModel\InfoTabControlVM.cs" />
     <Compile Include="ViewModel\MainMenuDataGridVM.cs" />
     <Compile Include="ViewModel\Pages\AttributesPageVM.cs" />
+    <Compile Include="ViewModel\Pages\ChildrenPageVM.cs" />
     <Compile Include="View\CurrentObjectUserControl.xaml.cs">
       <DependentUpon>CurrentObjectUserControl.xaml</DependentUpon>
     </Compile>
@@ -147,8 +150,8 @@
     <Compile Include="View\Pages\FilesPage.xaml.cs">
       <DependentUpon>FilesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\TabControl\TreeTabControl.xaml.cs">
-      <DependentUpon>TreeTabControl.xaml</DependentUpon>
+    <Compile Include="View\Pages\InfoTabControl.xaml.cs">
+      <DependentUpon>InfoTabControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\TypePage.xaml.cs">
       <DependentUpon>TypePage.xaml</DependentUpon>
@@ -192,7 +195,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\TabControl\TreeTabControl.xaml">
+    <Page Include="View\Pages\InfoTabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,9 +217,7 @@
       <Name>Ascon.Pilot.SDK.Controls</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModel\TabControl\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

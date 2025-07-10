@@ -4,10 +4,12 @@ using MyIceLibrary.Command;
 using MyIceLibrary.Helper;
 using MyIceLibrary.Model;
 using MyIceLibrary.View;
+using MyIceLibrary.ViewModel.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,35 +19,22 @@ namespace MyIceLibrary.ViewModel
 {
     internal class CurrentObjectFormVM : INotifyPropertyChanged
     {
+        #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private ObservableCollection<AttributeValue> _attributesValue;
-        public ObservableCollection<AttributeValue> CurrentObjectAttributesValue
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            get => _attributesValue;
-            set
-            {
-                _attributesValue = value;
-                OnPropertyChanged();
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
 
-        private ObservableCollection<CurrentObjectInfo> _mainInfoValues;
-        public ObservableCollection<CurrentObjectInfo> CurrentObjectMainInfoValues
-        {
-            get => _mainInfoValues;
-            set
-            {
-                _mainInfoValues = value;
-                OnPropertyChanged();
-            }
-        }
+        #region View Model Properties
 
         private string _currentObjectName;
         public string CurrentObjectName
         {
             get => _currentObjectName;
-            set
+            private set
             {
                 _currentObjectName = value;
                 OnPropertyChanged();
@@ -67,14 +56,37 @@ namespace MyIceLibrary.ViewModel
         public System.Windows.Visibility ParentLabelVisibility
         {
             get => _parentLabelVisibility;
-            set
+            private set
             {
                 _parentLabelVisibility = value;
                 OnPropertyChanged();
             }
         }
 
+        private AttributesPageVM _currentObjectAttributesVM;
+        public AttributesPageVM CurrentObjectAttributesVM
+        {
+            get => _currentObjectAttributesVM;
+            private set
+            {
+                _currentObjectAttributesVM = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<CurrentObjectInfo> _mainInfoValues;
+        public ObservableCollection<CurrentObjectInfo> CurrentObjectMainInfoValues
+        {
+            get => _mainInfoValues;
+            private set
+            {
+                _mainInfoValues = value;
+                OnPropertyChanged();
+            }
+        }
+
         public bool IsExpanded => true;
+
 
         private ObservableCollection<TreeItem> _treeItems;
         public ObservableCollection<TreeItem> TreeItems
@@ -87,16 +99,28 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private InfoTabControlVM _selectedElementTabControlVM;
+        public InfoTabControlVM SelectedElementTabControlVM
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get => _selectedElementTabControlVM;
+            private set
+            {
+                _selectedElementTabControlVM = value;
+                OnPropertyChanged();
+            }
         }
+
+
+
+        #endregion
+
+
 
         public ICommand OpenCommand => new RelayCommand<IDataObject>(OpenForm);
         public ICommand GoToParentCommand => new RelayCommand<object>(_ => GoToParent());
         public ICommand ChangeObjectNameLabelContentCommand => new RelayCommand<string>(ChangeObjectNameLabelContent);
         public ICommand ChangeParentNameLabelContentCommand => new RelayCommand<string>(ChangeParentNameLabelContent);
-        public ICommand LoadAttributesCommand => new RelayCommand<object>(_ => LoadAttributes());
+        //public ICommand LoadChildrenCommand => new RelayCommand<object>(_ => LoadAttributes());
         public ICommand LoadMainInfoCommand => new RelayCommand<object>(_ => LoadMainInfo());
 
         private IObjectsRepository _objectsRepository;
@@ -108,23 +132,71 @@ namespace MyIceLibrary.ViewModel
         public CurrentObjectFormVM(IObjectsRepository objectsRepository)
         {
             _objectsRepository = objectsRepository;
+            _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>();
+            _currentWindow.DataContext = this;
+
+            CurrentObjectAttributesVM = new AttributesPageVM();
+            SelectedElementTabControlVM = new InfoTabControlVM(objectsRepository);
         }
+
+
+        private object _selectedTreeItem;
+        public object SelectedTreeItem
+        {
+            get => _selectedTreeItem;
+            set
+            {
+                if (_selectedTreeItem != value)
+                {
+                    _selectedTreeItem = value;
+                    OnPropertyChanged(nameof(SelectedTreeItem));
+                    // Дополнительная логика при изменении выбранного элемента
+                    System.Windows.MessageBox.Show("Нажатие");
+                }
+            }
+        }
+
+        private void OnSelectedItemChanged(TreeItem item)
+        {
+            // Обработка выбранного элемента
+            if (item != null)
+            {
+                Debug.WriteLine($"Selected: {item.Name}");
+            }
+        }
+
+
+        public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(OnTabSelected);
+
+        private void OnTabSelected(TreeItem selectedTab)
+        {
+            System.Windows.MessageBox.Show("Нажатие");
+
+            //var dataObject = (Ascon.Pilot.SDK.IDataObject) selectedTab;
+
+            //SelectedElementChildrenPageVM.LoadChildrenCommand.Execute(dataObject);
+            //SelectedElementAttributesVM.LoadAttributesCommand.Execute(dataObject);
+        }
+
 
         private void OpenForm(IDataObject dataObjects)
         {
             _dataObject = dataObjects;
 
-            _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>();
-
-            LoadAttributesCommand.Execute(null);
             LoadMainInfoCommand.Execute(null);
+
             ChangeObjectNameLabelContentCommand.Execute(dataObjects.DisplayName);
+
+
+
+            CurrentObjectAttributesVM.LoadAttributesCommand.Execute(dataObjects);
+
+
 
             FindObjectById(_dataObject.ParentId, OnParentFind);
             CheckRootParent();
             UpdateTree(_dataObject);
 
-            _currentWindow.DataContext = this;
             _currentWindow.Show();
         }
 
@@ -133,7 +205,7 @@ namespace MyIceLibrary.ViewModel
             try
             {
                 List<AttributeValue> attributes = new List<AttributeValue>();
-                
+
                 foreach (var item in _dataObject.Attributes)
                 {
                     attributes.Add(new AttributeValue(item.Key, item.Value));
@@ -141,7 +213,7 @@ namespace MyIceLibrary.ViewModel
 
                 ObservableCollection<AttributeValue> observableCollection = new ObservableCollection<AttributeValue>(attributes);
 
-                CurrentObjectAttributesValue = observableCollection;
+                //CurrentObjectChildren = observableCollection;
             }
             catch (Exception ex)
             {
@@ -236,14 +308,14 @@ namespace MyIceLibrary.ViewModel
 
                 TreeItems = new ObservableCollection<TreeItem>
                 {
-                    new TreeItem { Name = dataObject.DisplayName, IsExpanded = true, Children = new List<TreeItem>() { treeItem } }
+                    new TreeItem { Name = dataObject.DisplayName, DataObject = dataObject, IsExpanded = true, Children = new List<TreeItem>() { treeItem } }
                 };
             }
             else
             {
                 TreeItems = new ObservableCollection<TreeItem>
                 {
-                    new TreeItem { Name = dataObject.DisplayName, IsExpanded = true, Children = null }
+                    new TreeItem { Name = dataObject.DisplayName, DataObject = dataObject, IsExpanded = true, Children = null }
                 };
             } 
 

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="MyIceLibrary.View.Pages.TreeTabControl"
+﻿<UserControl x:Class="MyIceLibrary.View.Pages.InfoTabControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -23,10 +23,12 @@
         
         <TabControl Style="{DynamicResource NormalTabControl}">
             <TabItem Header="Attributes">
-                <pages:AttributesPage/>
+                <pages:AttributesPage
+                    DataContext="{DynamicResource SelectedElementAttributesVM}"/>
             </TabItem>
             <TabItem Header="Children">
-                <pages:ChildrenPage/>
+                <pages:ChildrenPage
+                    DataContext="{DynamicResource SelectedElementChildrenPageVM}"/>
             </TabItem>
             <TabItem Header="Creator">
                 <pages:CreatorPage/>
@@ -37,6 +39,7 @@
             <TabItem Header="Type">
                 <pages:TypePage/>
             </TabItem>
+
         </TabControl>    
             
     </Grid>

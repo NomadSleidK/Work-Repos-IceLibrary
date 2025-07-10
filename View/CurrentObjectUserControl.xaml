@@ -2,11 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"         
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
              xmlns:controls="clr-namespace:Ascon.Pilot.Theme.Controls;assembly=Ascon.Pilot.Theme"
              xmlns:local="clr-namespace:MyIceLibrary"
              xmlns:pages="clr-namespace:MyIceLibrary.View.Pages"
+             
              mc:Ignorable="d"
              Background="{DynamicResource NormalBackground}"
              d:DesignHeight="800" d:DesignWidth="1000">
@@ -108,12 +110,11 @@
                 Grid.Row="10" Grid.Column="1"
                 Style="{DynamicResource TitleLabel}"/>
 
-            <DataGrid 
-                x:Name="AttributesDataGrid" 
+            <pages:AttributesPage
                 Grid.Row="11" Grid.Column="1"
-                AutoGenerateColumns="True"
+                x:Name="CurrentObjectAttributes"
                 
-                ItemsSource="{Binding CurrentObjectAttributesValue}"/>
+                DataContext="{Binding CurrentObjectAttributesVM}"/>
 
         </Grid>
 
@@ -123,34 +124,40 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <TreeView 
                 Grid.Row="0" Grid.Column="0"
                 Style="{DynamicResource NormalTreeView}"
                 
+                SelectedItemChanged="{Binding SelectedItem}"
                 ItemsSource="{Binding TreeItems}">
 
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="TreeViewItem">
-                    <Setter
-                        Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                </Style>
-            </TreeView.ItemContainerStyle>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter
+                            Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
 
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                
+
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                         <TextBlock
-                        Text="{Binding Name}" 
-                        Style="{DynamicResource NormalTextBlock}"/>
-                </HierarchicalDataTemplate>
+                            Text="{Binding Name}" 
+                            Style="{DynamicResource NormalTextBlock}">
 
-            </TreeView.ItemTemplate>
 
-        </TreeView>
+                        </TextBlock>
+                    </HierarchicalDataTemplate>
 
-            <pages:TreeTabControl
+                </TreeView.ItemTemplate>
+
+            </TreeView>
+
+            <pages:InfoTabControl
                 Grid.Row="1" Grid.Column="0"
-                x:Name="TreeTabControl"/>
+                DataContext="{DynamicResource SelectedElementTabControlVM}"/>
 
         </Grid>
         
