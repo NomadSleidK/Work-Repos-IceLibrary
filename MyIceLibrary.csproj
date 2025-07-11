@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Users\artem\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
+    <OutputPath>..\..\..\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -57,6 +57,9 @@
     </Reference>
     <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.IO.RecyclableMemoryStream.3.0.1\lib\netstandard2.0\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.135\lib\net462\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -115,6 +118,7 @@
     <Compile Include="Model\AttributeValues.cs" />
     <Compile Include="Model\AttributeValue.cs" />
     <Compile Include="Model\CurrentObjectInfo.cs" />
+    <Compile Include="Model\FileInfo.cs" />
     <Compile Include="Model\MainInfoValue.cs" />
     <Compile Include="Model\ObjectChild.cs" />
     <Compile Include="Model\TreeItem.cs" />
@@ -123,6 +127,10 @@
     <Compile Include="ViewModel\MainMenuDataGridVM.cs" />
     <Compile Include="ViewModel\Pages\AttributesPageVM.cs" />
     <Compile Include="ViewModel\Pages\ChildrenPageVM.cs" />
+    <Compile Include="ViewModel\Pages\CreatorPageVM.cs" />
+    <Compile Include="ViewModel\Pages\FilesPageVM.cs" />
+    <Compile Include="ViewModel\Pages\MainInfoPageVM.cs" />
+    <Compile Include="ViewModel\Pages\TypePageVM.cs" />
     <Compile Include="View\CurrentObjectUserControl.xaml.cs">
       <DependentUpon>CurrentObjectUserControl.xaml</DependentUpon>
     </Compile>
@@ -152,6 +160,9 @@
     </Compile>
     <Compile Include="View\Pages\InfoTabControl.xaml.cs">
       <DependentUpon>InfoTabControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\MainInfoPage.xaml.cs">
+      <DependentUpon>MainInfoPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\TypePage.xaml.cs">
       <DependentUpon>TypePage.xaml</DependentUpon>
@@ -196,6 +207,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Pages\InfoTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\MainInfoPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

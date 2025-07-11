@@ -21,6 +21,7 @@ namespace MyIceLibrary.ViewModel.Pages
         }
         #endregion
 
+        #region Property
         private ObservableCollection<ObjectChild> _currentObjectChildren;
         public ObservableCollection<ObjectChild> CurrentObjectChildren
         {
@@ -31,20 +32,23 @@ namespace MyIceLibrary.ViewModel.Pages
                 OnPropertyChanged();
             }
         }
+        #endregion
 
-        public ICommand LoadChildrenCommand => new RelayCommand<IDataObject>(LoadChildren);
-
-        private IObjectsRepository _objectsRepository;
+        private readonly IObjectsRepository _objectsRepository;
 
         public ChildrenPageVM(IObjectsRepository objectsRepository)
         {
             _objectsRepository = objectsRepository;
         }
 
+        public ICommand LoadChildrenCommand => new RelayCommand<IDataObject>(LoadChildren);
+
         private void LoadChildren(IDataObject dataObject)
         {
             try
             {
+                CurrentObjectChildren = new ObservableCollection<ObjectChild>();
+
                 var children = dataObject.Children;
 
                 var dataObjects = _objectsRepository.SubscribeObjects(dataObject.Children);

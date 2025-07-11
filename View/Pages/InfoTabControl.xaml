@@ -9,11 +9,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     
-    
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/standardcontrols/togglebutton.xaml"/>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -22,22 +20,31 @@
     <Grid>
         
         <TabControl Style="{DynamicResource NormalTabControl}">
+            
             <TabItem Header="Attributes">
                 <pages:AttributesPage
-                    DataContext="{DynamicResource SelectedElementAttributesVM}"/>
+                    DataContext="{Binding SelectedElementAttributesVM}"/>
             </TabItem>
+            
             <TabItem Header="Children">
                 <pages:ChildrenPage
-                    DataContext="{DynamicResource SelectedElementChildrenPageVM}"/>
+                    DataContext="{Binding SelectedElementChildrenPageVM}"/>
             </TabItem>
-            <TabItem Header="Creator">
-                <pages:CreatorPage/>
-            </TabItem>
-            <TabItem Header="Files">
-                <pages:FilesPage/>
-            </TabItem>
+            
             <TabItem Header="Type">
-                <pages:TypePage/>
+                <pages:TypePage
+                    DataContext="{Binding SelectedElementTypePageVM}"/>
+            </TabItem> 
+            
+            <TabItem Header="Creator">
+                <pages:CreatorPage
+                    DataContext="{Binding SelectedElementCreatorPageVM}"/>
+
+            </TabItem>
+
+            <TabItem Header="Files">
+                <pages:FilesPage
+                    DataContext="{Binding SelectedElementFilesPageVM}"/>
             </TabItem>
 
         </TabControl>    

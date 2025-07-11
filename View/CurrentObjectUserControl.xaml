@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
              xmlns:controls="clr-namespace:Ascon.Pilot.Theme.Controls;assembly=Ascon.Pilot.Theme"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:MyIceLibrary"
              xmlns:pages="clr-namespace:MyIceLibrary.View.Pages"
              
@@ -19,7 +19,6 @@
                 <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/standardcontrols/togglebutton.xaml"/>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-                    
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -31,7 +30,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Row="1" Grid.Column="0">
@@ -41,7 +40,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="5"/>
+                <RowDefinition Height="10"/>
                 <RowDefinition Height="1"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -49,6 +48,7 @@
                 <RowDefinition Height="1"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="1"/>
                 <RowDefinition Height="0.1*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -58,7 +58,7 @@
             </Grid.ColumnDefinitions>
 
             <Label
-                Content="ОБЪЕКТ:"
+                Content="ОТКРЫТ ОБЪЕКТ:"
                 Grid.Row="0" Grid.Column="1"                              
                 Style="{DynamicResource TitleLabel}"/>
 
@@ -94,12 +94,9 @@
                 Grid.Row="6" Grid.Column="1"                         
                 Style="{DynamicResource TitleLabel}"/>
 
-            <DataGrid
-                x:Name="MainInfoDataGrid"
-                Grid.Row="7" Grid.Column="1"    
-                AutoGenerateColumns="True"
-                
-                ItemsSource="{Binding CurrentObjectMainInfoValues}"/>
+            <pages:MainInfoPage
+                Grid.Row="7" Grid.Column="1"
+                DataContext="{Binding CurrentObjectMainInfoPageVM}"/>
 
             <Rectangle
                 Grid.Row="9" Grid.Column="1" 
@@ -112,25 +109,41 @@
 
             <pages:AttributesPage
                 Grid.Row="11" Grid.Column="1"
-                x:Name="CurrentObjectAttributes"
                 
                 DataContext="{Binding CurrentObjectAttributesVM}"/>
+
+            <Rectangle
+                Grid.Row="12" Grid.Column="1" 
+                Style="{DynamicResource NormalRectangle}"/>
 
         </Grid>
 
 
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TreeView 
+            <Label
+                Content="ПУТЬ ДО ОБЪЕКТА. выберите объект."
                 Grid.Row="0" Grid.Column="0"
+                Style="{DynamicResource TitleLabel}"/>
+
+            <TreeView 
+                Grid.Row="1" Grid.Column="0"
                 Style="{DynamicResource NormalTreeView}"
                 
-                SelectedItemChanged="{Binding SelectedItem}"
                 ItemsSource="{Binding TreeItems}">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectedElementCommand}" 
+                            CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
 
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem">
@@ -139,7 +152,7 @@
                     </Style>
                 </TreeView.ItemContainerStyle>
 
-                
+
 
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
@@ -155,12 +168,16 @@
 
             </TreeView>
 
+            <Label
+                Content="ДАННЫЕ О ВЫБРАННОМ ОБЪЕКТЕ"
+                Grid.Row="2" Grid.Column="0"
+                Style="{DynamicResource TitleLabel}"/>
+
             <pages:InfoTabControl
-                Grid.Row="1" Grid.Column="0"
-                DataContext="{DynamicResource SelectedElementTabControlVM}"/>
+                Grid.Row="3" Grid.Column="0"
+                DataContext="{Binding SelectedElementTabControlVM}"/>
 
         </Grid>
-        
     </Grid>
     
 </UserControl>

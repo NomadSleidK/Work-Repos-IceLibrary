@@ -4,7 +4,6 @@ using MyIceLibrary.Model;
 using MyIceLibrary.ViewModel.Pages;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -21,7 +20,7 @@ namespace MyIceLibrary.ViewModel
         }
         #endregion
 
-        #region View Model Properties
+        #region Properties
 
         private AttributesPageVM _selectedElementAttributesVM;
         public AttributesPageVM SelectedElementAttributesVM
@@ -45,25 +44,59 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
+        private TypePageVM _selectedElementTypePageVM;
+        public TypePageVM SelectedElementTypePageVM
+        {
+            get => _selectedElementTypePageVM;
+            private set
+            {
+                _selectedElementTypePageVM = value;
+                OnPropertyChanged();
+            }
+        }
 
+        private CreatorPageVM _selectedElementCreatorPageVM;
+        public CreatorPageVM SelectedElementCreatorPageVM
+        { 
+            get => _selectedElementCreatorPageVM;
+            private set
+            {
+                _selectedElementCreatorPageVM = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private FilesPageVM _selectedElementFilesPageVM;
+        public FilesPageVM SelectedElementFilesPageVM
+        {
+            get => _selectedElementFilesPageVM;
+            private set
+            {
+                _selectedElementFilesPageVM = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
-        public InfoTabControlVM(IObjectsRepository objectsRepository)
+        public InfoTabControlVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
         {
             SelectedElementAttributesVM = new AttributesPageVM();
             SelectedElementChildrenPageVM = new ChildrenPageVM(objectsRepository);
+            SelectedElementTypePageVM = new TypePageVM();
+            SelectedElementCreatorPageVM = new CreatorPageVM();
+            SelectedElementFilesPageVM = new FilesPageVM(modifier);
         }
 
-        public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(OnTabSelected);
+        public ICommand UpdateInfoCommand => new RelayCommand<IDataObject>(UpdateInfo);
 
-        private void OnTabSelected(TreeItem selectedTab)
+        private void UpdateInfo(IDataObject dataObject)
         {
-            MessageBox.Show("Нажатие");
-
-            //var dataObject = (Ascon.Pilot.SDK.IDataObject) selectedTab;
-
-            //SelectedElementChildrenPageVM.LoadChildrenCommand.Execute(dataObject);
-            //SelectedElementAttributesVM.LoadAttributesCommand.Execute(dataObject);
+            SelectedElementChildrenPageVM.LoadChildrenCommand.Execute(dataObject);
+            SelectedElementAttributesVM.LoadAttributesCommand.Execute(dataObject);
+            SelectedElementTypePageVM.LoadTypeInfoCommand.Execute(dataObject);
+            SelectedElementCreatorPageVM.LoadCreatorInfoCommand.Execute(dataObject);
+            SelectedElementFilesPageVM.LoadFilesInfoCommand.Execute(dataObject);
         }
     }
 }

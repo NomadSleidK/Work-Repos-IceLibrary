@@ -73,6 +73,16 @@
         <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
     </Style>
 
+    <Style TargetType="DataGrid" x:Key="NormalDataGrid">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="AutoGenerateColumns" Value="True"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
+    </Style>
+
 </ResourceDictionary>
 
 <!-- <Style TargetType="" x:Key=""> -->

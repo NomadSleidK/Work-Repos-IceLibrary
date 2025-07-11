@@ -43,8 +43,17 @@ namespace MyIceLibrary
             {
                 if (name == CUSTOM_BUTTON_NAME)
                 {
-                    _mainMenuDataGridVM = new MainMenuDataGridVM(_modifier, _objectsRepository, _pilotDialogService);
-                    _mainMenuDataGridVM.OpenFormCommand.Execute(context.SelectedObjects.ToArray());
+                    if (context.SelectedObjects.ToArray().Length > 1)
+                    {
+                        _mainMenuDataGridVM = new MainMenuDataGridVM(_modifier, _objectsRepository, _pilotDialogService);
+                        _mainMenuDataGridVM.OpenFormCommand.Execute(context.SelectedObjects.ToArray());
+                    }
+                    else if (context.SelectedObjects.ToArray().Length == 1)
+                    {
+                        CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository);
+                        currentObjectFormVM.OpenCommand.Execute(context.SelectedObjects.ToArray()[0]);
+                    }
+                    
                 }
             }
             catch (Exception ex)

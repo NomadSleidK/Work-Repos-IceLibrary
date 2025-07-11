@@ -197,7 +197,7 @@ namespace MyIceLibrary.ViewModel
 
         private void OnObjectsFind(IDataObject obj)
         {
-            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectsRepository);
+            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository);
 
             currentObjectFormVM.OpenCommand.Execute(obj);
         }

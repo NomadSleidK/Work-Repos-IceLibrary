@@ -9,15 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Windows.Controls;
 using System.Windows.Input;
 using static MyIceLibrary.ObserverFindObjectById;
 
 namespace MyIceLibrary.ViewModel
 {
-    internal class CurrentObjectFormVM : INotifyPropertyChanged
+    public class CurrentObjectFormVM : INotifyPropertyChanged
     {
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -63,6 +61,17 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
+        private MainInfoPageVM _currentObjectMainInfoPageVM;
+        public MainInfoPageVM CurrentObjectMainInfoPageVM
+        {
+            get => _currentObjectMainInfoPageVM;
+            private set
+            {
+                _currentObjectMainInfoPageVM = value;
+                OnPropertyChanged();
+            }
+        }
+
         private AttributesPageVM _currentObjectAttributesVM;
         public AttributesPageVM CurrentObjectAttributesVM
         {
@@ -87,7 +96,6 @@ namespace MyIceLibrary.ViewModel
 
         public bool IsExpanded => true;
 
-
         private ObservableCollection<TreeItem> _treeItems;
         public ObservableCollection<TreeItem> TreeItems
         {
@@ -109,145 +117,72 @@ namespace MyIceLibrary.ViewModel
                 OnPropertyChanged();
             }
         }
-
-
-
         #endregion
 
-
-
-        public ICommand OpenCommand => new RelayCommand<IDataObject>(OpenForm);
-        public ICommand GoToParentCommand => new RelayCommand<object>(_ => GoToParent());
-        public ICommand ChangeObjectNameLabelContentCommand => new RelayCommand<string>(ChangeObjectNameLabelContent);
-        public ICommand ChangeParentNameLabelContentCommand => new RelayCommand<string>(ChangeParentNameLabelContent);
-        //public ICommand LoadChildrenCommand => new RelayCommand<object>(_ => LoadAttributes());
-        public ICommand LoadMainInfoCommand => new RelayCommand<object>(_ => LoadMainInfo());
-
-        private IObjectsRepository _objectsRepository;
+        private readonly IObjectsRepository _objectsRepository;
+        
         private IDataObject _dataObject;
         private IDataObject _parentDataObject;
 
-        private DialogWindow _currentWindow;
-
-        public CurrentObjectFormVM(IObjectsRepository objectsRepository)
+        private readonly DialogWindow _currentWindow;
+        private readonly IObjectModifier _modifier;
+        public CurrentObjectFormVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
         {
-            _objectsRepository = objectsRepository;
             _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>();
             _currentWindow.DataContext = this;
+            _objectsRepository = objectsRepository;
 
+            CurrentObjectMainInfoPageVM = new MainInfoPageVM();
             CurrentObjectAttributesVM = new AttributesPageVM();
-            SelectedElementTabControlVM = new InfoTabControlVM(objectsRepository);
+            SelectedElementTabControlVM = new InfoTabControlVM(modifier, objectsRepository);
         }
 
-
-        private object _selectedTreeItem;
-        public object SelectedTreeItem
-        {
-            get => _selectedTreeItem;
-            set
-            {
-                if (_selectedTreeItem != value)
-                {
-                    _selectedTreeItem = value;
-                    OnPropertyChanged(nameof(SelectedTreeItem));
-                    // Дополнительная логика при изменении выбранного элемента
-                    System.Windows.MessageBox.Show("Нажатие");
-                }
-            }
-        }
-
-        private void OnSelectedItemChanged(TreeItem item)
-        {
-            // Обработка выбранного элемента
-            if (item != null)
-            {
-                Debug.WriteLine($"Selected: {item.Name}");
-            }
-        }
-
-
+        public ICommand OpenCommand => new RelayCommand<IDataObject>(OpenDialogWindow);
+        public ICommand GoToParentCommand => new RelayCommand<object>(_ => GoToParent());
+        public ICommand ChangeParentNameLabelContentCommand => new RelayCommand<string>(ChangeParentNameLabelContent);
         public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(OnTabSelected);
 
-        private void OnTabSelected(TreeItem selectedTab)
+        private void OpenDialogWindow(IDataObject dataObject)
         {
-            System.Windows.MessageBox.Show("Нажатие");
+            _dataObject = dataObject;
 
-            //var dataObject = (Ascon.Pilot.SDK.IDataObject) selectedTab;
-
-            //SelectedElementChildrenPageVM.LoadChildrenCommand.Execute(dataObject);
-            //SelectedElementAttributesVM.LoadAttributesCommand.Execute(dataObject);
-        }
-
-
-        private void OpenForm(IDataObject dataObjects)
-        {
-            _dataObject = dataObjects;
-
-            LoadMainInfoCommand.Execute(null);
-
-            ChangeObjectNameLabelContentCommand.Execute(dataObjects.DisplayName);
-
-
-
-            CurrentObjectAttributesVM.LoadAttributesCommand.Execute(dataObjects);
-
-
-
-            FindObjectById(_dataObject.ParentId, OnParentFind);
-            CheckRootParent();
-            UpdateTree(_dataObject);
-
+            UpdateWindow();
             _currentWindow.Show();
         }
 
-        private void LoadAttributes()
+        private void UpdateWindow()
         {
-            try
-            {
-                List<AttributeValue> attributes = new List<AttributeValue>();
+            CurrentObjectMainInfoPageVM.LoadMainInfoCommand.Execute(_dataObject);
+            CurrentObjectAttributesVM.LoadAttributesCommand.Execute(_dataObject);
 
-                foreach (var item in _dataObject.Attributes)
-                {
-                    attributes.Add(new AttributeValue(item.Key, item.Value));
-                }
+            ChangeObjectNameLabelContent(_dataObject.DisplayName);
+            FindObjectById(_dataObject.ParentId, OnParentFind);
 
-                ObservableCollection<AttributeValue> observableCollection = new ObservableCollection<AttributeValue>(attributes);
-
-                //CurrentObjectChildren = observableCollection;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            CheckRootParent();
+            UpdateTree(_dataObject);
         }
 
-        private void LoadMainInfo()
+        private void GoToParent()
         {
-            try
-            {
-                CurrentObjectMainInfoValues = DataGridHelper.GetMainInfoObservableCollectionByObject(_dataObject);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository);
+            currentObjectFormVM.OpenCommand.Execute(_parentDataObject);
         }
-        
-        private void ChangeObjectNameLabelContent(string newName)
-        {
-            CurrentObjectName = newName;
-        }
-
+     
         private void ChangeParentNameLabelContent(string newName)
         {
             ParentObjectName = newName;
         }
 
-        private void GoToParent()
+        private void OnTabSelected(TreeItem selectedTab)
         {
-            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectsRepository);
-            currentObjectFormVM.OpenCommand.Execute(_parentDataObject);
+
+            SelectedElementTabControlVM.UpdateInfoCommand.Execute(selectedTab.DataObject);
         }
+
+        private void ChangeObjectNameLabelContent(string newName)
+        {
+            CurrentObjectName = newName;
+        }   
 
         private void CheckRootParent()
         {
