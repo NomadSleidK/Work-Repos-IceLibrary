@@ -22,34 +22,55 @@
 
     <Grid>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.1"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="0.1"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.1"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.1"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="0.1"/>
+        </Grid.ColumnDefinitions>
+
+        <Label
+            Content="ИЕРАРХИЯ ПОЛЬЗОВАТЕЛЕЙ БАЗЫ"
+            Grid.Row="1" Grid.Column="1"                              
+            Style="{DynamicResource TitleLabel}"/>
+
+        <Label
+            Content="ИНФОРМАЦИЯ О ВЫБРАННОМ ЭЛЕМЕНТЕ"
+            Grid.Row="1" Grid.Column="2"                              
+            Style="{DynamicResource TitleLabel}"/>
+
         <TreeView 
-    Grid.Row="1" Grid.Column="0"
-    Style="{DynamicResource NormalTreeView}"
+            Grid.Row="3" Grid.Column="1"
+            Style="{DynamicResource NormalTreeView}"
     
-    ItemsSource="{Binding TreeItems}">
+            ItemsSource="{Binding TreeItems}">
 
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged">
                     <i:InvokeCommandAction Command="{Binding SelectedElementCommand}" 
-                CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
+                        CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter
-                Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                        Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                 </Style>
             </TreeView.ItemContainerStyle>
-
-
 
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                     <TextBlock
-                Text="{Binding Name}" 
-                Style="{DynamicResource NormalTextBlock}">
-
+                        Text="{Binding Name}" 
+                        Style="{DynamicResource NormalTextBlock}">
 
                     </TextBlock>
                 </HierarchicalDataTemplate>
@@ -58,6 +79,11 @@
 
         </TreeView>
 
+        <DataGrid
+            Grid.Row="3" Grid.Column="2" 
+            Style="{DynamicResource NormalDataGrid}"
+            
+            ItemsSource="{Binding SelectedObjectInfo}"/>
 
     </Grid>
     

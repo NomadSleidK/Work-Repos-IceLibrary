@@ -13,6 +13,9 @@ namespace MyIceLibrary
         private const string CUSTOM_BUTTON_NAME = "CustomProperties";
         private const string CUSTOM_BUTTON_HEADER = "My Object Info";
 
+        private const string CUSTOM_B_BUTTON_NAME = "AccessTree";
+        private const string CUSTOM_B_BUTTON_HEADER = "Access Tree";
+
         private IMenuItemBuilder _customButton;
         private IObjectModifier _modifier;
         private IObjectsRepository _objectsRepository;
@@ -33,9 +36,13 @@ namespace MyIceLibrary
 
         public void Build(IMenuBuilder builder, ObjectsViewContext context)
         {
-            _customButton = builder.AddItem(CUSTOM_BUTTON_NAME, builder.Count);
+            _customButton = builder.AddItem(CUSTOM_BUTTON_NAME, 0);
             _customButton.WithIcon(Properties.Resources.InfoSquare);
             _customButton.WithHeader(CUSTOM_BUTTON_HEADER);
+
+            _customButton = builder.AddItem(CUSTOM_B_BUTTON_NAME, 1);
+            _customButton.WithIcon(Properties.Resources.InfoSquare);
+            _customButton.WithHeader(CUSTOM_B_BUTTON_HEADER);
         }
 
         public void OnMenuItemClick(string name, ObjectsViewContext context)
@@ -55,6 +62,12 @@ namespace MyIceLibrary
                         currentObjectFormVM.OpenCommand.Execute(context.SelectedObjects.ToArray()[0]);
                     }
                     
+                }
+
+                else if (name == CUSTOM_B_BUTTON_NAME)
+                {
+                    AccessInfoWindowVM access = new AccessInfoWindowVM(_objectsRepository);
+                    access.OpenDialogCommand.Execute(null);
                 }
             }
             catch (Exception ex)
