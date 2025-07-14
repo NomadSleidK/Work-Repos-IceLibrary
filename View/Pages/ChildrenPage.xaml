@@ -18,9 +18,11 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.1"/>
+            <RowDefinition Height="1"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="0.1"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="1"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.1"/>
@@ -29,10 +31,21 @@
         </Grid.ColumnDefinitions>
 
         <DataGrid
+            x:Name="ChildrenDataGrid"
             Grid.Row="1" Grid.Column="1" 
             Style="{DynamicResource NormalDataGrid}"
             
             ItemsSource="{Binding CurrentObjectChildren}"/>
+
+        <Button x:Name="DeleteButton"
+            Grid.Row="3" Grid.Column="1"
+    
+            Content="УДАЛИТЬ ВЫДЕЛЕННЫЕ ФАЙЛЫ"
+                HorizontalAlignment="Right"
+            Style="{DynamicResource DeleteButton}"     
+        
+            Command="{Binding DeleteSelectedCommand}"
+            CommandParameter="{Binding SelectedItems, ElementName=ChildrenDataGrid}"/>  
 
     </Grid>
 </UserControl>

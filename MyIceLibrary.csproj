@@ -114,7 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\RelayCommand.cs" />
+    <Compile Include="Enum\AccessNames.cs" />
     <Compile Include="Helper\WindowHelper.cs" />
+    <Compile Include="Model\AccessLevelInfo.cs" />
     <Compile Include="Model\AttributeValues.cs" />
     <Compile Include="Model\AttributeValue.cs" />
     <Compile Include="Model\CurrentObjectInfo.cs" />
@@ -122,15 +124,21 @@
     <Compile Include="Model\MainInfoValue.cs" />
     <Compile Include="Model\ObjectChild.cs" />
     <Compile Include="Model\TreeItem.cs" />
+    <Compile Include="ObjectLoader.cs" />
+    <Compile Include="ViewModel\AccessInfoWindowVM.cs" />
     <Compile Include="ViewModel\CurrentObjectFormVM.cs" />
     <Compile Include="ViewModel\InfoTabControlVM.cs" />
     <Compile Include="ViewModel\MainMenuDataGridVM.cs" />
+    <Compile Include="ViewModel\Pages\AccessLevelPageVM.cs" />
     <Compile Include="ViewModel\Pages\AttributesPageVM.cs" />
     <Compile Include="ViewModel\Pages\ChildrenPageVM.cs" />
     <Compile Include="ViewModel\Pages\CreatorPageVM.cs" />
     <Compile Include="ViewModel\Pages\FilesPageVM.cs" />
     <Compile Include="ViewModel\Pages\MainInfoPageVM.cs" />
     <Compile Include="ViewModel\Pages\TypePageVM.cs" />
+    <Compile Include="View\AccessInfoWindow.xaml.cs">
+      <DependentUpon>AccessInfoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CurrentObjectUserControl.xaml.cs">
       <DependentUpon>CurrentObjectUserControl.xaml</DependentUpon>
     </Compile>
@@ -145,6 +153,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\AccessLevelPage.xaml.cs">
+      <DependentUpon>AccessLevelPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\AttributesPage.xaml.cs">
       <DependentUpon>AttributesPage.xaml</DependentUpon>
@@ -182,11 +193,19 @@
     <None Include="Resources\money.svg" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="View\AccessInfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CurrentObjectUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MainUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\AccessLevelPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

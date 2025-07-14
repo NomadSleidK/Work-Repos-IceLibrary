@@ -2,6 +2,7 @@
 using MyIceLibrary.Command;
 using MyIceLibrary.Model;
 using MyIceLibrary.ViewModel.Pages;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
@@ -77,26 +78,51 @@ namespace MyIceLibrary.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        private AccessLevelPageVM _accessPageVM;
+        public AccessLevelPageVM SelectedElementAccessLevelPageVM 
+        {
+            get => _accessPageVM;
+            private set
+            {
+                _accessPageVM = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
+
+        private IObjectsRepository _objectsRepository;
 
         public InfoTabControlVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
         {
+            _objectsRepository = objectsRepository;
+
             SelectedElementAttributesVM = new AttributesPageVM();
-            SelectedElementChildrenPageVM = new ChildrenPageVM(objectsRepository);
+            SelectedElementChildrenPageVM = new ChildrenPageVM(modifier, objectsRepository);
             SelectedElementTypePageVM = new TypePageVM();
             SelectedElementCreatorPageVM = new CreatorPageVM();
             SelectedElementFilesPageVM = new FilesPageVM(modifier);
+            SelectedElementAccessLevelPageVM = new AccessLevelPageVM(objectsRepository);
         }
 
         public ICommand UpdateInfoCommand => new RelayCommand<IDataObject>(UpdateInfo);
 
         private void UpdateInfo(IDataObject dataObject)
         {
-            SelectedElementChildrenPageVM.LoadChildrenCommand.Execute(dataObject);
+            var dataObjects = _objectsRepository.SubscribeObjects(new Guid[] { dataObject.Id });
+            ObserverFindObjectById observer = new ObserverFindObjectById(Update);
+            dataObjects.Subscribe(observer);
+        }
+
+        private void Update(IDataObject dataObject)
+        {
+            SelectedElementChildrenPageVM.LoadChildrenCommand.Execute(dataObject.Id);
             SelectedElementAttributesVM.LoadAttributesCommand.Execute(dataObject);
             SelectedElementTypePageVM.LoadTypeInfoCommand.Execute(dataObject);
             SelectedElementCreatorPageVM.LoadCreatorInfoCommand.Execute(dataObject);
             SelectedElementFilesPageVM.LoadFilesInfoCommand.Execute(dataObject);
+            SelectedElementAccessLevelPageVM.LoadAccessLevelCommand.Execute(dataObject.Id);
         }
     }
 }

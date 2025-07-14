@@ -47,6 +47,11 @@
                     DataContext="{Binding SelectedElementFilesPageVM}"/>
             </TabItem>
 
+            <TabItem Header="Access">
+                <pages:AccessLevelPage
+                    DataContext="{Binding SelectedElementAccessLevelPageVM}"/>
+            </TabItem>
+
         </TabControl>    
             
     </Grid>

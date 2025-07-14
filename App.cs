@@ -17,6 +17,7 @@ namespace MyIceLibrary
         private IObjectModifier _modifier;
         private IObjectsRepository _objectsRepository;
         private IPilotDialogService _pilotDialogService;
+        private IOrganisationUnit _organisationUnit;
 
         private MainMenuDataGridVM _mainMenuDataGridVM;
 

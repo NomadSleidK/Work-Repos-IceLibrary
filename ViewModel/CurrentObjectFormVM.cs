@@ -126,6 +126,7 @@ namespace MyIceLibrary.ViewModel
 
         private readonly DialogWindow _currentWindow;
         private readonly IObjectModifier _modifier;
+
         public CurrentObjectFormVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
         {
             _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>();

@@ -1,12 +1,9 @@
 ﻿using Ascon.Pilot.SDK;
 using MyIceLibrary.Command;
 using MyIceLibrary.Model;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -44,7 +41,6 @@ namespace MyIceLibrary.ViewModel.Pages
         }
 
         public ICommand LoadFilesInfoCommand => new RelayCommand<IDataObject>(LoadFilesInfo);
-        public ICommand DeleteSelectedCommand => new RelayCommand<IList>(DeleteSelectedItems);
 
         private void LoadFilesInfo(IDataObject dataObject)
         {
@@ -68,31 +64,6 @@ namespace MyIceLibrary.ViewModel.Pages
             }
 
             CurrentObjectFilesInfo = new ObservableCollection<FileInfo>(filesInfo);
-        }
-
-        private void DeleteSelectedItems(IList selectedItems)
-        {
-            try
-            {
-                var itemsToRemove = selectedItems?.Cast<IFile>().ToList();
-
-                foreach (var obj in itemsToRemove)
-                {
-                    if (Guid.TryParse(obj.Id.ToString(), out Guid id))
-                    {
-                        _modifier.DeleteById(id);
-                        _modifier.Apply();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                System.Windows.MessageBox.Show($"Файлы успешно удалены ");
-            }
         }
     }
 }

@@ -1,12 +1,13 @@
-﻿using MyIceLibrary.Command;
+﻿using Ascon.Pilot.SDK;
+using MyIceLibrary.Command;
 using MyIceLibrary.Model;
 using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Ascon.Pilot.SDK;
-using System.Linq;
 
 namespace MyIceLibrary.ViewModel.Pages
 {
@@ -35,25 +36,39 @@ namespace MyIceLibrary.ViewModel.Pages
         #endregion
 
         private readonly IObjectsRepository _objectsRepository;
+        private readonly IObjectModifier _modifier;
+        private readonly ObjectLoader _objectLoader;
 
-        public ChildrenPageVM(IObjectsRepository objectsRepository)
+        private Guid _currentObject;
+
+        public ChildrenPageVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
         {
+            _objectLoader = new ObjectLoader(objectsRepository);
+            _modifier = modifier;
             _objectsRepository = objectsRepository;
         }
 
-        public ICommand LoadChildrenCommand => new RelayCommand<IDataObject>(LoadChildren);
+        public ICommand LoadChildrenCommand => new RelayCommand<Guid>(LoadChildren);
+        public ICommand DeleteSelectedCommand => new RelayCommand<IList>(DeleteSelectedItems);
 
-        private void LoadChildren(IDataObject dataObject)
+        private async void LoadChildren(Guid dataObjectId)
         {
             try
             {
+                _currentObject = dataObjectId;
+
                 CurrentObjectChildren = new ObservableCollection<ObjectChild>();
+                var childrenCollection = CurrentObjectChildren;
 
-                var children = dataObject.Children;
+                var currentObject = await _objectLoader.Load(_currentObject);
+                var childrenObjects = await _objectLoader.Load(currentObject.Children);
 
-                var dataObjects = _objectsRepository.SubscribeObjects(dataObject.Children);
-                ObserverFindObjectById observer = new ObserverFindObjectById(AddChildToGrid);
-                dataObjects.Subscribe(observer);
+                foreach (var child in childrenObjects)
+                {
+                    childrenCollection.Add(new ObjectChild() { Name = child.DisplayName, Id = child.Id });
+                }
+
+                CurrentObjectChildren = childrenCollection;
             }
             catch (Exception ex)
             {
@@ -61,12 +76,34 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        private void AddChildToGrid(IDataObject dataObject)
+        private void DeleteSelectedItems(IList selectedItems)
         {
-            var children = CurrentObjectChildren.ToList();
-            children.Add(new ObjectChild() { Name = dataObject.DisplayName, Id = dataObject.Id });
+            try
+            {
+                var itemsToRemove = selectedItems?.Cast<ObjectChild>().ToList();
 
-            CurrentObjectChildren = new ObservableCollection<ObjectChild>(children);
+                foreach (var obj in itemsToRemove)
+                {
+                    if (Guid.TryParse(obj.Id.ToString(), out Guid id))
+                    {
+                        _modifier.DeleteById(id);
+                    }
+                }
+
+                _modifier.Apply();
+
+                CurrentObjectChildren = new ObservableCollection<ObjectChild>();
+
+                LoadChildren(_currentObject);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Ошибка при удалении файла Id: {ex}");
+            }
+            finally
+            {
+                System.Windows.MessageBox.Show($"Файлы успешно удалены ");
+            }
         }
     }
 }
