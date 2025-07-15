@@ -27,7 +27,6 @@ namespace MyIceLibrary
         private readonly IObjectModifier _modifier;
         private readonly IObjectsRepository _objectsRepository;
         private readonly IPilotDialogService _pilotDialogService;
-        private readonly IOrganisationUnit _organisationUnit;
         private readonly IFileProvider _fileProvider;
 
         private MainMenuDataGridVM _mainMenuDataGridVM;
@@ -98,9 +97,7 @@ namespace MyIceLibrary
         {
             ObjectCreator objectCreator = new ObjectCreator(_objectsRepository, _modifier, _fileProvider);
 
-            //await objectCreator.CopyObject(dataObject, dataObject.ParentId);
-            await objectCreator.Loader(dataObject);
-
+            await objectCreator.CloneObject(dataObject);
         }
         #endregion
     }

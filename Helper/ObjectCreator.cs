@@ -1,169 +1,129 @@
 ﻿using Ascon.Pilot.SDK;
-using MyIceLibrary.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyIceLibrary.Helper
 {
     public class ObjectCreator
     {
-        public struct GuidInfo
+        public class ChildParentRatio
         {
-            public Guid ParentId { get; set; }
             public Guid ChildId { get; set; }
+            public Guid ParentId { get; set; }
         }
 
         private readonly IObjectsRepository _objectsRepository;
         private readonly IObjectModifier _objectModifier;
         private readonly IFileProvider _fileProvider;
 
-        private List<GuidInfo> _parentToChildDictionary;
 
         public ObjectCreator(IObjectsRepository objectsRepository, IObjectModifier objectModifier, IFileProvider fileProvider)
         {
             _objectsRepository = objectsRepository;
             _objectModifier = objectModifier;
             _fileProvider = fileProvider;
-
-            _parentToChildDictionary = new List<GuidInfo>();
         }
 
-        //public async Task CopyObject(IDataObject dataObject, Guid parentId)
-        //{
-        //    IObjectBuilder objectBuilder = _objectModifier.Create(parentId, dataObject.Type);
+        public async Task CloneObject(IDataObject clonedObject)
+        {
+            ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
+            var children = await objectLoader.Load(clonedObject.Children);
 
-        //    var attributes = dataObject.Attributes;
-        //    var files = dataObject.Files.ToArray();
-
-        //    foreach ( var attribute in attributes)
-        //    {
-        //        objectBuilder.SetAttributeAsObject(attribute.Key, attribute.Value);
-        //    }
-
-        //    _objectModifier.Apply();
-
-        //    foreach (var file in files)
-        //    {
-        //        using (var fileStream = _fileProvider.OpenRead(file))
-        //        {
-        //            objectBuilder.AddFile(file.Name, fileStream, 
-        //                System.DateTime.UtcNow, System.DateTime.UtcNow, System.DateTime.UtcNow);
-        //        }
-        //    }
-
-        //    _objectModifier.Apply();
-
-        //    if (dataObject.Children.Any())
-        //    {
-        //        var objectLoader = new ObjectLoader(_objectsRepository);
-        //        var children = await objectLoader.Load(dataObject.Children.ToArray());
-
-        //        foreach (var child in children)
-        //        {
-        //            await WaitUntilRunAsync(child);
-        //            await WaitUntilRunAsync(objectBuilder.DataObject);
-
-        //            await CopyObject(child, objectBuilder.DataObject.Id);
-
-
-        //        }
+            List<ChildParentRatio> ChildParentRatios = await CreateChildParentRatiosList(clonedObject, children.ToArray());
             
-        //    }
-
-        //    await WaitUntilRunAsync(objectBuilder.DataObject);
-        //}
-
-        public async Task Loader(IDataObject currentDataObject)
-        {
-            await CreateDictionary(currentDataObject);
-            await CloneObject(currentDataObject);
+            await CopyObjectByRatiosList(clonedObject, ChildParentRatios);
         }
 
-        private async Task CreateDictionary(IDataObject currentDataObject)
+        #region Create Children List
+        private async Task<List<ChildParentRatio>> CreateChildParentRatiosList(IDataObject parentObject, IDataObject[] children)
         {
-            var objectLoader = new ObjectLoader(_objectsRepository);
-            var children = await objectLoader.Load(currentDataObject.Children.ToArray());
-
-            DereAsync(currentDataObject);
-        }
-
-        private async void DereAsync(IDataObject currentDataObject)
-        {
-            var children = currentDataObject.Children.ToArray();
+            List<ChildParentRatio> resultList = new List<ChildParentRatio>();
 
             foreach (var child in children)
             {
-                _parentToChildDictionary.Add( new GuidInfo() { ParentId = currentDataObject.Id, ChildId = child });
-                await Reload(child);
+                resultList.Add(new ChildParentRatio()
+                {
+                    ParentId = parentObject.Id,
+                    ChildId = child.Id,
+                });
+
+                if (child.Children.Any())
+                {
+                    var nextChildren = await FindChildren(child);
+                    var nextList = await CreateChildParentRatiosList(child, nextChildren);
+                    resultList.AddRange(nextList);
+                }
             }
 
-            List<GuidInfo> parentToChildDictionary = _parentToChildDictionary.ToList();
+            return resultList;
         }
 
-        private async Task Reload(Guid guid)
+        private async Task<IDataObject[]> FindChildren(IDataObject dataObject)
         {
-            var objectLoader = new ObjectLoader(_objectsRepository);
-            var children = await objectLoader.Load(guid);
-            DereAsync(children);
+            ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
+            var children = await objectLoader.Load(dataObject.Children);
+
+            return children.ToArray();
         }
+        #endregion
 
-        private async Task CloneObject(IDataObject mainObject)
+        #region Copy Children By List
+        private async Task CopyObjectByRatiosList(IDataObject mainObject, List<ChildParentRatio> guidsInfo)
         {
-            CreateCopy(mainObject, mainObject.ParentId);
+            ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
 
-            var objectLoader = new ObjectLoader(_objectsRepository);
+            var newMain = await CreateObjectCopy(mainObject, mainObject.ParentId);
+            guidsInfo = await ReplaceParentGuidToNewGuid(mainObject.Id, newMain.Id, guidsInfo);
 
-            foreach(var parentKey in _parentToChildDictionary)
+            for (int i = 0; i < guidsInfo.Count; i++)
             {
-                var dataObject = await objectLoader.Load(parentKey.ParentId);
-                CreateCopy(dataObject, parentKey.ParentId);
+                var refObject = await objectLoader.Load(guidsInfo[i].ChildId);
+
+                var newObject = await CreateObjectCopy(refObject, guidsInfo[i].ParentId);  
+                
+                guidsInfo = await ReplaceParentGuidToNewGuid(refObject.Id, newObject.Id, guidsInfo);
             }
         }
 
-        private void CreateCopy(IDataObject currentDataObject, Guid parentId)
+        private async Task<List<ChildParentRatio>> ReplaceParentGuidToNewGuid(Guid targetGuid, Guid newGuid, List<ChildParentRatio> guidsInfo)
         {
-            IObjectBuilder objectBuilder = _objectModifier.Create(parentId, currentDataObject.Type);
+            for (int i = 0; i < guidsInfo.Count; i++)
+            {
+                if (guidsInfo[i].ParentId == targetGuid)
+                {
+                    guidsInfo[i].ParentId = newGuid;
+                }
+            }
 
-            var attributes = currentDataObject.Attributes;
-            var files = currentDataObject.Files.ToArray();
+            return guidsInfo;
+        }
+
+        private async Task<IDataObject> CreateObjectCopy(IDataObject clonedObject, Guid parentId)
+        {
+            IObjectBuilder objectBuilder = _objectModifier.Create(parentId, clonedObject.Type);
+
+            var attributes = clonedObject.Attributes;
+            var files = clonedObject.Files.ToArray();
 
             foreach (var attribute in attributes)
             {
                 objectBuilder.SetAttributeAsObject(attribute.Key, attribute.Value);
             }
 
-            _objectModifier.Apply();
-
             foreach (var file in files)
             {
                 using (var fileStream = _fileProvider.OpenRead(file))
                 {
                     objectBuilder.AddFile(file.Name, fileStream,
-                        System.DateTime.UtcNow, System.DateTime.UtcNow, System.DateTime.UtcNow);
+                        DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow);
                 }
             }
 
             _objectModifier.Apply();
-        }
 
-        #region Wait Stoper
-        public async Task WaitUntilRunAsync(IDataObject instance, CancellationToken cancellationToken = default)
-        {
-            while (instance.State != DataState.Loaded)
-            {
-                await Task.Delay(100, cancellationToken); // Асинхронная пауза
-            }
-        }
-
-        public async Task WaitUntilSinhronAsync(IDataObject instance, CancellationToken cancellationToken = default)
-        {
-            while (instance.SynchronizationState != SynchronizationState.Synchronized)
-            {
-                await Task.Delay(100, cancellationToken); // Асинхронная пауза
-            }
+            return objectBuilder.DataObject;
         }
         #endregion
     }
