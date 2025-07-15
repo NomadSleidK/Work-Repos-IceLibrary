@@ -1,9 +1,12 @@
 ﻿using Ascon.Pilot.SDK;
 using Ascon.Pilot.SDK.Menu;
+using MyIceLibrary.Helper;
 using MyIceLibrary.ViewModel;
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
+using System.Threading.Tasks;
 
 namespace MyIceLibrary
 {
@@ -16,22 +19,28 @@ namespace MyIceLibrary
         private const string CUSTOM_B_BUTTON_NAME = "AccessTree";
         private const string CUSTOM_B_BUTTON_HEADER = "Access Tree";
 
+        private const string COPY_BUTTON_NAME = "CopyButton";
+        private const string COPY_BUTTON_HEADER = "Copy Ice";
+
         private IMenuItemBuilder _customButton;
-        private IObjectModifier _modifier;
-        private IObjectsRepository _objectsRepository;
-        private IPilotDialogService _pilotDialogService;
-        private IOrganisationUnit _organisationUnit;
+
+        private readonly IObjectModifier _modifier;
+        private readonly IObjectsRepository _objectsRepository;
+        private readonly IPilotDialogService _pilotDialogService;
+        private readonly IOrganisationUnit _organisationUnit;
+        private readonly IFileProvider _fileProvider;
 
         private MainMenuDataGridVM _mainMenuDataGridVM;
 
         #region IMenu <ObjectsViewContext>
 
         [ImportingConstructor]
-        public App(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService)
+        public App(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService, IFileProvider fileProvider)
         {
             _modifier = modifier;
             _objectsRepository = objectsRepository;
             _pilotDialogService = pilotDialogService;
+            _fileProvider = fileProvider;
         }
 
         public void Build(IMenuBuilder builder, ObjectsViewContext context)
@@ -43,6 +52,10 @@ namespace MyIceLibrary
             _customButton = builder.AddItem(CUSTOM_B_BUTTON_NAME, 1);
             _customButton.WithIcon(Properties.Resources.InfoSquare);
             _customButton.WithHeader(CUSTOM_B_BUTTON_HEADER);
+
+            _customButton = builder.AddItem(COPY_BUTTON_NAME, 2);
+            _customButton.WithIcon(Properties.Resources.InfoSquare);
+            _customButton.WithHeader(COPY_BUTTON_HEADER);
         }
 
         public void OnMenuItemClick(string name, ObjectsViewContext context)
@@ -69,11 +82,25 @@ namespace MyIceLibrary
                     AccessInfoWindowVM access = new AccessInfoWindowVM(_objectsRepository);
                     access.OpenDialogCommand.Execute(null);
                 }
+
+                else if (name == COPY_BUTTON_NAME)
+                {
+                    _ = CreateCopeAsync(context.SelectedObjects.ToArray()[0]);
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
+        }
+
+        private async Task CreateCopeAsync(IDataObject dataObject)
+        {
+            ObjectCreator objectCreator = new ObjectCreator(_objectsRepository, _modifier, _fileProvider);
+
+            //await objectCreator.CopyObject(dataObject, dataObject.ParentId);
+            await objectCreator.Loader(dataObject);
+
         }
         #endregion
     }

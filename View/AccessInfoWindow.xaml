@@ -37,7 +37,7 @@
         </Grid.ColumnDefinitions>
 
         <Label
-            Content="ИЕРАРХИЯ ПОЛЬЗОВАТЕЛЕЙ БАЗЫ"
+            Content="ОРГАНИЗАЦИОННАЯ СТРУКТУРА БАЗЫ"
             Grid.Row="1" Grid.Column="1"                              
             Style="{DynamicResource TitleLabel}"/>
 

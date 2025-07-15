@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
+using System;
 using System.Collections.Generic;
 
 namespace MyIceLibrary.AccessNames
@@ -20,6 +21,19 @@ namespace MyIceLibrary.AccessNames
             { AccessLevel.Full, "Полный доступ" },
         };
 
-        public static string GetAccessName(AccessLevel level) => _names[level];
+        public static string GetAccessName(AccessLevel level)
+        {
+            string resultName = "";
+
+            foreach (AccessLevel value in Enum.GetValues(typeof(AccessLevel)))
+            {
+                if (value != AccessLevel.None && (level & value) == value)
+                {
+                    resultName += _names[value] + ", ";
+                }
+            }
+
+            return resultName;
+        }   
     }
 }

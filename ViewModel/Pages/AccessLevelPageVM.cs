@@ -1,5 +1,4 @@
 ﻿using Ascon.Pilot.SDK;
-using MyIceLibrary.AccessNames;
 using MyIceLibrary.Command;
 using MyIceLibrary.Model;
 using System;
@@ -7,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows.Input;
 
 namespace MyIceLibrary.ViewModel.Pages
@@ -49,52 +47,38 @@ namespace MyIceLibrary.ViewModel.Pages
             _currentObjectGuid = currentObjectGuid;
             IDataObject currentObject = await _objectLoader.Load(_currentObjectGuid);
 
-            var persons = new List<AccessLevelInfo>();
-
-
             var currentObjectAccess = currentObject.Access2;
 
-            foreach (var access in currentObjectAccess)
+            CurrentObjectAttributesValue = new ObservableCollection<AccessLevelInfo>();
+
+            foreach (var person in currentObjectAccess)
             {
-                IOrganisationUnit uniy = _objectsRepository.GetOrganisationUnit(access.OrgUnitId);
-                var personId = uniy.Person();
+                UpdateAccessLayers(person, currentObject);
+            }
+        }
 
+        private async void UpdateAccessLayers(IAccessRecord currentAccessRecord, IDataObject currentDataObject)
+        {
+            var organizationUnit = _objectsRepository.GetOrganisationUnit(currentAccessRecord.OrgUnitId);
 
-                if (personId != -1)
-                {
-                    var dataPerson = _objectsRepository.GetPerson(personId);
-                    string name = AccessNames.AccessNames.GetAccessName(access.Access.AccessLevel);
-
-                    persons.Add(new AccessLevelInfo() { PersonName = dataPerson.ActualName, AccsessName = name });
-                }
+            var layer = new AccessLevelInfo() { PersonName = AccessNames.AccessNames.GetAccessName(currentAccessRecord.Access.AccessLevel), AccessName = organizationUnit.Title };
+            if (organizationUnit.Kind() == OrganizationUnitKind.Position && organizationUnit.Person() != -1)
+            {
+                layer.MoreInfo = _objectsRepository.GetPerson(organizationUnit.Person()).DisplayName;
             }
 
-            CurrentObjectAttributesValue = new ObservableCollection<AccessLevelInfo>(persons);
+            CurrentObjectAttributesValue.Add(layer);
 
+            if (currentDataObject.ParentId != Guid.Empty)
+            {
+                var nextOrganizationUnit = await _objectLoader.Load(currentDataObject.ParentId);
+                var accessRecords = nextOrganizationUnit.Access2;            
 
-            //_________________________________________________
-
-            //var access = _objectsRepository.GetOrganisationUnits();
-
-            //var childs = new List<IOrganisationUnit>();
-
-            //foreach (var unit in access)
-            //{
-            //    foreach (var childId in unit.Children)
-            //    {
-            //        childs.Add(_objectsRepository.GetOrganisationUnit(childId));
-
-            //        if (personId != -1)
-            //        {
-            //            var dataPerson = _objectsRepository.GetPerson(personId);
-            //            string name = AccessNames.AccessNames.GetAccessName(access.Access.AccessLevel);
-
-            //            persons.Add(new AccessLevelInfo() { PersonName = dataPerson.ActualName, AccsessName = name });
-            //        }
-            //    }
-            //}
-
-            //CurrentObjectAttributesValue = new ObservableCollection<IOrganisationUnit>(access);
+                foreach (var accessRecord in accessRecords)
+                {
+                    UpdateAccessLayers(accessRecord, nextOrganizationUnit);
+                }
+            }
         }
     }
 }
