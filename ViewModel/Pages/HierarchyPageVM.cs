@@ -4,17 +4,15 @@ using MyIceLibrary.Command;
 using MyIceLibrary.Helper;
 using MyIceLibrary.Model;
 using MyIceLibrary.View;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
-namespace MyIceLibrary.ViewModel
+namespace MyIceLibrary.ViewModel.Pages
 {
-    public class AccessInfoWindowVM : INotifyPropertyChanged
+    public class HierarchyPageVM : INotifyPropertyChanged
     {
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -54,22 +52,13 @@ namespace MyIceLibrary.ViewModel
         #endregion
 
         public ICommand SelectedElementCommand => new RelayCommand<AccessTreeItem>(OnTabSelected);
-        public ICommand OpenDialogCommand => new RelayCommand<object>(_ => OpenWindow());
+        public ICommand LoadHierarchyCommand => new RelayCommand<object>(_ => LoadAccessTree());
 
         private readonly IObjectsRepository _objectsRepository;
-        private readonly DialogWindow _currentWindow;
 
-        public AccessInfoWindowVM(IObjectsRepository objectsRepository)
+        public HierarchyPageVM(IObjectsRepository objectsRepository)
         {
             _objectsRepository = objectsRepository;
-            _currentWindow = WindowHelper.CreateWindowWithUserControl<AccessInfoWindow>();
-            _currentWindow.DataContext = this;
-        }
-
-        private void OpenWindow()
-        {
-            LoadAccessTree();
-            _currentWindow.Show();
         }
 
         private void LoadAccessTree()
@@ -115,11 +104,16 @@ namespace MyIceLibrary.ViewModel
                 Children = new List<AccessTreeItem>(),
                 Unit = unit,
             };
-          
+
             if (unit.Kind() == OrganizationUnitKind.Position)
             {
-                item.Children.Add(new AccessTreeItem() { Name = _objectsRepository.GetPerson(unit.Person()).DisplayName,
-                    IsExpanded = true, Unit = unit,  Children = null });
+                item.Children.Add(new AccessTreeItem()
+                {
+                    Name = _objectsRepository.GetPerson(unit.Person()).DisplayName,
+                    IsExpanded = true,
+                    Unit = unit,
+                    Children = null
+                });
             }
 
             foreach (var childId in unit.Children)
@@ -132,8 +126,8 @@ namespace MyIceLibrary.ViewModel
             }
 
             return item;
-        } 
-        
+        }
+
         private void OnTabSelected(AccessTreeItem selectedTab)
         {
             if (selectedTab.Unit.Person() != -1)

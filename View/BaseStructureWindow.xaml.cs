@@ -5,9 +5,9 @@ namespace MyIceLibrary.View
     /// <summary>
     /// Interaction logic for AccessInfoWindow.xaml
     /// </summary>
-    public partial class AccessInfoWindow : UserControl
+    public partial class BaseStructureWindow : UserControl
     {
-        public AccessInfoWindow()
+        public BaseStructureWindow()
         {
             InitializeComponent();
         }

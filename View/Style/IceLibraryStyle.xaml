@@ -34,10 +34,9 @@
 
     <Style TargetType="Label" x:Key="InfoLabel">
         <Setter Property="HorizontalAlignment" Value="Left"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="FontFamily" Value="Arial"/>
-        <Setter Property="FontStyle" Value="Italic"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MediumFontFamily}"/>
         <Setter Property="Foreground" Value="{DynamicResource NormalBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
         
@@ -45,10 +44,10 @@
 
     <Style TargetType="ToggleButton" x:Key="LinkTogleButton" BasedOn="{StaticResource PseudoHyperlinkToggleButtonStyle}">
         <Setter Property="HorizontalAlignment" Value="Left"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="FontStyle" Value="Italic"/>
         <Setter Property="Foreground" Value="#FF4658FF"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MediumFontFamily}"/>
     </Style>
 
     <Style TargetType="Rectangle" x:Key="NormalRectangle">
@@ -60,6 +59,7 @@
     <Style TargetType="TreeView" x:Key="NormalTreeView">
         <Setter Property="Margin" Value="20 20 20 20"/>
         <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+
     </Style>
 
     <Style TargetType="TabControl" x:Key="NormalTabControl">

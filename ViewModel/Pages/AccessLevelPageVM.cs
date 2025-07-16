@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MyIceLibrary.ViewModel.Pages
@@ -34,8 +36,6 @@ namespace MyIceLibrary.ViewModel.Pages
         private readonly IObjectsRepository _objectsRepository;
         private readonly ObjectLoader _objectLoader;
 
-        private Guid _currentObjectGuid;
-
         public AccessLevelPageVM(IObjectsRepository objectsRepository)
         {
             _objectLoader = new ObjectLoader(objectsRepository);
@@ -44,41 +44,92 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private async void LoadAccessLevel(Guid currentObjectGuid)
         {
-            _currentObjectGuid = currentObjectGuid;
-            IDataObject currentObject = await _objectLoader.Load(_currentObjectGuid);
+            IDataObject currentObject = await _objectLoader.Load(currentObjectGuid);
 
-            var currentObjectAccess = currentObject.Access2;
+            var access = (await CheckAccess(currentObject)).Distinct().ToArray();
 
-            CurrentObjectAttributesValue = new ObservableCollection<AccessLevelInfo>();
-
-            foreach (var person in currentObjectAccess)
-            {
-                UpdateAccessLayers(person, currentObject);
-            }
+            CurrentObjectAttributesValue = new ObservableCollection<AccessLevelInfo>(access);
         }
 
-        private async void UpdateAccessLayers(IAccessRecord currentAccessRecord, IDataObject currentDataObject)
+        private async Task<List<AccessLevelInfo>> CheckAccess(IDataObject currentDataObject)
         {
-            var organizationUnit = _objectsRepository.GetOrganisationUnit(currentAccessRecord.OrgUnitId);
-
-            var layer = new AccessLevelInfo() { PersonName = AccessNames.AccessNames.GetAccessName(currentAccessRecord.Access.AccessLevel), AccessName = organizationUnit.Title };
-            if (organizationUnit.Kind() == OrganizationUnitKind.Position && organizationUnit.Person() != -1)
+            var resultAccess = new List<AccessLevelInfo>();
+            var currentObjectAccess = currentDataObject.Access2;
+            
+            foreach (var access in currentObjectAccess)
             {
-                layer.MoreInfo = _objectsRepository.GetPerson(organizationUnit.Person()).DisplayName;
+                var layerAccess = GetAccesLevelInfo(access, currentDataObject);
+                resultAccess.Add(layerAccess);
             }
-
-            CurrentObjectAttributesValue.Add(layer);
 
             if (currentDataObject.ParentId != Guid.Empty)
             {
-                var nextOrganizationUnit = await _objectLoader.Load(currentDataObject.ParentId);
-                var accessRecords = nextOrganizationUnit.Access2;            
+                var parentObject = await _objectLoader.Load(currentDataObject.ParentId);
 
-                foreach (var accessRecord in accessRecords)
+                resultAccess.AddRange(await CheckAccess(parentObject));
+            }
+
+            return resultAccess;
+        }
+
+        private AccessLevelInfo GetAccesLevelInfo(IAccessRecord currentAccessRecord, IDataObject currentDataObject)
+        {
+            var organizationUnit = _objectsRepository.GetOrganisationUnit(currentAccessRecord.OrgUnitId);
+            var accessInfo = new AccessLevelInfo() { PersonName = organizationUnit.Title, 
+                None = false, Create = false, Edit = false, View = false, Freeze = false, Agreement = false, Share = false,
+                ViewCreate = false, ViewEdit = false, ViewEditAgrement = false, Full = false};
+
+            if (organizationUnit.Kind() == OrganizationUnitKind.Position && organizationUnit.Person() != -1)
+            {
+                accessInfo.PersonName = _objectsRepository.GetPerson(organizationUnit.Person()).DisplayName;
+            }
+
+            AccessLevel level = currentAccessRecord.Access.AccessLevel;
+
+            foreach (AccessLevel value in Enum.GetValues(typeof(AccessLevel)))
+            {
+                if (value != AccessLevel.None && (level & value) == value)
                 {
-                    UpdateAccessLayers(accessRecord, nextOrganizationUnit);
+                    switch (value)
+                    {
+                        case AccessLevel.None:
+                            accessInfo.None = true;
+                            break;
+                        case AccessLevel.Create:
+                            accessInfo.Create = true;
+                            break;
+                        case AccessLevel.Edit:
+                            accessInfo.Edit = true;
+                            break;
+                        case AccessLevel.View:
+                            accessInfo.View = true;
+                            break;
+                        case AccessLevel.Freeze:
+                            accessInfo.Freeze = true;
+                            break;
+                        case AccessLevel.Agreement:
+                            accessInfo.Agreement = true;
+                            break;
+                        case AccessLevel.Share:
+                            accessInfo.Share = true;
+                            break;
+                        case AccessLevel.ViewCreate:
+                            accessInfo.ViewCreate = true;
+                            break;
+                        case AccessLevel.ViewEdit:
+                            accessInfo.ViewEdit = true;
+                            break;
+                        case AccessLevel.ViewEditAgrement:
+                            accessInfo.ViewEditAgrement = true;
+                            break;
+                        case AccessLevel.Full:
+                            accessInfo.Full = true;
+                            break;
+                    }
                 }
             }
+
+            return accessInfo;
         }
     }
 }

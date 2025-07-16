@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using static MyIceLibrary.ObserverFindObjectById;
 
 namespace MyIceLibrary.ViewModel
 {
@@ -143,24 +143,26 @@ namespace MyIceLibrary.ViewModel
         public ICommand ChangeParentNameLabelContentCommand => new RelayCommand<string>(ChangeParentNameLabelContent);
         public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(OnTabSelected);
 
-        private void OpenDialogWindow(IDataObject dataObject)
+        private async void OpenDialogWindow(IDataObject dataObject)
         {
             _dataObject = dataObject;
 
-            UpdateWindow();
+            await UpdateWindow();
             _currentWindow.Show();
         }
 
-        private void UpdateWindow()
+        private async Task UpdateWindow()
         {
             CurrentObjectMainInfoPageVM.LoadMainInfoCommand.Execute(_dataObject);
             CurrentObjectAttributesVM.LoadAttributesCommand.Execute(_dataObject);
 
             ChangeObjectNameLabelContent(_dataObject.DisplayName);
-            FindObjectById(_dataObject.ParentId, OnParentFind);
+            FindParentObject(_dataObject);
 
-            CheckRootParent();
-            UpdateTree(_dataObject);
+            if(TreeItems!= null)
+                TreeItems.Clear();
+
+            TreeItems = await UpdateTreeAsync(_dataObject, TreeItems);
         }
 
         private void GoToParent()
@@ -185,9 +187,9 @@ namespace MyIceLibrary.ViewModel
             CurrentObjectName = newName;
         }   
 
-        private void CheckRootParent()
+        private async void FindParentObject(IDataObject currentObject)
         {
-            if (_dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001"))
+            if (currentObject.Id != new Guid("00000001-0001-0001-0001-000000000001"))
             {
                 ParentLabelVisibility = System.Windows.Visibility.Visible;
             }
@@ -195,68 +197,44 @@ namespace MyIceLibrary.ViewModel
             {
                 ParentLabelVisibility = System.Windows.Visibility.Hidden;
             }
+
+            ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
+
+            _parentDataObject = await objectLoader.Load(currentObject.ParentId);
+            ChangeParentNameLabelContentCommand.Execute(_parentDataObject.DisplayName);
         }
 
-        #region Find Object
-        private void FindObjectById(Guid id, LoadObjectsHandler loadObjectsHandler)
-        {
-            try
-            {
-                Guid[] guids = new Guid[] { id };
-
-                var dataObjects = _objectsRepository.SubscribeObjects(guids);
-                ObserverFindObjectById observer = new ObserverFindObjectById(loadObjectsHandler);
-                dataObjects.Subscribe(observer);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-        }
-
-        private void OnParentFind(IDataObject obj)
-        {
-            _parentDataObject = obj;
-            ChangeParentNameLabelContentCommand.Execute(obj.DisplayName);
-        }
-        #endregion
-
-        #region Tree View
-        private void AddTreeElement(IDataObject dataObject)
-        {
-
-            if (dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001")) //Начало 00000001-0001-0001-0001-000000000001
-
-            {
-                var dataObjects = _objectsRepository.SubscribeObjects(new Guid[] { dataObject.ParentId });
-                ObserverFindObjectById observer = new ObserverFindObjectById(UpdateTree);
-                dataObjects.Subscribe(observer);
-            }
-        }
-
-        private void UpdateTree(IDataObject dataObject)
+        private async Task<ObservableCollection<TreeItem>> UpdateTreeAsync(IDataObject dataObject, ObservableCollection<TreeItem> mainTreeItems)
         {
             TreeItem treeItem;
 
-            if (TreeItems != null)
+            if (mainTreeItems != null)
             {
-                treeItem = TreeItems[0];
+                treeItem = mainTreeItems[0];
 
-                TreeItems = new ObservableCollection<TreeItem>
+                mainTreeItems = new ObservableCollection<TreeItem>
                 {
                     new TreeItem { Name = dataObject.DisplayName, DataObject = dataObject, IsExpanded = true, Children = new List<TreeItem>() { treeItem } }
                 };
             }
             else
             {
-                TreeItems = new ObservableCollection<TreeItem>
+                mainTreeItems = new ObservableCollection<TreeItem>
                 {
                     new TreeItem { Name = dataObject.DisplayName, DataObject = dataObject, IsExpanded = true, Children = null }
                 };
-            } 
+            }
 
-            AddTreeElement(dataObject);
+            if (dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001")) //Начало 00000001-0001-0001-0001-000000000001
+
+            {
+                ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
+
+                var dataObjects = await objectLoader.Load(dataObject.ParentId);
+                mainTreeItems = await UpdateTreeAsync(dataObjects, mainTreeItems);
+            }
+
+            return mainTreeItems;
         }
-        #endregion
     }
 }

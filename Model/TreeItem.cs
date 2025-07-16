@@ -9,5 +9,6 @@ namespace MyIceLibrary.Model
         public List<TreeItem> Children { get; set; } = new List<TreeItem>();
         public IDataObject DataObject { get; set; }
         public bool IsExpanded { get; set; }
+        public bool IsSelected { get; set; }
     }
 }

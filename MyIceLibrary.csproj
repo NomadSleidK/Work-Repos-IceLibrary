@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Users\artem\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
+    <OutputPath>..\..\..\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -126,10 +126,13 @@
     <Compile Include="Model\MainInfoValue.cs" />
     <Compile Include="Model\ObjectChild.cs" />
     <Compile Include="Model\TreeItem.cs" />
-    <Compile Include="ObjectLoader.cs" />
-    <Compile Include="ViewModel\AccessInfoWindowVM.cs" />
+    <Compile Include="Model\TypeInfo.cs" />
+    <Compile Include="Helper\ObjectLoader.cs" />
+    <Compile Include="ToolbarButtonsBuilder.cs" />
+    <Compile Include="ViewModel\BaseStructureWindowVM.cs" />
     <Compile Include="ViewModel\CurrentObjectFormVM.cs" />
-    <Compile Include="ViewModel\InfoTabControlVM.cs" />
+    <Compile Include="ViewModel\Pages\HierarchyPageVM.cs" />
+    <Compile Include="ViewModel\Pages\InfoTabControlVM.cs" />
     <Compile Include="ViewModel\MainMenuDataGridVM.cs" />
     <Compile Include="ViewModel\Pages\AccessLevelPageVM.cs" />
     <Compile Include="ViewModel\Pages\AttributesPageVM.cs" />
@@ -138,8 +141,9 @@
     <Compile Include="ViewModel\Pages\FilesPageVM.cs" />
     <Compile Include="ViewModel\Pages\MainInfoPageVM.cs" />
     <Compile Include="ViewModel\Pages\TypePageVM.cs" />
-    <Compile Include="View\AccessInfoWindow.xaml.cs">
-      <DependentUpon>AccessInfoWindow.xaml</DependentUpon>
+    <Compile Include="ViewModel\Pages\TypesPageVM.cs" />
+    <Compile Include="View\BaseStructureWindow.xaml.cs">
+      <DependentUpon>BaseStructureWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CurrentObjectUserControl.xaml.cs">
       <DependentUpon>CurrentObjectUserControl.xaml</DependentUpon>
@@ -148,7 +152,7 @@
     <Compile Include="View\MainUserControl.xaml.cs">
       <DependentUpon>MainUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="App.cs" />
+    <Compile Include="ObjectmenuButtonsBuilder.cs" />
     <Compile Include="Observer\ObserverFindObjectById.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -171,6 +175,9 @@
     <Compile Include="View\Pages\FilesPage.xaml.cs">
       <DependentUpon>FilesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Pages\HierarchyPage.xaml.cs">
+      <DependentUpon>HierarchyPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Pages\InfoTabControl.xaml.cs">
       <DependentUpon>InfoTabControl.xaml</DependentUpon>
     </Compile>
@@ -179,6 +186,9 @@
     </Compile>
     <Compile Include="View\Pages\TypePage.xaml.cs">
       <DependentUpon>TypePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\TypesPage.xaml.cs">
+      <DependentUpon>TypesPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -195,7 +205,7 @@
     <None Include="Resources\money.svg" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="View\AccessInfoWindow.xaml">
+    <Page Include="View\BaseStructureWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -227,6 +237,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Pages\HierarchyPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Pages\InfoTabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -236,6 +250,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Pages\TypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\TypesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
