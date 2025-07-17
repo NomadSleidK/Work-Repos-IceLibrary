@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
+    <OutputPath>..\..\Users\artem\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -142,6 +142,7 @@
     <Compile Include="ViewModel\Pages\CreatorPageVM.cs" />
     <Compile Include="ViewModel\Pages\FilesPageVM.cs" />
     <Compile Include="ViewModel\Pages\MainInfoPageVM.cs" />
+    <Compile Include="ViewModel\Pages\ObjectPathTreePageVM.cs" />
     <Compile Include="ViewModel\Pages\TypePageVM.cs" />
     <Compile Include="ViewModel\Pages\TypesPageVM.cs" />
     <Compile Include="View\BaseStructureWindow.xaml.cs">
@@ -185,6 +186,9 @@
     </Compile>
     <Compile Include="View\Pages\MainInfoPage.xaml.cs">
       <DependentUpon>MainInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\ObjectPathTreePage.xaml.cs">
+      <DependentUpon>ObjectPathTreePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\TypePage.xaml.cs">
       <DependentUpon>TypePage.xaml</DependentUpon>
@@ -248,6 +252,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Pages\MainInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\ObjectPathTreePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -22,8 +22,8 @@ namespace MyIceLibrary.ViewModel.Pages
         #endregion
 
         #region Property
-        private ObservableCollection<CurrentObjectInfo> _currentObjectMainInfo;
-        public ObservableCollection<CurrentObjectInfo> CurrentObjectMainInfo
+        private ObservableCollection<MainInfoValue> _currentObjectMainInfo;
+        public ObservableCollection<MainInfoValue> CurrentObjectMainInfo
         {
             get => _currentObjectMainInfo;
             private set
@@ -34,23 +34,32 @@ namespace MyIceLibrary.ViewModel.Pages
         }
         #endregion
 
-        public MainInfoPageVM() { }
+        private readonly IObjectsRepository _objectsRepository;
+
+        public MainInfoPageVM(IObjectsRepository objectsRepository)
+        {
+            _objectsRepository = objectsRepository;
+        }
 
         public ICommand LoadMainInfoCommand => new RelayCommand<IDataObject>(LoadMainInfo);
 
         private void LoadMainInfo(IDataObject dataObject)
         {
             try
-            {
-                var content = new List<CurrentObjectInfo>();
+            {           
+                var content = new MainInfoValue[]
+                {
+                    new MainInfoValue()
+                    {
+                        DisplayName = dataObject.DisplayName,
+                        ID = dataObject.Id,
+                        Created = dataObject.Created,
+                        Creator = _objectsRepository.GetPerson(dataObject.Creator.Id).DisplayName,
+                        Type = dataObject.Type.Name,
+                    }
+                };
 
-                content.Add(new CurrentObjectInfo { Name = "DisplayName", Value = dataObject?.DisplayName });
-                content.Add(new CurrentObjectInfo { Name = "ID", Value = dataObject?.Id });
-                content.Add(new CurrentObjectInfo { Name = "Created", Value = dataObject?.Created });
-                content.Add(new CurrentObjectInfo { Name = "Creator", Value = dataObject.Creator?.DisplayName });
-                content.Add(new CurrentObjectInfo { Name = "Type", Value = dataObject.Type?.Title });
-
-                CurrentObjectMainInfo = new ObservableCollection<CurrentObjectInfo>(content);
+                CurrentObjectMainInfo = new ObservableCollection<MainInfoValue>(content);
             }
             catch (Exception ex)
             {

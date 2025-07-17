@@ -35,19 +35,17 @@
     <Style TargetType="Label" x:Key="InfoLabel">
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="FontSize" Value="18"/>
-        <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="FontFamily" Value="{DynamicResource MediumFontFamily}"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
         <Setter Property="Foreground" Value="{DynamicResource NormalBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
         
     </Style>
 
-    <Style TargetType="ToggleButton" x:Key="LinkTogleButton" BasedOn="{StaticResource PseudoHyperlinkToggleButtonStyle}">
+    <Style TargetType="Label" x:Key="LinkLabel">
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="FontSize" Value="18"/>
-        <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Foreground" Value="#FF4658FF"/>
-        <Setter Property="FontFamily" Value="{DynamicResource MediumFontFamily}"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
     </Style>
 
     <Style TargetType="Rectangle" x:Key="NormalRectangle">
@@ -57,13 +55,12 @@
     </Style>
 
     <Style TargetType="TreeView" x:Key="NormalTreeView">
-        <Setter Property="Margin" Value="20 20 20 20"/>
+        <Setter Property="Margin" Value="10 10 10 10"/>
         <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
-
     </Style>
 
     <Style TargetType="TabControl" x:Key="NormalTabControl">
-        <Setter Property="Margin" Value="20 20 20 20"/>
+        <Setter Property="Margin" Value="10 10 10 10"/>
         <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
     </Style>
@@ -78,9 +75,12 @@
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="AutoGenerateColumns" Value="True"/>
         <Setter Property="IsReadOnly" Value="True"/>
-        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource NormalForeground}"/>
         <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
+        <Setter Property="ColumnWidth" Value="*"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     </Style>
 
 </ResourceDictionary>

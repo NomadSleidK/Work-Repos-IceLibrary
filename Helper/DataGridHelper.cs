@@ -63,20 +63,7 @@ namespace MyIceLibrary
                 });
             }
 
-            return new ObservableCollection<MainInfoValue>(content);
-        }
-
-        public static ObservableCollection<CurrentObjectInfo> GetMainInfoObservableCollectionByObject(IDataObject dataObject)
-        {
-            var content = new List<CurrentObjectInfo>();
-
-            content.Add(new CurrentObjectInfo { Name = "DisplayName", Value = dataObject?.DisplayName });
-            content.Add(new CurrentObjectInfo { Name = "ID", Value = dataObject?.Id });
-            content.Add(new CurrentObjectInfo { Name = "Created", Value = dataObject?.Created });
-            content.Add(new CurrentObjectInfo { Name = "Creator", Value = dataObject.Creator?.DisplayName });
-            content.Add(new CurrentObjectInfo { Name = "Type", Value = dataObject.Type?.Title });
-
-            return new ObservableCollection<CurrentObjectInfo>(content);
+            return new ObservableCollection<MainInfoValue>(content.ToArray());
         }
     }
 }

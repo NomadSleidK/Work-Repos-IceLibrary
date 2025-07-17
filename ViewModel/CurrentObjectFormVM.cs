@@ -25,7 +25,7 @@ namespace MyIceLibrary.ViewModel
         }
         #endregion
 
-        #region View Model Properties
+        #region Properties
 
         private string _currentObjectName;
         public string CurrentObjectName
@@ -71,46 +71,24 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
-        private AttributesPageVM _currentObjectAttributesVM;
-        public AttributesPageVM CurrentObjectAttributesVM
-        {
-            get => _currentObjectAttributesVM;
-            private set
-            {
-                _currentObjectAttributesVM = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ObservableCollection<CurrentObjectInfo> _mainInfoValues;
-        public ObservableCollection<CurrentObjectInfo> CurrentObjectMainInfoValues
-        {
-            get => _mainInfoValues;
-            private set
-            {
-                _mainInfoValues = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ObservableCollection<TreeItem> _treeItems;
-        public ObservableCollection<TreeItem> TreeItems
-        {
-            get => _treeItems;
-            set
-            {
-                _treeItems = value;
-                OnPropertyChanged();
-            }
-        }
-
         private InfoTabControlVM _selectedElementTabControlVM;
-        public InfoTabControlVM SelectedElementTabControlVM
+        public InfoTabControlVM SelectedObjectInfoTabControlVM
         {
             get => _selectedElementTabControlVM;
             private set
             {
                 _selectedElementTabControlVM = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObjectPathTreePageVM _selectedObjectPathObjectTreePageVM;
+        public ObjectPathTreePageVM SelectedObjectPathObjectTreePageVM
+        {
+            get => _selectedObjectPathObjectTreePageVM;
+            private set
+            {
+                _selectedObjectPathObjectTreePageVM = value;
                 OnPropertyChanged();
             }
         }
@@ -123,9 +101,6 @@ namespace MyIceLibrary.ViewModel
 
         private readonly DialogWindow _currentWindow;
         private readonly IObjectModifier _modifier;
-        private ObservableCollection<TreeItem> _originTreeItems;
-
-        private readonly ObjectsTreeBuilder _objectsTreeBuilder;
 
         public CurrentObjectFormVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
         {
@@ -135,41 +110,32 @@ namespace MyIceLibrary.ViewModel
 
             _objectsRepository = objectsRepository;
 
-            _objectsTreeBuilder = new ObjectsTreeBuilder(_objectsRepository);
+            CurrentObjectMainInfoPageVM = new MainInfoPageVM(objectsRepository);
 
-            CurrentObjectMainInfoPageVM = new MainInfoPageVM();
-            CurrentObjectAttributesVM = new AttributesPageVM();
-            SelectedElementTabControlVM = new InfoTabControlVM(modifier, objectsRepository);
+            SelectedObjectPathObjectTreePageVM = new ObjectPathTreePageVM(objectsRepository, modifier);
+            SelectedObjectInfoTabControlVM = new InfoTabControlVM(modifier, objectsRepository);
         }
 
         public ICommand OpenCommand => new RelayCommand<IDataObject>(OpenDialogWindow);
         public ICommand GoToParentCommand => new RelayCommand<object>(_ => GoToParent());
         public ICommand ChangeParentNameLabelContentCommand => new RelayCommand<string>(ChangeParentNameLabelContent);
-        public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(OnTabSelected);
-        public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
 
-        private async void OpenDialogWindow(IDataObject dataObject)
+        private void OpenDialogWindow(IDataObject dataObject)
         {
             _dataObject = dataObject;
 
-            await UpdateWindow();
+            UpdateWindow();
             _currentWindow.Show();
         }
 
-        private async Task UpdateWindow()
+        private void UpdateWindow()
         {
             CurrentObjectMainInfoPageVM.LoadMainInfoCommand.Execute(_dataObject);
-            CurrentObjectAttributesVM.LoadAttributesCommand.Execute(_dataObject);
+            SelectedObjectInfoTabControlVM.UpdateInfoCommand.Execute(_dataObject);
+            SelectedObjectPathObjectTreePageVM.LoadPageCommand.Execute(_dataObject.Id);
 
             ChangeObjectNameLabelContent(_dataObject.DisplayName);
             FindParentObject(_dataObject);
-
-            if(TreeItems != null)
-                TreeItems.Clear();
-
-            _originTreeItems = await _objectsTreeBuilder.CreateFullTreeAsync(_dataObject, TreeItems);
-
-            TreeItems = new ObservableCollection<TreeItem>(_originTreeItems.DeepCopy());
         }
 
         private void GoToParent()
@@ -181,12 +147,6 @@ namespace MyIceLibrary.ViewModel
         private void ChangeParentNameLabelContent(string newName)
         {
             ParentObjectName = newName;
-        }
-
-        private void OnTabSelected(TreeItem selectedTab)
-        {
-
-            SelectedElementTabControlVM.UpdateInfoCommand.Execute(selectedTab.DataObject);
         }
 
         private void ChangeObjectNameLabelContent(string newName)
@@ -210,10 +170,5 @@ namespace MyIceLibrary.ViewModel
             _parentDataObject = await objectLoader.Load(currentObject.ParentId);
             ChangeParentNameLabelContentCommand.Execute(_parentDataObject.DisplayName);
         }
-
-        private async void FilteredBoxExecuteEnter(string parameter)
-        {
-            TreeItems = await _objectsTreeBuilder.FilteredTreeItemsAsync(parameter, _originTreeItems);
-        }       
     }
 }

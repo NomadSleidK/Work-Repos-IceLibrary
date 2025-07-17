@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MyIceLibrary.Helper
@@ -65,9 +64,8 @@ namespace MyIceLibrary.Helper
 
                 for (int i = 0; i < items.Count; i++)
                 {
-                    var result = await CheckTreeElements(items[i], input);
+                    var result = await CheckTreeElementsAsync(items[i], input);
                     items[i] = result.treeItem;
-
                 }
 
                 treeItems = new ObservableCollection<TreeItem>(items);
@@ -81,15 +79,13 @@ namespace MyIceLibrary.Helper
         }
 
 
-        private async Task<(TreeItem treeItem, bool isFind)> CheckTreeElements(TreeItem currentItem, string input)
+        private async Task<(TreeItem treeItem, bool isFind)> CheckTreeElementsAsync(TreeItem currentItem, string input)
         {
             bool isFind = false;
 
-            var objectLoader = new ObjectLoader(_objectsRepository);
-
             var children = currentItem.Children;
 
-            if (currentItem.Name.Contains(input))
+            if (currentItem.Name.ToLower().Contains(input.ToLower()))
             {
                 isFind = true;
                 currentItem.IsSelected = true;
@@ -105,9 +101,9 @@ namespace MyIceLibrary.Helper
                 {
                     if (children[i] != null)
                     {
-                        var childinfo = await CheckTreeElements(children[i], input);
+                        var childInfo = await CheckTreeElementsAsync(children[i], input);
 
-                        if (childinfo.isFind)
+                        if (childInfo.isFind)
                         {
                             isFind = true;
                         }
