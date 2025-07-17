@@ -1,8 +1,10 @@
-﻿namespace MyIceLibrary.Model
+﻿using System;
+
+namespace MyIceLibrary.Model
 {
     public struct FileInfo
     {
-        public object Id {  get; set; }
+        public Guid Id {  get; set; }
         public object Name { get; set; }
         public object Created { get; set; }
         public object Accessed { get; set; }

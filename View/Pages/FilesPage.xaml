@@ -31,10 +31,19 @@
         </Grid.ColumnDefinitions>
 
         <DataGrid
+            x:Name="FilesDataGrid"
             Grid.Row="1" Grid.Column="1" 
             Style="{DynamicResource NormalDataGrid}"
             
             ItemsSource="{Binding CurrentObjectFilesInfo}"/>
+
+        <Button
+            Grid.Row="3" Grid.Column="1" 
+            Content="Удалить выбранные файлы"
+            Style="{DynamicResource DeleteButton}"
+            Command="{Binding DeleteFilesCommand}"
+            CommandParameter="{Binding SelectedItems, ElementName=FilesDataGrid}"/>
+
 
     </Grid>
 </UserControl>

@@ -102,7 +102,7 @@ namespace MyIceLibrary.ViewModel
             SelectedElementChildrenPageVM = new ChildrenPageVM(modifier, objectsRepository);
             SelectedElementTypePageVM = new TypePageVM();
             SelectedElementCreatorPageVM = new CreatorPageVM();
-            SelectedElementFilesPageVM = new FilesPageVM(modifier);
+            SelectedElementFilesPageVM = new FilesPageVM(objectsRepository, modifier);
             SelectedElementAccessLevelPageVM = new AccessLevelPageVM(objectsRepository);
         }
 
@@ -121,7 +121,7 @@ namespace MyIceLibrary.ViewModel
             SelectedElementAttributesVM.LoadAttributesCommand.Execute(dataObject);
             SelectedElementTypePageVM.LoadTypeInfoCommand.Execute(dataObject);
             SelectedElementCreatorPageVM.LoadCreatorInfoCommand.Execute(dataObject);
-            SelectedElementFilesPageVM.LoadFilesInfoCommand.Execute(dataObject);
+            SelectedElementFilesPageVM.LoadFilesInfoCommand.Execute(dataObject.Id);
             SelectedElementAccessLevelPageVM.LoadAccessLevelCommand.Execute(dataObject.Id);
         }
     }

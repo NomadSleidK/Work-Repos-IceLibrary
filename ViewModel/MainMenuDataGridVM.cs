@@ -96,6 +96,7 @@ namespace MyIceLibrary.ViewModel
 
             _mainWindow = WindowHelper.CreateWindowWithUserControl<MainUserControl>();
             _mainWindow.DataContext = this;
+            _mainWindow.ShowInTaskbar = true;
 
             LoadAttributesCommand.Execute(null);
             LoadMainInfoCommand.Execute(null);

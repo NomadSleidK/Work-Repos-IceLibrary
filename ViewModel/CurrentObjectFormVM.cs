@@ -6,7 +6,6 @@ using MyIceLibrary.Model;
 using MyIceLibrary.View;
 using MyIceLibrary.ViewModel.Pages;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -94,8 +93,6 @@ namespace MyIceLibrary.ViewModel
             }
         }
 
-        public bool IsExpanded => true;
-
         private ObservableCollection<TreeItem> _treeItems;
         public ObservableCollection<TreeItem> TreeItems
         {
@@ -126,12 +123,19 @@ namespace MyIceLibrary.ViewModel
 
         private readonly DialogWindow _currentWindow;
         private readonly IObjectModifier _modifier;
+        private ObservableCollection<TreeItem> _originTreeItems;
+
+        private readonly ObjectsTreeBuilder _objectsTreeBuilder;
 
         public CurrentObjectFormVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
         {
             _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>();
             _currentWindow.DataContext = this;
+            _currentWindow.ShowInTaskbar = true;
+
             _objectsRepository = objectsRepository;
+
+            _objectsTreeBuilder = new ObjectsTreeBuilder(_objectsRepository);
 
             CurrentObjectMainInfoPageVM = new MainInfoPageVM();
             CurrentObjectAttributesVM = new AttributesPageVM();
@@ -142,6 +146,7 @@ namespace MyIceLibrary.ViewModel
         public ICommand GoToParentCommand => new RelayCommand<object>(_ => GoToParent());
         public ICommand ChangeParentNameLabelContentCommand => new RelayCommand<string>(ChangeParentNameLabelContent);
         public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(OnTabSelected);
+        public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
 
         private async void OpenDialogWindow(IDataObject dataObject)
         {
@@ -159,10 +164,12 @@ namespace MyIceLibrary.ViewModel
             ChangeObjectNameLabelContent(_dataObject.DisplayName);
             FindParentObject(_dataObject);
 
-            if(TreeItems!= null)
+            if(TreeItems != null)
                 TreeItems.Clear();
 
-            TreeItems = await UpdateTreeAsync(_dataObject, TreeItems);
+            _originTreeItems = await _objectsTreeBuilder.CreateFullTreeAsync(_dataObject, TreeItems);
+
+            TreeItems = new ObservableCollection<TreeItem>(_originTreeItems.DeepCopy());
         }
 
         private void GoToParent()
@@ -204,37 +211,9 @@ namespace MyIceLibrary.ViewModel
             ChangeParentNameLabelContentCommand.Execute(_parentDataObject.DisplayName);
         }
 
-        private async Task<ObservableCollection<TreeItem>> UpdateTreeAsync(IDataObject dataObject, ObservableCollection<TreeItem> mainTreeItems)
+        private async void FilteredBoxExecuteEnter(string parameter)
         {
-            TreeItem treeItem;
-
-            if (mainTreeItems != null)
-            {
-                treeItem = mainTreeItems[0];
-
-                mainTreeItems = new ObservableCollection<TreeItem>
-                {
-                    new TreeItem { Name = dataObject.DisplayName, DataObject = dataObject, IsExpanded = true, Children = new List<TreeItem>() { treeItem } }
-                };
-            }
-            else
-            {
-                mainTreeItems = new ObservableCollection<TreeItem>
-                {
-                    new TreeItem { Name = dataObject.DisplayName, DataObject = dataObject, IsExpanded = true, Children = null }
-                };
-            }
-
-            if (dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001")) //Начало 00000001-0001-0001-0001-000000000001
-
-            {
-                ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
-
-                var dataObjects = await objectLoader.Load(dataObject.ParentId);
-                mainTreeItems = await UpdateTreeAsync(dataObjects, mainTreeItems);
-            }
-
-            return mainTreeItems;
-        }
+            TreeItems = await _objectsTreeBuilder.FilteredTreeItemsAsync(parameter, _originTreeItems);
+        }       
     }
 }

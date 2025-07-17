@@ -144,16 +144,33 @@
             <Grid Grid.Row="0" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
                 <Label
-                    Content="ПУТЬ ДО ОБЪЕКТА. выберите объект."
+                    Content="ПУТЬ ДО ОБЪЕКТА. введите имя объекта или выберите его в дереве."
                     Grid.Row="0" Grid.Column="0"
                     Style="{DynamicResource TitleLabel}"/>
 
-                <TreeView 
+                <TextBox 
                     Grid.Row="1" Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    Margin="20 0 20 0"
+                    Height="20">
+                    
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter"
+                            Command="{Binding FilteredBoxExecuteEnterCommand}"
+                            CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"
+                                    />
+                    </TextBox.InputBindings>                                 
+                    
+                </TextBox>
+
+
+                <TreeView 
+                    Grid.Row="2" Grid.Column="0"
                     Style="{DynamicResource NormalTreeView}"
                 
                     ItemsSource="{Binding TreeItems}">
@@ -165,6 +182,13 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
 
+                    <TreeView.Resources>
+                        <Style TargetType="ToggleButton">
+
+                            
+                        </Style>
+                    </TreeView.Resources>
+                    
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="TreeViewItem">
                             <Style.Triggers>
@@ -176,20 +200,22 @@
                                     <Setter Property="FontWeight" Value="Normal"/>
                                     <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
                                 </Trigger>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                                    <Setter Property="FontWeight" Value="UltraBold"/>
+                                    <Setter Property="Background" Value="Orange"/>
+                                </DataTrigger>
+                               
                             </Style.Triggers>
-                            <Setter                               
-                                Property="IsExpanded" Value="True"/>
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                         </Style>
+                       
                     </TreeView.ItemContainerStyle>
-
-
 
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                             <TextBlock
                                 Text="{Binding Name}" 
                                 Style="{DynamicResource NormalTextBlock}">
-
 
                             </TextBlock>
                         </HierarchicalDataTemplate>
