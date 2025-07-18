@@ -2,6 +2,7 @@
 using Ascon.Pilot.Theme.Controls;
 using MyIceLibrary.Command;
 using MyIceLibrary.Helper;
+using MyIceLibrary.Model;
 using MyIceLibrary.View;
 using MyIceLibrary.ViewModel.Pages;
 using System.ComponentModel;
@@ -43,6 +44,17 @@ namespace MyIceLibrary.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        private PeoplesPageVM _basePeoplesPageVM;
+        public PeoplesPageVM BasePeoplesPageVM
+        {
+            get => _basePeoplesPageVM;
+            set
+            {
+                _basePeoplesPageVM = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         public ICommand OpenDialogCommand => new RelayCommand<object>(_ => OpenWindow());
@@ -56,15 +68,18 @@ namespace MyIceLibrary.ViewModel
 
             BaseHierarchyPageVM = new HierarchyPageVM(objectsRepository);
             BaseTypesPageVM = new TypesPageVM(objectsRepository);
+            BasePeoplesPageVM = new PeoplesPageVM(objectsRepository);
 
             _currentWindow = WindowHelper.CreateWindowWithUserControl<BaseStructureWindow>();
             _currentWindow.DataContext = this;
         }
 
+
         private void OpenWindow()
         {
             BaseHierarchyPageVM.LoadHierarchyCommand.Execute(null);
             BaseTypesPageVM.LoadTypesCommand.Execute(null);
+            BasePeoplesPageVM.LoadPepleInfoCommand.Execute(null);
 
             _currentWindow.Show();
         }

@@ -47,25 +47,27 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private readonly IObjectsRepository _objectsRepository;
         private readonly IObjectModifier _objectModifier;
+        private readonly IFileProvider _fileProvider;
         private readonly ObjectLoader _objectLoader;
         private readonly ObjectsTreeBuilder _objectsTreeBuilder;
 
         private Guid _currentObject;
         private ObservableCollection<TreeItem> _originTreeItems;
 
-        public ObjectPathTreePageVM(IObjectsRepository objectsRepository, IObjectModifier objectModifier)
+        public ObjectPathTreePageVM(IObjectsRepository objectsRepository, IObjectModifier objectModifier, IFileProvider fileProvider)
         {
             _objectsRepository = objectsRepository;
             _objectModifier = objectModifier;
+            _fileProvider = fileProvider;
 
             _objectLoader = new ObjectLoader(_objectsRepository);
             _objectsTreeBuilder = new ObjectsTreeBuilder(_objectsRepository);
 
-            SelectedObjectInfoTabControlVM = new InfoTabControlVM(_objectModifier, _objectsRepository);
+            SelectedObjectInfoTabControlVM = new InfoTabControlVM(_objectModifier, _objectsRepository, _fileProvider);
         }
 
         public ICommand LoadPageCommand => new RelayCommand<Guid>(LoadPage);
-        public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(OnTabSelected);
+        public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(SelectTreeElement);
         public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
 
         private async void LoadPage(Guid objectGuid)
@@ -76,7 +78,7 @@ namespace MyIceLibrary.ViewModel.Pages
             if (TreeItems != null)
                 TreeItems.Clear();
 
-            _originTreeItems = await _objectsTreeBuilder.CreateFullTreeAsync(dataObject, TreeItems);
+            _originTreeItems = await _objectsTreeBuilder.CreateObjectTreeButtomToTopAsync(dataObject, TreeItems);
 
             TreeItems = new ObservableCollection<TreeItem>(_originTreeItems.DeepCopy());
         }
@@ -86,9 +88,9 @@ namespace MyIceLibrary.ViewModel.Pages
             TreeItems = await _objectsTreeBuilder.FilteredTreeItemsAsync(parameter, _originTreeItems);
         }
 
-        private void OnTabSelected(TreeItem selectedTab)
+        private void SelectTreeElement(TreeItem selectedTab)
         {
-            SelectedObjectInfoTabControlVM.UpdateInfoCommand.Execute(selectedTab.DataObject);
+            SelectedObjectInfoTabControlVM.UpdateInfoCommand.Execute(selectedTab.DataObject as IDataObject);
         }
     }
 }

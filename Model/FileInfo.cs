@@ -5,10 +5,10 @@ namespace MyIceLibrary.Model
     public struct FileInfo
     {
         public Guid Id {  get; set; }
-        public object Name { get; set; }
-        public object Created { get; set; }
-        public object Accessed { get; set; }
-        public object Size { get; set; }
-        public object Md5 { get; set; }
+        public string Name { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Accessed { get; set; }
+        public long Size { get; set; }
+        public string Md5 { get; set; }
     }
 }

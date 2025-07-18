@@ -46,6 +46,11 @@
                 <pages:TypesPage
                     DataContext="{Binding BaseTypesPageVM}"/>
             </TabItem>
+
+            <TabItem Header="People">
+                <pages:PeoplePage
+                    DataContext="{Binding BasePeoplesPageVM}"/>
+            </TabItem>
         </TabControl>
 
     </Grid>

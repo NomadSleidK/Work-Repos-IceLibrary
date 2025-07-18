@@ -17,7 +17,7 @@ namespace MyIceLibrary.Helper
             _objectsRepository = objectsRepository;
         }
 
-        public async Task<ObservableCollection<TreeItem>> CreateFullTreeAsync(IDataObject dataObject, ObservableCollection<TreeItem> mainTreeItems)
+        public async Task<ObservableCollection<TreeItem>> CreateObjectTreeButtomToTopAsync(IDataObject dataObject, ObservableCollection<TreeItem> mainTreeItems)
         {
             TreeItem treeItem;
 
@@ -46,7 +46,7 @@ namespace MyIceLibrary.Helper
                 ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
 
                 var dataObjects = await objectLoader.Load(dataObject.ParentId);
-                mainTreeItems = await CreateFullTreeAsync(dataObjects, mainTreeItems);
+                mainTreeItems = await CreateObjectTreeButtomToTopAsync(dataObjects, mainTreeItems);
             }
 
             return mainTreeItems;
@@ -77,7 +77,6 @@ namespace MyIceLibrary.Helper
 
             return treeItems;
         }
-
 
         private async Task<(TreeItem treeItem, bool isFind)> CheckTreeElementsAsync(TreeItem currentItem, string input)
         {
@@ -125,5 +124,91 @@ namespace MyIceLibrary.Helper
             return (currentItem, isFind);
         }
 
+        public ObservableCollection<TreeItem> CreateOrganisationUnitTreeTopToButtomAsync()
+        {
+            var unitsId = _objectsRepository.GetOrganisationUnit(0).Children;
+            var units = new List<IOrganisationUnit>();
+
+            foreach (var id in unitsId)
+            {
+                units.Add(_objectsRepository.GetOrganisationUnit(id));
+            }
+
+            var tree = new List<TreeItem>();
+
+            foreach (var unit in units)
+            {
+                tree.Add(BuildTreeItem(unit));
+            }
+
+            return new ObservableCollection<TreeItem>(tree);
+        }
+
+        private TreeItem BuildTreeItem(IOrganisationUnit unit)
+        {
+            var item = new TreeItem
+            {
+                Name = unit.Title,
+                IsExpanded = true,
+                Children = new List<TreeItem>(),
+                DataObject = unit,
+            };
+
+            if (unit.Kind() == OrganizationUnitKind.Position)
+            {
+                item.Children.Add(new TreeItem()
+                {
+                    Name = _objectsRepository.GetPerson(unit.Person()).DisplayName,
+                    IsExpanded = true,
+                    DataObject = unit,
+                    Children = null
+                });
+            }
+
+            foreach (var childId in unit.Children)
+            {
+                var childUnit = _objectsRepository.GetOrganisationUnit(childId);
+                if (childUnit != null)
+                {
+                    item.Children.Add(BuildTreeItem(childUnit));
+                }
+            }
+
+            return item;
+        }
+
+        public ObservableCollection<TreeItem> CreateSnapshotsTree(IFilesSnapshot[] filesSnapshots)
+        {
+            var treeItems = new List<TreeItem>();
+
+            foreach (var fileSnapshot in filesSnapshots)
+            {
+                var newTreeItem = new TreeItem()
+                {
+                    Name = fileSnapshot.Created.ToString("dd-MM-yyyy HH:mm:ss"),
+                    DataObject = fileSnapshot,
+                    Children = new List<TreeItem>(),
+                    IsExpanded = true,
+                    IsSelected = false,
+                };
+
+                var files = fileSnapshot.Files;
+
+                foreach (var file in files)
+                {
+                    newTreeItem.Children.Add(new TreeItem()
+                    {
+                        Name = file.Name,
+                        DataObject = file,
+                        Children = null,
+                        IsExpanded = true,
+                        IsSelected = false,
+                    });
+                }
+                treeItems.Add(newTreeItem);
+            }
+
+            return new ObservableCollection<TreeItem>(treeItems);
+        }
     }
 }

@@ -94,7 +94,7 @@ namespace MyIceLibrary.ViewModel
 
         private IObjectsRepository _objectsRepository;
 
-        public InfoTabControlVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
+        public InfoTabControlVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IFileProvider fileProvider)
         {
             _objectsRepository = objectsRepository;
 
@@ -102,7 +102,7 @@ namespace MyIceLibrary.ViewModel
             SelectedElementChildrenPageVM = new ChildrenPageVM(modifier, objectsRepository);
             SelectedElementTypePageVM = new TypePageVM();
             SelectedElementCreatorPageVM = new CreatorPageVM();
-            SelectedElementFilesPageVM = new FilesPageVM(objectsRepository, modifier);
+            SelectedElementFilesPageVM = new FilesPageVM(objectsRepository, modifier, fileProvider);
             SelectedElementAccessLevelPageVM = new AccessLevelPageVM(objectsRepository);
         }
 

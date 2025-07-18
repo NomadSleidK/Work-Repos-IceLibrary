@@ -43,7 +43,8 @@
             x:Name="MainInfoDataGrid"
             Grid.Row="1" Grid.Column="1"             
             IsReadOnly="True"
-            AutoGenerateColumns="True"
+            Style="{DynamicResource NormalDataGrid}"
+            ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
             
             ItemsSource="{Binding MainInfoValues}">
 
@@ -60,7 +61,8 @@
         <DataGrid
             x:Name="AttributesDataGrid"
             Grid.Row="3" Grid.Column="1"
-            AutoGenerateColumns="False"
+            Style="{DynamicResource NormalDataGrid}"
+            ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"            
             IsReadOnly="True"
             ItemsSource="{Binding AttributesValues}">
             

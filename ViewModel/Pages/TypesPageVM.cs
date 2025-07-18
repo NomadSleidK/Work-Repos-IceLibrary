@@ -55,7 +55,7 @@ namespace MyIceLibrary.ViewModel.Pages
                     Name = type.Name,
                     Id = type.Id,
                     Title = type.Title,
-                    Kind = type.Kind,
+                    Kind = type.Kind.ToString(),
                     IsMountable = type.IsMountable,
                     IsDeleted = type.IsDeleted,
                     IsProject = type.IsProject,

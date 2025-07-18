@@ -25,10 +25,8 @@ namespace MyIceLibrary.ViewModel.Pages
 
         #region View Model Properties
 
-        public bool IsExpanded => true;
-
-        private ObservableCollection<AccessTreeItem> _treeItems;
-        public ObservableCollection<AccessTreeItem> TreeItems
+        private ObservableCollection<TreeItem> _treeItems;
+        public ObservableCollection<TreeItem> TreeItems
         {
             get => _treeItems;
             set
@@ -51,92 +49,43 @@ namespace MyIceLibrary.ViewModel.Pages
 
         #endregion
 
-        public ICommand SelectedElementCommand => new RelayCommand<AccessTreeItem>(OnTabSelected);
+        public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(OnTabSelected);
         public ICommand LoadHierarchyCommand => new RelayCommand<object>(_ => LoadAccessTree());
+        public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
 
         private readonly IObjectsRepository _objectsRepository;
+        private readonly ObjectsTreeBuilder _treeBuilder;
+
+        private ObservableCollection<TreeItem> _originalTree;
 
         public HierarchyPageVM(IObjectsRepository objectsRepository)
         {
             _objectsRepository = objectsRepository;
+            _treeBuilder = new ObjectsTreeBuilder(objectsRepository);
         }
 
         private void LoadAccessTree()
         {
-            var tree = BuildTree();
-            TreeItems = new ObservableCollection<AccessTreeItem>(tree);
+            _originalTree = _treeBuilder.CreateOrganisationUnitTreeTopToButtomAsync();
+            TreeItems = new ObservableCollection<TreeItem>(_originalTree.DeepCopy()); ;
         }
 
-        public List<AccessTreeItem> BuildTree()
+        private async void FilteredBoxExecuteEnter(string parameter)
         {
-            //var child = new List<TreeItem>() { new TreeItem() { Name = "R1r", Children = null } };
-            //var tree = new List<TreeItem>()
-            //{
-            //    new TreeItem() { Name = "A1", Children = child },
-            //    new TreeItem() { Name = "A2", Children = child },
-            //    new TreeItem() { Name = "A3", Children = child },           
-            //};
-
-            var unitsId = _objectsRepository.GetOrganisationUnit(0).Children;
-            var units = new List<IOrganisationUnit>();
-
-            foreach (var id in unitsId)
-            {
-                units.Add(_objectsRepository.GetOrganisationUnit(id));
-            }
-
-            var tree = new List<AccessTreeItem>();
-
-            foreach (var unit in units)
-            {
-                tree.Add(BuildTreeItem(unit));
-            }
-
-            return tree;
+            TreeItems = await _treeBuilder.FilteredTreeItemsAsync(parameter, _originalTree);
         }
 
-        private AccessTreeItem BuildTreeItem(IOrganisationUnit unit)
+        private void OnTabSelected(TreeItem selectedTab)
         {
-            var item = new AccessTreeItem
-            {
-                Name = unit.Title,
-                IsExpanded = true,
-                Children = new List<AccessTreeItem>(),
-                Unit = unit,
-            };
 
-            if (unit.Kind() == OrganizationUnitKind.Position)
+            IOrganisationUnit unit = selectedTab.DataObject as IOrganisationUnit;
+            if (unit.Person() != -1)
             {
-                item.Children.Add(new AccessTreeItem()
-                {
-                    Name = _objectsRepository.GetPerson(unit.Person()).DisplayName,
-                    IsExpanded = true,
-                    Unit = unit,
-                    Children = null
-                });
-            }
-
-            foreach (var childId in unit.Children)
-            {
-                var childUnit = _objectsRepository.GetOrganisationUnit(childId);
-                if (childUnit != null)
-                {
-                    item.Children.Add(BuildTreeItem(childUnit));
-                }
-            }
-
-            return item;
-        }
-
-        private void OnTabSelected(AccessTreeItem selectedTab)
-        {
-            if (selectedTab.Unit.Person() != -1)
-            {
-                SelectedObjectInfo = GetPersonInfo(selectedTab.Unit);
+                SelectedObjectInfo = GetPersonInfo(unit);
             }
             else
             {
-                SelectedObjectInfo = GetUnitInfo(selectedTab.Unit);
+                SelectedObjectInfo = GetUnitInfo(unit);
             }
         }
 

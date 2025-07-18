@@ -9,7 +9,7 @@ namespace MyIceLibrary.Model
     {
         public string Name { get; set; }
         public List<TreeItem> Children { get; set; } = new List<TreeItem>();
-        public IDataObject DataObject { get; set; }
+        public object DataObject { get; set; }
         public bool IsExpanded { get; set; }
         public bool IsSelected { get; set; }
 
@@ -40,24 +40,27 @@ namespace MyIceLibrary.Model
             where TreeItem : class
         {
             var copy = new ObservableCollection<TreeItem>();
-
-            foreach (var item in original)
+            
+            if (original != null)
             {
-                if (item is ICloneable cloneable)
+                foreach (var item in original)
                 {
-                    copy.Add((TreeItem)cloneable.Clone());
+                    if (item is ICloneable cloneable)
+                    {
+                        copy.Add((TreeItem)cloneable.Clone());
+                    }
+                    else if (item.GetType().GetMethod("DeepCopy") != null)
+                    {
+                        var deepCopyMethod = item.GetType().GetMethod("DeepCopy");
+                        var copiedItem = deepCopyMethod.Invoke(item, null);
+                        copy.Add((TreeItem)copiedItem);
+                    }
+                    else
+                    {
+                        copy.Add(item);
+                    }
                 }
-                else if (item.GetType().GetMethod("DeepCopy") != null)
-                {
-                    var deepCopyMethod = item.GetType().GetMethod("DeepCopy");
-                    var copiedItem = deepCopyMethod.Invoke(item, null);
-                    copy.Add((TreeItem)copiedItem);
-                }
-                else
-                {
-                    copy.Add(item);
-                }
-            }
+            }         
 
             return copy;
         }

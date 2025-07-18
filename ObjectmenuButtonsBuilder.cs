@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace MyIceLibrary
 {
     [Export(typeof(IMenu<ObjectsViewContext>))]
-    internal class ObjectmenuButtonsBuilder : IMenu<ObjectsViewContext>
+    internal class ObjectMenuButtonsBuilder : IMenu<ObjectsViewContext>
     {
         private const string CUSTOM_BUTTON_NAME = "CustomProperties";
         private const string CUSTOM_BUTTON_HEADER = "My Object Info";
@@ -31,7 +31,7 @@ namespace MyIceLibrary
         #region IMenu <ObjectsViewContext>
 
         [ImportingConstructor]
-        public ObjectmenuButtonsBuilder(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService, IFileProvider fileProvider)
+        public ObjectMenuButtonsBuilder(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService, IFileProvider fileProvider)
         {
             _modifier = modifier;
             _objectsRepository = objectsRepository;
@@ -58,12 +58,12 @@ namespace MyIceLibrary
                 {
                     if (context.SelectedObjects.ToArray().Length > 1)
                     {
-                        _mainMenuDataGridVM = new MainMenuDataGridVM(_modifier, _objectsRepository, _pilotDialogService);
+                        _mainMenuDataGridVM = new MainMenuDataGridVM(_modifier, _objectsRepository, _pilotDialogService, _fileProvider);
                         _mainMenuDataGridVM.OpenFormCommand.Execute(context.SelectedObjects.ToArray());
                     }
                     else if (context.SelectedObjects.ToArray().Length == 1)
                     {
-                        CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository);
+                        CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository, _fileProvider);
                         currentObjectFormVM.OpenCommand.Execute(context.SelectedObjects.ToArray()[0]);
                     }
                     

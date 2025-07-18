@@ -6,7 +6,7 @@ using System.ComponentModel.Composition;
 namespace MyIceLibrary
 {
     [Export(typeof(IToolbar<ObjectsViewContext>))]
-    public class ToolbarButtonsBuilder : IToolbar<ObjectsViewContext>
+    public class ObjectToolbarButtonsBuilder : IToolbar<ObjectsViewContext>
     {
         private const string CUSTOM_B_BUTTON_NAME = "AccessTree";
         private const string CUSTOM_B_BUTTON_HEADER = "Информация о базе";
@@ -19,7 +19,7 @@ namespace MyIceLibrary
         private IToolbarButtonItemBuilder _customButton;
 
         [ImportingConstructor]
-        public ToolbarButtonsBuilder(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService, IFileProvider fileProvider)
+        public ObjectToolbarButtonsBuilder(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService, IFileProvider fileProvider)
         {
             _modifier = modifier;
             _objectsRepository = objectsRepository;

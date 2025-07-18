@@ -2,14 +2,11 @@
 using Ascon.Pilot.Theme.Controls;
 using MyIceLibrary.Command;
 using MyIceLibrary.Helper;
-using MyIceLibrary.Model;
 using MyIceLibrary.View;
 using MyIceLibrary.ViewModel.Pages;
 using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MyIceLibrary.ViewModel
@@ -92,6 +89,17 @@ namespace MyIceLibrary.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        private SnapshotsPageVM _selectedObjectSnapshotsPageVM;
+        public SnapshotsPageVM SelectedObjectSnapshotsPageVM
+        {
+            get => _selectedObjectSnapshotsPageVM;
+            private set
+            {
+                _selectedObjectSnapshotsPageVM = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         private readonly IObjectsRepository _objectsRepository;
@@ -101,19 +109,21 @@ namespace MyIceLibrary.ViewModel
 
         private readonly DialogWindow _currentWindow;
         private readonly IObjectModifier _modifier;
+        private readonly IFileProvider _fileProvider;
 
-        public CurrentObjectFormVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
+        public CurrentObjectFormVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IFileProvider fileProvider)
         {
             _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>();
             _currentWindow.DataContext = this;
             _currentWindow.ShowInTaskbar = true;
 
             _objectsRepository = objectsRepository;
-
+            _fileProvider = fileProvider;
             CurrentObjectMainInfoPageVM = new MainInfoPageVM(objectsRepository);
 
-            SelectedObjectPathObjectTreePageVM = new ObjectPathTreePageVM(objectsRepository, modifier);
-            SelectedObjectInfoTabControlVM = new InfoTabControlVM(modifier, objectsRepository);
+            SelectedObjectPathObjectTreePageVM = new ObjectPathTreePageVM(objectsRepository, modifier, _fileProvider);
+            SelectedObjectInfoTabControlVM = new InfoTabControlVM(modifier, objectsRepository, fileProvider);
+            SelectedObjectSnapshotsPageVM = new SnapshotsPageVM(objectsRepository, modifier, fileProvider);
         }
 
         public ICommand OpenCommand => new RelayCommand<IDataObject>(OpenDialogWindow);
@@ -133,6 +143,9 @@ namespace MyIceLibrary.ViewModel
             CurrentObjectMainInfoPageVM.LoadMainInfoCommand.Execute(_dataObject);
             SelectedObjectInfoTabControlVM.UpdateInfoCommand.Execute(_dataObject);
             SelectedObjectPathObjectTreePageVM.LoadPageCommand.Execute(_dataObject.Id);
+            SelectedObjectSnapshotsPageVM.LoadFilesInfoCommand.Execute(_dataObject.Id);
+
+            var snap = _dataObject.ActualFileSnapshot;
 
             ChangeObjectNameLabelContent(_dataObject.DisplayName);
             FindParentObject(_dataObject);
@@ -140,7 +153,7 @@ namespace MyIceLibrary.ViewModel
 
         private void GoToParent()
         {
-            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository);
+            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository, _fileProvider);
             currentObjectFormVM.OpenCommand.Execute(_parentDataObject);
         }
      

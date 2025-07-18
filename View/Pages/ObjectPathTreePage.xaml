@@ -46,13 +46,12 @@
             <TextBox 
                 Grid.Row="1" Grid.Column="0"
                 HorizontalAlignment="Stretch"
-                Margin="20 0 20 0"
+                Margin="10 0 10 0"
                 Height="20">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter"
                             Command="{Binding FilteredBoxExecuteEnterCommand}"
-                            CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"
-                                    />
+                            CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
                 </TextBox.InputBindings>
             </TextBox>
 

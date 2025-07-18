@@ -1,19 +1,13 @@
 ﻿using Ascon.Pilot.SDK;
-using Microsoft.Win32;
 using MyIceLibrary.Command;
-using MyIceLibrary.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace MyIceLibrary.ViewModel.Pages
@@ -44,19 +38,22 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private readonly IObjectsRepository _objectsRepository;
         private readonly IObjectModifier _objectModifier;
+        private readonly IFileProvider _fileProvider;
         private readonly ObjectLoader _objectLoader;
 
         private Guid _currentObjectGuid;
 
-        public FilesPageVM(IObjectsRepository objectsRepository, IObjectModifier objectModifier)
+        public FilesPageVM(IObjectsRepository objectsRepository, IObjectModifier objectModifier, IFileProvider fileProvider)
         {
             _objectsRepository = objectsRepository;
             _objectModifier = objectModifier;
+            _fileProvider = fileProvider;
             _objectLoader = new ObjectLoader(_objectsRepository);
         }
 
         public ICommand LoadFilesInfoCommand => new RelayCommand<Guid>(UpdateFilesInfo);
         public ICommand DeleteFilesCommand => new RelayCommand<IList>(DeleteFiles);
+        public ICommand DownloadFilesCommand => new RelayCommand<IList>(DownloadFiles);
 
         private async void UpdateFilesInfo(Guid objectGuid)
         {
@@ -97,65 +94,47 @@ namespace MyIceLibrary.ViewModel.Pages
             UpdateFilesInfo(_currentObjectGuid);
         }
 
-        private async Task DownloadFiles(IList selectedItems)
-        {
-            //var filesToDownload = selectedItems?.Cast<Model.FileInfo>().ToList();
-            ////var files = await _objectLoader.Load();
-            
-            //foreach (var file in filesToDownload)
-            //{
-                
-            //    if (file == null) return;
+        private async void DownloadFiles(IList selectedItems)
+        {     
+            if (selectedItems.Count > 0)
+            {
+                var filesInfo = selectedItems?.Cast<Model.FileInfo>().ToList();
+                var files = new List<IFile>();
 
-            //    var dlg = new SaveFileDialog();
-            //    dlg.DefaultExt = Path.GetExtension(file.Name);
-            //    dlg.FileName = file.Name;
-            //    if (dlg.ShowDialog() != true) return;
-            //    using (var stream = _fileProvider.OpenRead(file))
-            //    {
-            //        try
-            //        {
-            //            using (FileStream output = new FileStream(dlg.FileName, FileMode.Create))
-            //            {
-            //                stream.CopyTo(output);
-            //            }
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            MessageBox.Show(ex.Message, "Error", System.Windows.MessageBoxButton.OK,
-            //                System.Windows.MessageBoxImage.Error);
-            //        }
-            //    }
-            //}       
+                var allFiles = (await _objectLoader.Load(_currentObjectGuid)).Files;
 
-            //using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
-            //{
-            //    var filesToRemove = selectedItems?.Cast<Model.FileInfo>().ToList();
-            //    var files = await _objectLoader.Load()
+                foreach (var fileInfo in filesInfo)
+                {
+                    files.Add(allFiles.SingleOrDefault(n => n.Id == fileInfo.Id));
+                }
 
-            //    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-            //    if (result != System.Windows.Forms.DialogResult.OK) return;
+                using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+                {
+                    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                    if (result != System.Windows.Forms.DialogResult.OK) return;
 
-            //    foreach (var file in _files)
-            //    {
-            //        using (var stream = _fileProvider.OpenRead(file))
-            //        {
-            //            try
-            //            {
-            //                using (FileStream output = new FileStream(Path.Combine(dialog.SelectedPath, file.Name),
-            //                           FileMode.Create))
-            //                {
-            //                    stream.CopyTo(output);
-            //                }
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                System.Windows.MessageBox.Show(ex.Message, "Error", System.Windows.MessageBoxButton.OK,
-            //                    System.Windows.MessageBoxImage.Error);
-            //            }
-            //        }
-            //    }           
-            //}
+                    foreach (var file in files)
+                    {
+                        using (var stream = _fileProvider.OpenRead(file))
+                        {
+                            try
+                            {
+                                using (FileStream output = new FileStream(Path.Combine(dialog.SelectedPath, file.Name),
+                                           FileMode.Create))
+                                {
+                                    stream.CopyTo(output);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Windows.MessageBox.Show(ex.Message, "Error", System.Windows.MessageBoxButton.OK,
+                                    System.Windows.MessageBoxImage.Error);
+                            }
+                        }
+                    }
+                    System.Windows.MessageBox.Show($"Файлы ({selectedItems.Count}) успешно сканы в папку \n {dialog.SelectedPath}");
+                }
+            }     
         }
     }
 }

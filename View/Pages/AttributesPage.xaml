@@ -30,6 +30,7 @@
         <DataGrid
             Grid.Row="1" Grid.Column="1" 
             Style="{DynamicResource NormalDataGrid}"
+            ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
                     
             ItemsSource="{Binding CurrentObjectAttributesValue}"/>
 

@@ -29,7 +29,7 @@
 
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
@@ -46,7 +46,6 @@
                             <RowDefinition Height="1"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="0.1*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
@@ -131,6 +130,11 @@
             <TabItem Header="Путь до объекта">
                 <pages:ObjectPathTreePage
                     DataContext="{Binding SelectedObjectPathObjectTreePageVM}"/>
+            </TabItem>
+
+            <TabItem Header="Snapshots">
+                <pages:SnapshotsPage
+                    DataContext="{Binding SelectedObjectSnapshotsPageVM}"/>
             </TabItem>
 
         </TabControl>

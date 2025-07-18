@@ -1,8 +1,12 @@
-﻿namespace MyIceLibrary.Model
+﻿using System;
+using System.ComponentModel;
+
+namespace MyIceLibrary.Model
 {
-    public struct ObjectChild
+    public class ObjectChild
     {
-        public object Name { get; set; }
-        public object Id { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public Guid Id { get; set; }
     }
 }

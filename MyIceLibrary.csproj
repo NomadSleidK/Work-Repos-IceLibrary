@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Users\artem\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
+    <OutputPath>..\..\..\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -115,22 +115,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\RelayCommand.cs" />
-    <Compile Include="Enum\AccessNames.cs" />
+    <Compile Include="Helper\FileManager.cs" />
     <Compile Include="Helper\ObjectCreator.cs" />
     <Compile Include="Helper\ObjectsTreeBuilder.cs" />
     <Compile Include="Helper\WindowHelper.cs" />
     <Compile Include="Model\AccessLevelInfo.cs" />
-    <Compile Include="Model\AccessTreeItem.cs" />
     <Compile Include="Model\AttributeValues.cs" />
     <Compile Include="Model\AttributeValue.cs" />
     <Compile Include="Model\CurrentObjectInfo.cs" />
     <Compile Include="Model\FileInfo.cs" />
     <Compile Include="Model\MainInfoValue.cs" />
     <Compile Include="Model\ObjectChild.cs" />
+    <Compile Include="Model\PersonInfo.cs" />
+    <Compile Include="ViewModel\Pages\PeoplesPageVM.cs" />
     <Compile Include="Model\TreeItem.cs" />
     <Compile Include="Model\TypeInfo.cs" />
     <Compile Include="Helper\ObjectLoader.cs" />
-    <Compile Include="ToolbarButtonsBuilder.cs" />
+    <Compile Include="ObjectToolbarButtonsBuilder.cs" />
+    <Compile Include="TaskToolbarButtonsBuilder.cs" />
     <Compile Include="ViewModel\BaseStructureWindowVM.cs" />
     <Compile Include="ViewModel\CurrentObjectFormVM.cs" />
     <Compile Include="ViewModel\Pages\HierarchyPageVM.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="ViewModel\Pages\FilesPageVM.cs" />
     <Compile Include="ViewModel\Pages\MainInfoPageVM.cs" />
     <Compile Include="ViewModel\Pages\ObjectPathTreePageVM.cs" />
+    <Compile Include="ViewModel\Pages\SnapshotsPageVM.cs" />
     <Compile Include="ViewModel\Pages\TypePageVM.cs" />
     <Compile Include="ViewModel\Pages\TypesPageVM.cs" />
     <Compile Include="View\BaseStructureWindow.xaml.cs">
@@ -155,7 +158,7 @@
     <Compile Include="View\MainUserControl.xaml.cs">
       <DependentUpon>MainUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ObjectmenuButtonsBuilder.cs" />
+    <Compile Include="ObjectMenuButtonsBuilder.cs" />
     <Compile Include="Observer\ObserverFindObjectById.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -190,11 +193,17 @@
     <Compile Include="View\Pages\ObjectPathTreePage.xaml.cs">
       <DependentUpon>ObjectPathTreePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Pages\SnapshotsPage.xaml.cs">
+      <DependentUpon>SnapshotsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Pages\TypePage.xaml.cs">
       <DependentUpon>TypePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\TypesPage.xaml.cs">
       <DependentUpon>TypesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\PeoplesPage.xaml.cs">
+      <DependentUpon>PeoplesPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -259,11 +268,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Pages\SnapshotsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Pages\TypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Pages\TypesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\PeoplesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

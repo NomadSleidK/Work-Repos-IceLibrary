@@ -68,19 +68,21 @@ namespace MyIceLibrary.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private IObjectModifier _modifier;
-        private IObjectsRepository _objectsRepository;
+        private readonly IObjectModifier _modifier;
+        private readonly IObjectsRepository _objectsRepository;
+        private readonly IFileProvider _fileProvider;
         private IDataObject[] _dataObjects;
 
         private IPilotDialogService _pilotDialogService;
 
         private DialogWindow _mainWindow;
 
-        public MainMenuDataGridVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService)
+        public MainMenuDataGridVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IPilotDialogService pilotDialogService, IFileProvider fileProvider)
         {
             _modifier = modifier;
             _objectsRepository = objectsRepository;
             _pilotDialogService = pilotDialogService;
+            _fileProvider = fileProvider;
         }
 
         public ICommand OpenFormCommand => new RelayCommand<IDataObject[]>(OpenForm);
@@ -198,7 +200,7 @@ namespace MyIceLibrary.ViewModel
 
         private void OnObjectsFind(IDataObject obj)
         {
-            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository);
+            CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository, _fileProvider);
 
             currentObjectFormVM.OpenCommand.Execute(obj);
         }
