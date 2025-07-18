@@ -37,65 +37,58 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Row="0" Grid.Column="0">
+                    <Grid Grid.Row="0" Grid.Column="0" Margin="15 0 15 5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
-                            <RowDefinition Height="1"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="48*"/>
-                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
                         <Label
                             Content="ОТКРЫТ ОБЪЕКТ:"
-                            Grid.Row="0" Grid.Column="1"                              
+                            Grid.Row="0" Grid.Column="0"                              
                             Style="{DynamicResource TitleLabel}"/>
 
                         <Label 
                             x:Name="ObjectName"
-                            Grid.Row="1" Grid.Column="1"                                          
+                            Grid.Row="1" Grid.Column="0"                                          
                             Style="{DynamicResource InfoLabel}"
                 
                             Content="{Binding CurrentObjectName}"/>
 
                         <Label
                             Content="РОДИТЕЛЬСКИЙ ОБЪЕКТ:"
-                            Grid.Row="2" Grid.Column="1"              
+                            Grid.Row="2" Grid.Column="0"              
                             Style="{DynamicResource TitleLabel}"               
                             FontFamily="{DynamicResource TitleFontFamily}"/>
 
                         <Label
                             x:Name="ParentNameLabel"
-                            Grid.Row="3" Grid.Column="1"
+                            Grid.Row="3" Grid.Column="0"
                             Style="{DynamicResource LinkLabel}"
                             
                             Visibility="{Binding ParentLabelVisibility}"
                             Content="{Binding ParentObjectName}">
-                            
+
                             <Label.InputBindings>
                                 <MouseBinding MouseAction="LeftClick" Command="{Binding GoToParentCommand}"/>
                             </Label.InputBindings>
-                            
-                        </Label>
 
-                        <Rectangle
-                            Grid.Row="4" Grid.Column="1" 
-                            Style="{DynamicResource NormalRectangle}"/>
+                        </Label>
 
                         <Label
                             Content="ОБЩАЯ ИНФОРМАЦИЯ:"
-                            Grid.Row="5" Grid.Column="1"                         
+                            Grid.Row="4" Grid.Column="0"                         
                             Style="{DynamicResource TitleLabel}"/>
 
                         <pages:MainInfoPage
-                            Grid.Row="6" Grid.Column="1"
+                            Grid.Row="5" Grid.Column="0"
                             DataContext="{Binding CurrentObjectMainInfoPageVM}"/>
 
                     </Grid>

@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
+using Ascon.Pilot.Theme.Controls;
 using MyIceLibrary.Command;
 using System;
 using System.Collections.Generic;
@@ -6,8 +7,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MyIceLibrary.Model
@@ -48,23 +47,24 @@ namespace MyIceLibrary.Model
         #endregion
 
         private readonly IObjectsRepository _objectsRepository;
+        private ObservableCollection<PersonInfo> _originPeopleInfo;
 
         public PeoplesPageVM(IObjectsRepository objectsRepository)
         {
             _objectsRepository = objectsRepository;
         }
 
-        public ICommand LoadPepleInfoCommand => new RelayCommand<object>(_ => LoadPepleInfo());
+        public ICommand LoadPeopleInfoCommand => new RelayCommand<object>(_ => LoadPeopleInfo());
         public ICommand SelectedElementCommand => new RelayCommand<PersonInfo>(SelectedElement);
+        public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredInfo);
 
-        private void LoadPepleInfo()
+        private void LoadPeopleInfo()
         {
-            PeopleInfo = CreatePeopleInfoColliction(_objectsRepository.GetPeople().ToArray());
-
-
+            _originPeopleInfo = CreatePeopleInfoCollection(_objectsRepository.GetPeople().ToArray());
+            PeopleInfo = new ObservableCollection<PersonInfo>(_originPeopleInfo);
         }
 
-        private ObservableCollection<PersonInfo> CreatePeopleInfoColliction(IPerson[] people)
+        private ObservableCollection<PersonInfo> CreatePeopleInfoCollection(IPerson[] people)
         {
             var peopleInfo = new List<PersonInfo>();
 
@@ -80,13 +80,39 @@ namespace MyIceLibrary.Model
             return new ObservableCollection<PersonInfo>(peopleInfo);
         }
 
+        private void FilteredInfo(string input)
+        {
+            if (input != "")
+            {
+                var filteredPeople = _originPeopleInfo
+                    .Where(p => p.Name.ToLower().Contains(input.ToLower())).ToList();
+
+                filteredPeople.AddRange(_originPeopleInfo
+                    .Where(p => p.Id.ToString().ToLower().Contains(input.ToLower())).ToList());
+
+                PeopleInfo = new ObservableCollection<PersonInfo>(filteredPeople);
+            }
+            else
+            {
+                PeopleInfo = new ObservableCollection<PersonInfo>(_originPeopleInfo);
+            }    
+        }
+
         private void SelectedElement(PersonInfo personInfo)
         {
             var dataPerson = new List<CurrentObjectInfo>();
             var person = _objectsRepository.GetPerson(personInfo.Id);
 
-            dataPerson.Add(new CurrentObjectInfo() { Name = "Имя", Value = person.ActualName });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "ActualName", Value = person.ActualName });
             dataPerson.Add(new CurrentObjectInfo() { Name = "Id", Value = person.Id });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "DisplayName", Value = person.DisplayName });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "Login", Value = person.Login });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "ServiceInfo", Value = person.ServiceInfo });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "Sid", Value = person.Sid });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "IsAdmin", Value = person.IsAdmin });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "IsDeleted", Value = person.IsDeleted });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "CreatedUtc", Value = person.CreatedUtc.ToString("dd-MM-yyyy HH:mm:ss") });
+            dataPerson.Add(new CurrentObjectInfo() { Name = "Comment", Value = person.Comment });
 
             CurrentObjectFilesInfo = new ObservableCollection<CurrentObjectInfo>(dataPerson);
         }

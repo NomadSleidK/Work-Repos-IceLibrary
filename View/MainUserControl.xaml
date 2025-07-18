@@ -29,19 +29,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.1*"/>
-            <ColumnDefinition Width="10*"/>
-            <ColumnDefinition Width="0.1*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Label
             Content="ОБЩАЯ ИНФОРМАЦИЯ:"
-            Grid.Row="0" Grid.Column="1"           
+            Grid.Row="0" Grid.Column="0"           
             Style="{DynamicResource TitleLabel}"/>
 
         <DataGrid
             x:Name="MainInfoDataGrid"
-            Grid.Row="1" Grid.Column="1"             
+            Grid.Row="1" Grid.Column="0"             
             IsReadOnly="True"
             Style="{DynamicResource NormalDataGrid}"
             ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
@@ -60,7 +58,7 @@
 
         <DataGrid
             x:Name="AttributesDataGrid"
-            Grid.Row="3" Grid.Column="1"
+            Grid.Row="3" Grid.Column="0"
             Style="{DynamicResource NormalDataGrid}"
             ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"            
             IsReadOnly="True"
@@ -110,12 +108,14 @@
         </DataGrid>
 
         <Label Content="АТРИБУТЫ:"
-            Grid.Row="2" Grid.Column="1"
+            Grid.Row="2" Grid.Column="0"
             Style="{DynamicResource TitleLabel}"/>
 
         <Button x:Name="DeleteButton"
-            Grid.Row="2" Grid.Column="1"
-            
+            Grid.Row="2" Grid.Column="0"
+            Width="300"
+                Height="35"
+                HorizontalAlignment="Right"
             Content="УДАЛИТЬ ВЫДЕЛЕННЫЕ ОБЪЕКТЫ"
             Style="{DynamicResource DeleteButton}"     
                 

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:MyIceLibrary.View.Pages"             
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -23,37 +24,89 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
-        <DataGrid
-            x:Name="PeopleDataGrid"
-            Grid.Row="1" Grid.Column="0" 
-            Style="{DynamicResource NormalDataGrid}"
-            ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Content="ПОЛЬЗОВАТЕЛИ. выберите пользователя"
+                Grid.Row="0" Grid.Column="0"
+                Style="{DynamicResource TitleLabel}"/>
+
+            <TextBox 
+                Grid.Row="1" Grid.Column="0"
+                HorizontalAlignment="Stretch"
+                Margin="10 0 10 0"
+                Height="20">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter"
+                            Command="{Binding FilteredBoxExecuteEnterCommand}"
+                            CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <DataGrid
+                x:Name="PeopleDataGrid"
+                Grid.Row="2" Grid.Column="0"
+                Margin="10 10 10 10"
+                Style="{DynamicResource NormalDataGrid}"
+                ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
+
+                ItemsSource="{Binding PeopleInfo}">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction 
+                            Command="{Binding SelectedElementCommand}" 
+                            CommandParameter="{Binding SelectedItem,  ElementName=PeopleDataGrid}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </DataGrid>
+        </Grid>
+
+        <GridSplitter
+            Grid.Row="1" Grid.Column="1"
+            Width="3"
+            Background="Gray"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Stretch"/>
+
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Label
+                Content="ДАННЫЕ О ПОЛЬЗОВАТЕЛЕ"
+                Grid.Row="0" Grid.Column="0"
+                Style="{DynamicResource TitleLabel}"/>
+
+            <DataGrid
+                x:Name="InfoDataGrid"
+                Grid.Row="1" Grid.Column="0"
+                Margin="10 10 10 10"
+                Style="{DynamicResource NormalDataGrid}"
+                ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
     
-            ItemsSource="{Binding PeopleInfo}">
+                ItemsSource="{Binding CurrentObjectFilesInfo}">
 
-            <DataGrid.InputBindings>
-                <MouseBinding MouseAction="LeftDoubleClick"
-                  Command="{Binding SelectedElementCommand}"
-                  CommandParameter="{Binding SelectedItem}"/>
-            </DataGrid.InputBindings>
-
-        </DataGrid>
-
-        <DataGrid
-            x:Name="InfoDataGrid"
-            Grid.Row="1" Grid.Column="2" 
-            Style="{DynamicResource NormalDataGrid}"
-            ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
-    
-            ItemsSource="{Binding CurrentObjectFilesInfo}">
-
-        </DataGrid>
-
+            </DataGrid>
+        </Grid>
 
     </Grid>
 </UserControl>

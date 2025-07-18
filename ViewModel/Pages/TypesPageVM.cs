@@ -33,14 +33,16 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        public ICommand LoadTypesCommand => new RelayCommand<object>(_ => LoadTypes());
-
         private readonly IObjectsRepository _objectsRepository;
+        private ObservableCollection<TypeInfo> _originalTypeInfo;
 
         public TypesPageVM(IObjectsRepository objectsRepository)
         {
             _objectsRepository = objectsRepository;
         }
+
+        public ICommand LoadTypesCommand => new RelayCommand<object>(_ => LoadTypes());
+        public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredInfo);
 
         private void LoadTypes()
         {
@@ -63,19 +65,31 @@ namespace MyIceLibrary.ViewModel.Pages
                 });
             }
 
-            TypesInfo = new ObservableCollection<TypeInfo>(typesInfo);
+            _originalTypeInfo = new ObservableCollection<TypeInfo>(typesInfo);
+            TypesInfo = new ObservableCollection<TypeInfo>(_originalTypeInfo);
         }
 
-        public BitmapImage ToImage(byte[] array)
+        private void FilteredInfo(string input)
         {
-            using (var ms = new System.IO.MemoryStream(array))
+            if (input != "")
             {
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.StreamSource = ms;
-                image.EndInit();
-                return image;
+                var filteredPeople = _originalTypeInfo
+                    .Where(p => p.Name.ToLower().Contains(input.ToLower())).ToList();
+
+                filteredPeople.AddRange(_originalTypeInfo
+                    .Where(p => p.Title.ToLower().Contains(input.ToLower())).ToList());
+
+                filteredPeople.AddRange(_originalTypeInfo
+                    .Where(p => p.Kind.ToLower().Contains(input.ToLower())).ToList());
+
+                filteredPeople.AddRange(_originalTypeInfo
+                    .Where(p => p.Id.ToString().ToLower().Contains(input.ToLower())).ToList());
+
+                TypesInfo = new ObservableCollection<TypeInfo>(filteredPeople);
+            }
+            else
+            {
+                TypesInfo = new ObservableCollection<TypeInfo>(_originalTypeInfo);
             }
         }
     }

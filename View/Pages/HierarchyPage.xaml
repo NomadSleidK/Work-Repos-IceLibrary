@@ -18,97 +18,122 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Grid.Row="0" Grid.Column="1">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="0.1"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.1"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.1"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="0.1"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Label
-            Content="ОРГАНИЗАЦИОННАЯ СТРУКТУРА БАЗЫ"
-            Grid.Row="0" Grid.Column="1"                              
-            Style="{DynamicResource TitleLabel}"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <TextBox 
-            Grid.Row="1" Grid.Column="1"
-            HorizontalAlignment="Stretch"
-            Margin="10 0 10 0"
-            Height="20">
-            <TextBox.InputBindings>
-                <KeyBinding Key="Enter"
-                    Command="{Binding FilteredBoxExecuteEnterCommand}"
-                    CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
-            </TextBox.InputBindings>
-        </TextBox>
+            <Label
+                Content="ОРГАНИЗАЦИОННАЯ СТРУКТУРА БАЗЫ"
+                Grid.Row="0" Grid.Column="0"                              
+                Style="{DynamicResource TitleLabel}"/> 
+            
+            <TextBox 
+                Grid.Row="1" Grid.Column="0"
+                HorizontalAlignment="Stretch"
+                Margin="10 5 10 5"
+                Height="20">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter"
+                        Command="{Binding FilteredBoxExecuteEnterCommand}"
+                        CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
+                </TextBox.InputBindings>
+            </TextBox>                       
+            
+            <TreeView 
+                Grid.Row="2" Grid.Column="0"
+                Style="{DynamicResource NormalTreeView}"
 
-        <Label
-            Content="ИНФОРМАЦИЯ О ВЫБРАННОМ ЭЛЕМЕНТЕ"
-            Grid.Row="0" Grid.Column="2"                              
-            Style="{DynamicResource TitleLabel}"/>
+                ItemsSource="{Binding TreeItems}">
 
-        <TreeView 
-            Grid.Row="3" Grid.Column="1"
-            Style="{DynamicResource NormalTreeView}"
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectedElementCommand}" 
+                        CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
 
-            ItemsSource="{Binding TreeItems}">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="FontWeight" Value="UltraBold"/>
+                                <Setter Property="Background" Value="{DynamicResource NormalForeground}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                                <Setter Property="FontWeight" Value="UltraBold"/>
+                                <Setter Property="Background" Value="Orange"/>
+                            </DataTrigger>
 
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectedItemChanged">
-                    <i:InvokeCommandAction Command="{Binding SelectedElementCommand}" 
-                    CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+                        </Style.Triggers>
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
 
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="TreeViewItem">
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="FontWeight" Value="UltraBold"/>
-                            <Setter Property="Background" Value="{DynamicResource NormalForeground}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="False">
-                            <Setter Property="FontWeight" Value="Normal"/>
-                            <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
-                        </Trigger>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="true">
-                            <Setter Property="FontWeight" Value="UltraBold"/>
-                            <Setter Property="Background" Value="Orange"/>
-                        </DataTrigger>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock
+                        Text="{Binding Name}" 
+                        Style="{DynamicResource NormalTextBlock}">
 
-                    </Style.Triggers>
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                </Style>
-            </TreeView.ItemContainerStyle>
+                        </TextBlock>
+                    </HierarchicalDataTemplate>
 
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <TextBlock
-                    Text="{Binding Name}" 
-                    Style="{DynamicResource NormalTextBlock}">
+                </TreeView.ItemTemplate>
 
-                    </TextBlock>
-                </HierarchicalDataTemplate>
+            </TreeView>            
+            
+        </Grid>
 
-            </TreeView.ItemTemplate>
+        <GridSplitter
+            Grid.Row="0" Grid.Column="1"
+            Width="3"
+            Background="Gray"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Stretch"/>
 
-        </TreeView>
+        <Grid Grid.Row="0" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <DataGrid
-            Grid.Row="3" Grid.Column="2" 
-            Style="{DynamicResource NormalDataGrid}"
-            ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
+            <Label
+                Content="ИНФОРМАЦИЯ О ВЫБРАННОМ ЭЛЕМЕНТЕ"
+                Grid.Row="0" Grid.Column="0"                              
+                Style="{DynamicResource TitleLabel}"/>
+
+            <DataGrid
+                Grid.Row="1" Grid.Column="0" 
+                Margin="10 10 10 10"
+                Style="{DynamicResource NormalDataGrid}"
+                ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
         
-            ItemsSource="{Binding SelectedObjectInfo}"/>
+                ItemsSource="{Binding SelectedObjectInfo}"/>
 
+        </Grid>
     </Grid>
 </UserControl>

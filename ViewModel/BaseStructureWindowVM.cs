@@ -79,7 +79,7 @@ namespace MyIceLibrary.ViewModel
         {
             BaseHierarchyPageVM.LoadHierarchyCommand.Execute(null);
             BaseTypesPageVM.LoadTypesCommand.Execute(null);
-            BasePeoplesPageVM.LoadPepleInfoCommand.Execute(null);
+            BasePeoplesPageVM.LoadPeopleInfoCommand.Execute(null);
 
             _currentWindow.Show();
         }

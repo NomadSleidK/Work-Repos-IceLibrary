@@ -18,9 +18,9 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.1"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.1"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.1"/>
@@ -28,8 +28,25 @@
             <ColumnDefinition Width="0.1"/>
         </Grid.ColumnDefinitions>
 
+        <Label
+            Content="ИНФОРМАЦИЯ О ТИПАХ ДАННЫЙ В БАЗЕ"
+            Grid.Row="0" Grid.Column="1"
+            Style="{DynamicResource TitleLabel}"/>
+        
+        <TextBox 
+            Grid.Row="1" Grid.Column="1"
+            HorizontalAlignment="Stretch"
+            Margin="10 10 10 10"
+            Height="20">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter"
+                    Command="{Binding FilteredBoxExecuteEnterCommand}"
+                    CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
+            </TextBox.InputBindings>
+        </TextBox>
+
         <DataGrid
-            Grid.Row="1" Grid.Column="1" 
+            Grid.Row="2" Grid.Column="1" 
             Style="{DynamicResource NormalDataGrid}"
             ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"         
             AutoGenerateColumns="False"
@@ -45,22 +62,23 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                
                 <DataGridTextColumn Header="Id" 
-                                    Binding="{Binding Id, Mode=OneWay}"/>
+                     Binding="{Binding Id, Mode=OneWay}"/>
                 <DataGridTextColumn Header="Name"
-                                    Binding="{Binding Name, Mode=OneWay}"/>
+                     Binding="{Binding Name, Mode=OneWay}"/>
                 <DataGridTextColumn Header="Title"
-                                    Binding="{Binding Title, Mode=OneWay}"/>
+                     Binding="{Binding Title, Mode=OneWay}"/>
                 <DataGridTextColumn Header="Kind"
-                                    Binding="{Binding Kind, Mode=OneWay}"/>
+                     Binding="{Binding Kind, Mode=OneWay}"/>
                 <DataGridTextColumn Header="IsMountable"
-                                    Binding="{Binding IsMountable, Mode=OneWay}"/>
+                     Binding="{Binding IsMountable, Mode=OneWay}"/>
                 <DataGridTextColumn Header="IsDeleted"
-                                    Binding="{Binding IsDeleted, Mode=OneWay}"/>
+                     Binding="{Binding IsDeleted, Mode=OneWay}"/>
                 <DataGridTextColumn Header="IsProject"
-                                    Binding="{Binding IsProject, Mode=OneWay}"/>
+                     Binding="{Binding IsProject, Mode=OneWay}"/>
                 <DataGridTextColumn Header="IsAdmin"
-                                    Binding="{Binding IsService, Mode=OneWay}"/>
+                     Binding="{Binding IsService, Mode=OneWay}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
