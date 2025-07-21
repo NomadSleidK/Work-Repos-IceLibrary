@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace MyIceLibrary.ViewModel.Pages
@@ -32,6 +33,18 @@ namespace MyIceLibrary.ViewModel.Pages
             private set
             {
                 _treeItems = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            private set
+            {
+                _isSelected = value;
+                //System.Windows.MessageBox.Show($"{_isSelected}");
                 OnPropertyChanged();
             }
         }

@@ -100,21 +100,24 @@ namespace MyIceLibrary.Model
 
         private void SelectedElement(PersonInfo personInfo)
         {
-            var dataPerson = new List<CurrentObjectInfo>();
-            var person = _objectsRepository.GetPerson(personInfo.Id);
+            if (personInfo != null)
+            {
+                var dataPerson = new List<CurrentObjectInfo>();
+                var person = _objectsRepository.GetPerson(personInfo.Id);
 
-            dataPerson.Add(new CurrentObjectInfo() { Name = "ActualName", Value = person.ActualName });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "Id", Value = person.Id });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "DisplayName", Value = person.DisplayName });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "Login", Value = person.Login });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "ServiceInfo", Value = person.ServiceInfo });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "Sid", Value = person.Sid });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "IsAdmin", Value = person.IsAdmin });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "IsDeleted", Value = person.IsDeleted });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "CreatedUtc", Value = person.CreatedUtc.ToString("dd-MM-yyyy HH:mm:ss") });
-            dataPerson.Add(new CurrentObjectInfo() { Name = "Comment", Value = person.Comment });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "ActualName", Value = person.ActualName });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "Id", Value = person.Id });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "DisplayName", Value = person.DisplayName });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "Login", Value = person.Login });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "ServiceInfo", Value = person.ServiceInfo });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "Sid", Value = person.Sid });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "IsAdmin", Value = person.IsAdmin });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "IsDeleted", Value = person.IsDeleted });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "CreatedUtc", Value = person.CreatedUtc.ToString("dd-MM-yyyy HH:mm:ss") });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "Comment", Value = person.Comment });
 
-            CurrentObjectFilesInfo = new ObservableCollection<CurrentObjectInfo>(dataPerson);
+                CurrentObjectFilesInfo = new ObservableCollection<CurrentObjectInfo>(dataPerson);
+            }          
         }
     }
 }

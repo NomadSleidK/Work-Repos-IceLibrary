@@ -80,8 +80,8 @@
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                     <TextBlock
-                    Text="{Binding Name}" 
-                    Style="{DynamicResource NormalTextBlock}">
+                        Text="{Binding Name}" 
+                        Style="{DynamicResource NormalTextBlock}">
 
                     </TextBlock>
                 </HierarchicalDataTemplate>
