@@ -62,6 +62,16 @@
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="Foreground" Value="#FF4658FF"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
+
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="LinkTextBlock">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Foreground" Value="{DynamicResource HyperlinkForeground}"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="TextDecorations" Value="Underline"/>
+
     </Style>
 
     <Style TargetType="Rectangle" x:Key="NormalRectangle">

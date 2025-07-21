@@ -68,7 +68,7 @@
                             Style="{DynamicResource TitleLabel}"               
                             FontFamily="{DynamicResource TitleFontFamily}"/>
 
-                        <Label
+                        <!--<Label
                             x:Name="ParentNameLabel"
                             Grid.Row="3" Grid.Column="0"
                             Style="{DynamicResource LinkLabel}"
@@ -80,8 +80,22 @@
                                 <MouseBinding MouseAction="LeftClick" Command="{Binding GoToParentCommand}"/>
                             </Label.InputBindings>
 
-                        </Label>
+                        </Label>-->
 
+                        <TextBlock
+                            x:Name="TextBlockLink"
+                            Grid.Row="3" Grid.Column="0"
+                            Style="{DynamicResource LinkTextBlock}"
+    
+                            Visibility="{Binding ParentLabelVisibility}"
+                            Text="{Binding ParentObjectName}">
+
+                            <TextBlock.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" Command="{Binding GoToParentCommand}"/>
+                            </TextBlock.InputBindings>
+                        </TextBlock>
+
+                        
                         <Label
                             Content="ОБЩАЯ ИНФОРМАЦИЯ:"
                             Grid.Row="4" Grid.Column="0"                         
