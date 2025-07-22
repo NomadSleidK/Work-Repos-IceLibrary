@@ -78,7 +78,7 @@ namespace MyIceLibrary.ViewModel.Pages
             if (TreeItems != null)
                 TreeItems.Clear();
 
-            _originTreeItems = await _objectsTreeBuilder.CreateObjectTreeButtomToTopAsync(dataObject, TreeItems);
+            _originTreeItems = await _objectsTreeBuilder.CreateObjectTreeButtonToTopAsync(dataObject, TreeItems);
 
             TreeItems = new ObservableCollection<TreeItem>(_originTreeItems.DeepCopy());
         }

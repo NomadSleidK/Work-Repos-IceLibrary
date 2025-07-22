@@ -1,6 +1,6 @@
 ﻿using Ascon.Pilot.SDK;
+using MyIceLibrary.Extensions;
 using MyIceLibrary.Model;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace MyIceLibrary.Helper
             _objectsRepository = objectsRepository;
         }
 
-        public async Task<ObservableCollection<TreeItem>> CreateObjectTreeButtomToTopAsync(IDataObject dataObject, ObservableCollection<TreeItem> mainTreeItems)
+        public async Task<ObservableCollection<TreeItem>> CreateObjectTreeButtonToTopAsync(IDataObject dataObject, ObservableCollection<TreeItem> mainTreeItems)
         {
             TreeItem treeItem;
 
@@ -40,13 +40,13 @@ namespace MyIceLibrary.Helper
                 };
             }
 
-            if (dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001")) //Начало 00000001-0001-0001-0001-000000000001
+            if (!dataObject.Id.IsRoot())
 
             {
                 ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
 
                 var dataObjects = await objectLoader.Load(dataObject.ParentId);
-                mainTreeItems = await CreateObjectTreeButtomToTopAsync(dataObjects, mainTreeItems);
+                mainTreeItems = await CreateObjectTreeButtonToTopAsync(dataObjects, mainTreeItems);
             }
 
             return mainTreeItems;
@@ -54,21 +54,25 @@ namespace MyIceLibrary.Helper
 
         public async Task<ObservableCollection<TreeItem>> FilteredTreeItemsAsync(string parameter, ObservableCollection<TreeItem> originTreeItems)
         {
-            var treeItems = new ObservableCollection<TreeItem>();
+            ObservableCollection<TreeItem> treeItems;
 
             string input = parameter;
 
             if (input != "")
             {
                 List<TreeItem> items = originTreeItems.DeepCopy().ToList();
+                List<TreeItem> filteredItems = new List<TreeItem>();
 
                 for (int i = 0; i < items.Count; i++)
                 {
-                    var result = await CheckTreeElementsAsync(items[i], input);
-                    items[i] = result.treeItem;
+                    var result = await CheckChildrenElementsAsync(items[i], input);
+                    if (result.isFind || result.treeItem.Children?.Count > 0)
+                    {
+                        filteredItems.Add(result.treeItem);
+                    }
                 }
 
-                treeItems = new ObservableCollection<TreeItem>(items);
+                treeItems = new ObservableCollection<TreeItem>(filteredItems);
             }
             else
             {
@@ -78,7 +82,7 @@ namespace MyIceLibrary.Helper
             return treeItems;
         }
 
-        private async Task<(TreeItem treeItem, bool isFind)> CheckTreeElementsAsync(TreeItem currentItem, string input)
+        private async Task<(TreeItem treeItem, bool isFind)> CheckChildrenElementsAsync(TreeItem currentItem, string input)
         {
             bool isFind = false;
 
@@ -100,7 +104,7 @@ namespace MyIceLibrary.Helper
                 {
                     if (children[i] != null)
                     {
-                        var childInfo = await CheckTreeElementsAsync(children[i], input);
+                        var childInfo = await CheckChildrenElementsAsync(children[i], input);
 
                         if (childInfo.isFind)
                         {

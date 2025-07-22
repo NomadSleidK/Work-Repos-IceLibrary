@@ -113,9 +113,7 @@ namespace MyIceLibrary.ViewModel
 
         public CurrentObjectFormVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IFileProvider fileProvider)
         {
-            _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>();
-            _currentWindow.DataContext = this;
-            _currentWindow.ShowInTaskbar = true;
+            _currentWindow = WindowHelper.CreateWindowWithUserControl<CurrentObjectUserControl>(this, true, "Информация об объекте");
 
             _objectsRepository = objectsRepository;
             _fileProvider = fileProvider;

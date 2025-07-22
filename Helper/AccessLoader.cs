@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
+using MyIceLibrary.Extensions;
 using MyIceLibrary.Model;
 using System;
 using System.Collections.Generic;
@@ -7,43 +8,78 @@ using System.Threading.Tasks;
 
 namespace MyIceLibrary.Helper
 {
-    public class ObjectAccessHelper
+    public class AccessLoader
     {
-        private readonly IObjectsRepository _objectsRepository;
+        private readonly IObjectsRepository _objectsRepository; 
         private readonly ObjectLoader _objectLoader;
 
-        public ObjectAccessHelper(IObjectsRepository objectsRepository)
+        private readonly Dictionary<AccessLevel, string> _accessNames;
+
+        public AccessLoader(IObjectsRepository objectsRepository)
         {
             _objectsRepository = objectsRepository;
             _objectLoader = new ObjectLoader(objectsRepository);
+
+            _accessNames = new Dictionary<AccessLevel, string>()
+            {
+                { AccessLevel.None, "Нет доступа" },
+                { AccessLevel.Create, "Создание" },
+                { AccessLevel.Edit, "Редактирование атрибутов и файлов" },
+                { AccessLevel.View, "Просмотр" },
+                { AccessLevel.Freeze, "Заморозка" },
+                { AccessLevel.Agreement, "Согласование" },
+                { AccessLevel.Share, "Делегирование прав доступа" },
+                { AccessLevel.ViewCreate, "" },
+                { AccessLevel.ViewEdit, "" },
+                { AccessLevel.ViewEditAgrement, "" },
+                { AccessLevel.Full, "Полный доступ" },
+            };
         }
 
-        public struct ObjectAcces
+        public string GetAccessNameByEnum(AccessLevel level)
+        {
+            string result = "";
+
+            foreach (AccessLevel value in Enum.GetValues(typeof(AccessLevel)))
+            {
+                if (value != AccessLevel.None && (level & value) == value)
+                {
+                    if (_accessNames[value] != "")
+                    {
+                        result += _accessNames[value] + ", ";
+                    }
+                }
+            }
+
+            result = result.Substring(0, result.Length - 2);
+
+            return result;
+        }
+
+        public struct ObjectAccess
         {
             public ReadOnlyCollection<IAccessRecord> AccessRecord { get; set; }
-            public bool isSecret { get; set; }
+            public bool IsSecret { get; set; }
         }
 
         public async Task<IEnumerable<IAccessRecord>> GetObjectAccess(Guid currentObjectGuid)
         {
-            var access = await GetObjectsAccessAsync(currentObjectGuid);
+            var access = await GetAccessFromAllObjectsAsync(currentObjectGuid);
 
-            return await GetAccessList(new Stack<ObjectAcces>(access));
+            return await GetAccessForCurrentObject(new Stack<ObjectAccess>(access));
         }
 
-
-        private async Task<IEnumerable<IAccessRecord>> GetAccessList(Stack<ObjectAcces> accessStack)
+        private async Task<IEnumerable<IAccessRecord>> GetAccessForCurrentObject(Stack<ObjectAccess> accessStack)
         {
             var accessList = new List<IAccessRecord>();
             bool secretZoneEnable = false;
-            var _isSecret = new List<bool>();
 
             while (accessStack.Count > 0)
             {
                 var currentObjectAccess = accessStack.Pop();
                 var accessRecords = currentObjectAccess.AccessRecord;
 
-                if (!secretZoneEnable && currentObjectAccess.isSecret)
+                if (!secretZoneEnable && currentObjectAccess.IsSecret)
                 {
                     secretZoneEnable = true;
                 }
@@ -58,7 +94,7 @@ namespace MyIceLibrary.Helper
 
                             foreach (var objectAccess in accessStack)
                             {
-                                if (objectAccess.isSecret)
+                                if (objectAccess.IsSecret)
                                 {
                                     secretObjectFind = true;
                                     break;
@@ -90,28 +126,27 @@ namespace MyIceLibrary.Helper
             return accessList;
         }
 
-        private async Task<List<ObjectAcces>> GetObjectsAccessAsync(Guid objectGuid)
+        private async Task<List<ObjectAccess>> GetAccessFromAllObjectsAsync(Guid objectGuid)
         {
-            var accessInheritance = new List<ObjectAcces>();
+            var accessInheritance = new List<ObjectAccess>();
 
             var dataObject = await _objectLoader.Load(objectGuid);
-            var objectAccess = dataObject.Access2;
 
-            accessInheritance.Add(new ObjectAcces()
+            accessInheritance.Add(new ObjectAccess()
             {
                 AccessRecord = dataObject.Access2,
-                isSecret = dataObject.IsSecret,
+                IsSecret = dataObject.IsSecret,
             });
 
-            if (dataObject.Id != new Guid("00000001-0001-0001-0001-000000000001"))
+            if (!dataObject.Id.IsRoot())
             {
-                accessInheritance.AddRange(await GetObjectsAccessAsync(dataObject.ParentId));
+                accessInheritance.AddRange(await GetAccessFromAllObjectsAsync(dataObject.ParentId));
             }
 
             return accessInheritance;
         }
 
-        public AccessLevelInfo ConvertRecordToAccesslevelInfo(IAccessRecord currentAccessRecord)
+        public AccessLevelInfo ConvertAccessRecordToAccessLevelInfo(IAccessRecord currentAccessRecord)
         {
             var organizationUnit = _objectsRepository.GetOrganisationUnit(currentAccessRecord.OrgUnitId);
             var accessInfo = new AccessLevelInfo()

@@ -70,7 +70,7 @@ namespace MyIceLibrary.ViewModel
             BaseTypesPageVM = new TypesPageVM(objectsRepository);
             BasePeoplesPageVM = new PeoplesPageVM(objectsRepository);
 
-            _currentWindow = WindowHelper.CreateWindowWithUserControl<BaseStructureWindow>();
+            _currentWindow = WindowHelper.CreateWindowWithUserControl<BaseStructureWindow>(this, true, "Структура базы");
             _currentWindow.DataContext = this;
         }
 

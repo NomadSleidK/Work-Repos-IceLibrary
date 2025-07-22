@@ -8,8 +8,8 @@ namespace MyIceLibrary
     [Export(typeof(IToolbar<ObjectsViewContext>))]
     public class ObjectToolbarButtonsBuilder : IToolbar<ObjectsViewContext>
     {
-        private const string CUSTOM_B_BUTTON_NAME = "AccessTree";
-        private const string CUSTOM_B_BUTTON_HEADER = "Информация о базе";
+        private const string DATABASE_INFO_BUTTON_NAME = "DataBaseInfoButton";
+        private const string DATABASE_INFO_BUTTON_HEADER = "Информация о базе";
 
         private readonly IObjectModifier _modifier;
         private readonly IObjectsRepository _objectsRepository;
@@ -29,14 +29,14 @@ namespace MyIceLibrary
 
         public void Build(IToolbarBuilder builder, ObjectsViewContext context)
         {
-            _customButton = builder.AddButtonItem(CUSTOM_B_BUTTON_NAME, 1);
-            _customButton.WithIcon(Properties.Resources.InfoSquare);
-            _customButton.WithHeader(CUSTOM_B_BUTTON_HEADER);
+            _customButton = builder.AddButtonItem(DATABASE_INFO_BUTTON_NAME, 1);
+            _customButton.WithIcon(Properties.Resources.DataBaseIcon);
+            _customButton.WithHeader(DATABASE_INFO_BUTTON_HEADER);
         }
 
         public void OnToolbarItemClick(string name, ObjectsViewContext context)
         {
-            if (name == CUSTOM_B_BUTTON_NAME)
+            if (name == DATABASE_INFO_BUTTON_NAME)
             {
                 BaseStructureWindowVM access = new BaseStructureWindowVM(_objectsRepository);
                 access.OpenDialogCommand.Execute(null);

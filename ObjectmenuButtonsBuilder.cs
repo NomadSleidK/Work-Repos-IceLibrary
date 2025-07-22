@@ -13,14 +13,14 @@ namespace MyIceLibrary
     [Export(typeof(IMenu<ObjectsViewContext>))]
     internal class ObjectMenuButtonsBuilder : IMenu<ObjectsViewContext>
     {
-        private const string CUSTOM_BUTTON_NAME = "CustomProperties";
-        private const string CUSTOM_BUTTON_HEADER = "My Object Info";
+        private const string INFO_BUTTON_NAME = "ObjectInfoButton";
+        private const string INFO_BUTTON_HEADER = "Информация об объекте";
 
         private const string COPY_BUTTON_NAME = "CopyButton";
-        private const string COPY_BUTTON_HEADER = "Copy Ice";
+        private const string COPY_BUTTON_HEADER = "Копировать объект";
 
-        private const string ACCESS_TRANSFER_BUTTON_NAME = "AccessTransfer";
-        private const string ACCESS_TRANSFER_BUTTON_HEADER = "Access Transfer";
+        private const string ACCESS_MODIFIER_BUTTON_NAME = "AccessModifierButton";
+        private const string ACCESS_MODIFIER_BUTTON_HEADER = "Передать права наверх";
 
         private IMenuItemBuilder _customButtonA;
         private IMenuItemBuilder _customButtonC;
@@ -46,24 +46,24 @@ namespace MyIceLibrary
 
         public void Build(IMenuBuilder builder, ObjectsViewContext context)
         {
-            _customButtonA = builder.AddItem(CUSTOM_BUTTON_NAME, 0);
-            _customButtonA.WithIcon(Properties.Resources.InfoSquare);
-            _customButtonA.WithHeader(CUSTOM_BUTTON_HEADER);
+            _customButtonA = builder.AddItem(INFO_BUTTON_NAME, builder.Count);
+            _customButtonA.WithIcon(Properties.Resources.InfoIconB);
+            _customButtonA.WithHeader(INFO_BUTTON_HEADER);
 
-            _customButtonC = builder.AddItem(COPY_BUTTON_NAME, 1);
-            _customButtonC.WithIcon(Properties.Resources.InfoSquare);
+            _customButtonC = builder.AddItem(COPY_BUTTON_NAME, builder.Count);
+            _customButtonC.WithIcon(Properties.Resources.CopyIcon);
             _customButtonC.WithHeader(COPY_BUTTON_HEADER);
 
-            _accessTransfer = builder.AddItem(ACCESS_TRANSFER_BUTTON_NAME, 2);
-            _accessTransfer.WithIcon(Properties.Resources.InfoSquare);
-            _accessTransfer.WithHeader(ACCESS_TRANSFER_BUTTON_HEADER);
+            _accessTransfer = builder.AddItem(ACCESS_MODIFIER_BUTTON_NAME, builder.Count);
+            _accessTransfer.WithIcon(Properties.Resources.AccessIcon);
+            _accessTransfer.WithHeader(ACCESS_MODIFIER_BUTTON_HEADER);
         }
 
         public void OnMenuItemClick(string name, ObjectsViewContext context)
         {
             try
             {
-                if (name == CUSTOM_BUTTON_NAME)
+                if (name == INFO_BUTTON_NAME)
                 {
                     if (context.SelectedObjects.ToArray().Length > 1)
                     {
@@ -81,7 +81,7 @@ namespace MyIceLibrary
                 {
                     _ = CreateCopeAsync(context.SelectedObjects.ToArray()[0]);
                 }
-                else if (name == ACCESS_TRANSFER_BUTTON_NAME)
+                else if (name == ACCESS_MODIFIER_BUTTON_NAME)
                 {
                     AccessTransferVM accessTransferVM = new AccessTransferVM(_objectsRepository, _objectModifier);
                     accessTransferVM.OpenWindowCommand.Execute(context.SelectedObjects.ToArray()[0].Id);

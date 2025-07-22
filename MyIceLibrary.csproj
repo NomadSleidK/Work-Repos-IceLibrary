@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
+    <OutputPath>..\..\Users\artem\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -116,8 +116,9 @@
   <ItemGroup>
     <Compile Include="Command\RelayCommand.cs" />
     <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Helper\AccessModifier.cs" />
     <Compile Include="Helper\FileManager.cs" />
-    <Compile Include="Helper\ObjectAccessHelper.cs" />
+    <Compile Include="Helper\AccessLoader.cs" />
     <Compile Include="Helper\ObjectCreator.cs" />
     <Compile Include="Helper\ObjectsTreeBuilder.cs" />
     <Compile Include="Helper\WindowHelper.cs" />
@@ -318,7 +319,18 @@
       <Name>Ascon.Pilot.SDK.Controls</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\DataBaseIcon.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CopyIcon.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\InfoIconB.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AccessIcon.svg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

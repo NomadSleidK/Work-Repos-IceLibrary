@@ -27,17 +27,6 @@ namespace MyIceLibrary.ViewModel.Pages
         #endregion
 
         #region Property
-        //private ObservableCollection<AccessCheckBox> _accessItems;
-        //public ObservableCollection<AccessCheckBox> AccessItems
-        //{
-        //    get => _accessItems;
-        //    set
-        //    {
-        //        _accessItems = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-
         private ObservableCollection<TreeItem> _treeItems;
         public ObservableCollection<TreeItem> TreeItems
         {
@@ -222,6 +211,18 @@ namespace MyIceLibrary.ViewModel.Pages
             public string Name { get; set; }
         }
 
+        //___________________________________________________________________________
+        private bool _createButtonEnabled;
+        public bool CreateButtonEnabled
+        {
+            get => _createButtonEnabled;
+            set
+            {
+                _createButtonEnabled = value;
+
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
 
@@ -231,9 +232,9 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private readonly ObjectsTreeBuilder _treeBuilder;
 
-        private DialogWindow _dialogWindowAddAcces;
+        private DialogWindow _dialogWindowAddAccess;
 
-        private Guid _currntObjectGuid;
+        private Guid _currentObjectGuid;
         private ObservableCollection<TreeItem> _originalTree;
 
         public CreateAccessPageVM(IObjectsRepository objectsRepository, IObjectModifier objectModifier)
@@ -268,19 +269,18 @@ namespace MyIceLibrary.ViewModel.Pages
         public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(SelectedElementChange);
         public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
         public ICommand CreateButtonClickCommand => new RelayCommand<string>(_ => CreateButtonClick());
+        public ICommand UpdateCreateButtonEnabledCommand => new RelayCommand<string>(_ => UpdateCreateButtonEnabled());
 
         private void OpenWindowAsync(Guid objectGuid)
         {
-            _currntObjectGuid = objectGuid;
+            _currentObjectGuid = objectGuid;
 
-            _dialogWindowAddAcces = WindowHelper.CreateWindowWithUserControl<CreateAccessPage>();
+            _dialogWindowAddAccess = WindowHelper.CreateWindowWithUserControl<CreateAccessPage>(this, true, "Создание доступа");
 
-            _dialogWindowAddAcces.DataContext = this;
-            _dialogWindowAddAcces.ShowInTaskbar = true;
-            _dialogWindowAddAcces.Title = "Создание доступа";
-            _dialogWindowAddAcces.Show();
+            _dialogWindowAddAccess.Show();
 
             LoadAccessTree();
+            UpdateCreateButtonEnabled();
         }
 
         private void LoadAccessTree()
@@ -296,8 +296,20 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private void SelectedElementChange(TreeItem selectedTab)
         {
-            _selectedUnit = selectedTab;
-            SelectedUnitName = selectedTab.Name;
+            if (_selectedUnit != null)
+            {
+                _selectedUnit.IsSelected = false;
+            }
+
+            if (selectedTab != null)
+            {                
+                _selectedUnit = selectedTab;
+                _selectedUnit.IsSelected = true;
+
+                SelectedUnitName = selectedTab.Name;
+            }
+
+            UpdateCreateButtonEnabled();
         }
 
         private AccessLevel GetSelectedAccessLevel()
@@ -314,15 +326,13 @@ namespace MyIceLibrary.ViewModel.Pages
             return level;
         }
 
+        private void UpdateCreateButtonEnabled()
+        {
+            CreateButtonEnabled = _selectedUnit != null && GetSelectedAccessLevel() != AccessLevel.None;
+        }
+
         private async void CreateButtonClick()
         {
-
-            if (_selectedUnit == null)
-            {
-                System.Windows.MessageBox.Show("Организационная единица не выбрана");
-                return;
-            }
-
             var orgUnitId = ((IOrganisationUnit)_selectedUnit.DataObject).Id;
             var accessLevel = GetSelectedAccessLevel();
             var validThrough = SelectedValidThroughDate;
@@ -332,7 +342,7 @@ namespace MyIceLibrary.ViewModel.Pages
 
             try
             {
-                var objectInfo = await _objectLoader.Load(_currntObjectGuid);
+                var objectInfo = await _objectLoader.Load(_currentObjectGuid);
                 var builder = _objectModifier.EditById(objectInfo.Id);
 
                 builder.AddAccessRecords(
@@ -353,7 +363,7 @@ namespace MyIceLibrary.ViewModel.Pages
                 System.Windows.MessageBox.Show("Доступ успешно создан");
 
                 OnAccessCreated?.Invoke();
-                _dialogWindowAddAcces.Close();
+                _dialogWindowAddAccess.Close();
             }
         }
 

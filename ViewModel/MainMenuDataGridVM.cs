@@ -96,9 +96,7 @@ namespace MyIceLibrary.ViewModel
         {            
             _dataObjects = dataObjects;
 
-            _mainWindow = WindowHelper.CreateWindowWithUserControl<MainUserControl>();
-            _mainWindow.DataContext = this;
-            _mainWindow.ShowInTaskbar = true;
+            _mainWindow = WindowHelper.CreateWindowWithUserControl<MainUserControl>(this, true, "Выбор объекта");
 
             LoadAttributesCommand.Execute(null);
             LoadMainInfoCommand.Execute(null);

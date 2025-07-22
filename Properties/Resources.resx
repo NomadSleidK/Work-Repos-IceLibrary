@@ -118,6 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="AccessIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AccessIcon.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="CopyIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CopyIcon.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DataBaseIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DataBaseIcon.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="InfoIconB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\InfoIconB.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="InfoSquare" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InfoSquare.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

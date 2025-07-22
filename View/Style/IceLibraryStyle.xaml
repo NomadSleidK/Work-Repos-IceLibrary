@@ -31,13 +31,21 @@
         <Setter Property="Height" Value="35"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
-
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.7" />
+                <Setter Property="Background" Value="#FFE0E0E0" />
+                <Setter Property="BorderBrush" Value="#FFA0A0A0" />
+                <Setter Property="Foreground" Value="#FF808080" />
+                <Setter Property="Cursor" Value="No" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="Button" x:Key="DownloadButton" >
         <Setter Property="FontWeight" Value="DemiBold"/>
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Margin" Value="10"/>
+        <Setter Property="Margin" Value="10 5 10 5"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Background" Value="#FF4E608D"/>
         <Setter Property="FontFamily" Value="Bahnschrift"/>
@@ -45,11 +53,20 @@
         <Setter Property="Height" Value="35"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
-
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.7" />
+                <Setter Property="Background" Value="#FFE0E0E0" />
+                <Setter Property="BorderBrush" Value="#FFA0A0A0" />
+                <Setter Property="Foreground" Value="#FF808080" />
+                <Setter Property="Cursor" Value="No" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="Label" x:Key="InfoLabel">
         <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="10 0 10 0"/>
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
         <Setter Property="Foreground" Value="{DynamicResource NormalBackground}"/>
@@ -57,12 +74,11 @@
         
     </Style>
 
-    <Style TargetType="Label" x:Key="LinkLabel">
+    <Style TargetType="CheckBox" x:Key="NormalCheckBox">
         <Setter Property="HorizontalAlignment" Value="Left"/>
-        <Setter Property="FontSize" Value="18"/>
-        <Setter Property="Foreground" Value="#FF4658FF"/>
+        <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
-
     </Style>
 
     <Style TargetType="TextBlock" x:Key="LinkTextBlock">
@@ -108,7 +124,19 @@
         <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
         <Setter Property="ColumnWidth" Value="*"/>
     </Style>
+    
+    <Style TargetType="TextBlock" x:Key="MessageBox">
+        <Setter Property="Margin" Value="20 0 0 0"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+        <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource NormalForeground}"/>
 
+    </Style>
+
+    
+    
     <Style TargetType="DataGridColumnHeader" x:Key="NormalDataGridColumnHeader">
         <Setter Property="BorderBrush" Value="{DynamicResource NormalForeground}"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>

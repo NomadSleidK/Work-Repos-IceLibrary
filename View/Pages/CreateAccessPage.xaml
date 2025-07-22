@@ -31,7 +31,7 @@
 
         <Label
             Grid.Row="0" Grid.Column="0"                             
-            Content="Выберите организационную единицу в дереве и установите его права доступа"
+            Content="Выберите и нажмите на организационную единицу в дереве, установите права доступа"
             Style="{DynamicResource TitleLabel}"/>
 
         <GridSplitter Grid.Row="1" Grid.Column="1"
@@ -51,9 +51,11 @@
 
             <TextBox 
                 Grid.Row="1" Grid.Column="0"
+                x:Name="SearchTextBox"
                 HorizontalAlignment="Stretch"
                 Margin="10 10 10 10"
                 Height="20">
+
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter"
                         Command="{Binding FilteredBoxExecuteEnterCommand}"
@@ -61,7 +63,29 @@
                 </TextBox.InputBindings>
             </TextBox>
 
+            <TextBlock
+                Grid.Row="1" Grid.Column="0"
+                Margin="25 0 0 0"
+                VerticalAlignment="Center"
+                IsHitTestVisible="False"
+                Text="Поиск..."
+                Foreground="{DynamicResource NormalForeground}"
+                Background="{DynamicResource NormalBackground}">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
             <TreeView 
+                x:Name="MyTreeView"
                 Grid.Row="2" Grid.Column="0"
                 Style="{DynamicResource NormalTreeView}"
 
@@ -74,7 +98,7 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <TreeView.ItemContainerStyle>
+                <!--<TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem">
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
@@ -93,6 +117,22 @@
                         </Style.Triggers>
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                     </Style>
+                </TreeView.ItemContainerStyle>-->
+
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <!-- Привязка IsExpanded -->
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+
+                        <!-- Стиль при выделении через TreeItem.IsSelected -->
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                                <Setter Property="FontWeight" Value="UltraBold"/>
+                                <Setter Property="Background" Value="Orange"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
                 </TreeView.ItemContainerStyle>
 
                 <TreeView.ItemTemplate>
@@ -108,13 +148,31 @@
 
             </TreeView>
 
+            <TextBlock Text="Объекты организационной структуры не найдены"
+                Grid.Row="2" Grid.Column="0"    
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontStyle="Italic"
+                Foreground="Gray">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=MyTreeView}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
         </Grid>
 
         <Grid
             Grid.Row="1" Grid.Column="2">
             
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -153,15 +211,44 @@
                 Orientation="Vertical">
 
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Content="View" IsChecked="{Binding IsViewChecked, Mode=TwoWay}" Margin="10"/>
-                    <CheckBox Content="Edit" IsChecked="{Binding IsEditChecked, Mode=TwoWay}" Margin="10"/>
-                    <CheckBox Content="Create" IsChecked="{Binding IsCreateChecked, Mode=TwoWay}" Margin="10"/>                    
+                    <CheckBox
+                        Content="Просмотр"
+                        IsChecked="{Binding IsViewChecked, Mode=TwoWay}"
+                        Command="{Binding UpdateCreateButtonEnabledCommand}"
+                        Margin="10"/>
+                    
+                    <CheckBox
+                        Content="Редактирование атрибутов и файлов"
+                        IsChecked="{Binding IsEditChecked, Mode=TwoWay}"
+                        Command="{Binding UpdateCreateButtonEnabledCommand}"
+                        Margin="10"/>
+                    
+                    <CheckBox
+                        Content="Создание"
+                        IsChecked="{Binding IsCreateChecked, Mode=TwoWay}"
+                        Command="{Binding UpdateCreateButtonEnabledCommand}"
+                        Margin="10"/>   
+                    
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Content="Freeze" IsChecked="{Binding IsFreezeChecked, Mode=TwoWay}" Margin="10"/>
-                    <CheckBox Content="Agreement" IsChecked="{Binding IsAgreementChecked, Mode=TwoWay}" Margin="10"/>
-                    <CheckBox Content="Share" IsChecked="{Binding IsShareChecked, Mode=TwoWay}" Margin="10"/>
+                    <CheckBox
+                        Content="Заморозка"
+                        IsChecked="{Binding IsFreezeChecked, Mode=TwoWay}"
+                        Command="{Binding UpdateCreateButtonEnabledCommand}"
+                        Margin="10"/>
+                    
+                    <CheckBox
+                        Content="Согласование"
+                        IsChecked="{Binding IsAgreementChecked, Mode=TwoWay}"
+                        Command="{Binding UpdateCreateButtonEnabledCommand}"
+                        Margin="10"/>
+                    
+                    <CheckBox
+                        Content="Делегирование прав доступа"
+                        IsChecked="{Binding IsShareChecked, Mode=TwoWay}"
+                        Command="{Binding UpdateCreateButtonEnabledCommand}"
+                        Margin="10"/>
                 </StackPanel>
 
             </StackPanel>
@@ -174,13 +261,19 @@
 
             <DatePicker 
                 Grid.Row="5" Grid.Column="0"
-                Margin="10 10 10 10"
+                Margin="10 0 10 0"
                 x:Name="ValidThroughDate"
                  SelectedDate="{Binding SelectedValidThroughDate, UpdateSourceTrigger=PropertyChanged}"/>
 
+            <Label
+                Grid.Row="6" Grid.Column="0"                              
+                Content="Тип наследования"
+                Style="{DynamicResource TitleLabel}"               
+                FontFamily="{DynamicResource TitleFontFamily}"/>
+            
             <ComboBox
-                Grid.Row="6" Grid.Column="0"
-                Margin="10 10 10 10"
+                Grid.Row="7" Grid.Column="0"
+                Margin="10 0 10 0"
                 SelectedItem="{Binding SelectedInheritance}"
                 ItemsSource="{Binding InheritanceSource}">
 
@@ -192,9 +285,15 @@
 
             </ComboBox>
 
+            <Label
+                Grid.Row="8" Grid.Column="0"                              
+                Content="Тип доступа"
+                Style="{DynamicResource TitleLabel}"               
+                FontFamily="{DynamicResource TitleFontFamily}"/>
+            
             <ComboBox
-                Grid.Row="7" Grid.Column="0"
-                Margin="10 10 10 10"
+                Grid.Row="9" Grid.Column="0"
+                Margin="10 0 10 0"
                 SelectedItem="{Binding SelectedAccessType}"
                 ItemsSource="{Binding AccessTypeSource}">
 
@@ -207,9 +306,10 @@
             </ComboBox>
 
             <Button 
-                Grid.Row="22" Grid.Column="0"
+                Grid.Row="11" Grid.Column="0"
                 Content="СОЗДАТЬ"
                 Style="{DynamicResource DownloadButton}"
+                IsEnabled="{Binding CreateButtonEnabled}"
                 Command="{Binding CreateButtonClickCommand}"/>
 
         </Grid>

@@ -50,12 +50,35 @@
                 </ComboBox.ItemTemplate>
 
             </ComboBox>
+            
+            <TextBlock 
+                Margin="20,0,0,0" 
+                Grid.Row="0" Grid.Column="0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Text="Выбрать объект..."
+                IsHitTestVisible="False"
+                Foreground="{DynamicResource NormalForeground}"
+                Background="{DynamicResource NormalBackground}">
+                
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedParent}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
             <TreeView
                 Grid.Row="1" Grid.Column="0"
                 x:Name="MyTreeView"
                 Margin="10"
-                ItemsSource="{Binding TreeItems}">
+                ItemsSource="{Binding TreeItems}"
+                Style="{DynamicResource NormalTreeView}">
 
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem">
@@ -68,14 +91,15 @@
                         <StackPanel Orientation="Horizontal">
                             
                             <CheckBox 
-                                IsChecked="{Binding IsSelected, Mode=TwoWay}" 
+                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                Command="{Binding DataContext.UpdateCopeDeleteButtonsEnabledCommand, RelativeSource={RelativeSource AncestorType=TreeView}}"
                                 VerticalAlignment="Center"
                                 Margin="0,0,5,0"/>
                             
                             <TextBlock 
                                 Text="{Binding Name}" 
-                                       
-                           VerticalAlignment="Center"/>
+                                Style="{DynamicResource NormalTextBlock}"       
+                                VerticalAlignment="Center"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
@@ -103,17 +127,24 @@
             <Button 
                 Grid.Row="2" Grid.Column="0"
                 Content="Скопировать"
+                IsEnabled="{Binding CopyDeleteButtonsEnabled}"
                 Style="{DynamicResource DownloadButton}"
                 Command="{Binding CopyAccessToParentObjectsCommand}"/>
 
             <Button 
                 Grid.Row="3" Grid.Column="0"
                 Content="Удалить"
+                IsEnabled="{Binding CopyDeleteButtonsEnabled}"
                 Style="{DynamicResource DeleteButton}"
                 Command="{Binding RemoveAccessFromParentObjectsCommand}"/>  
 
         </Grid>
 
+        <GridSplitter Grid.Row="0" Grid.Column="1"
+            Width="3"
+            Background="Gray"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Stretch"/>
 
         <Grid Grid.Row="0" Grid.Column="2">
             <Grid.RowDefinitions>
@@ -135,7 +166,9 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="5">
-                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"               
+                            <CheckBox
+                                IsChecked="{Binding IsSelected, Mode=TwoWay}" 
+                                Command="{Binding DataContext.UpdateCopeDeleteButtonsEnabledCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
                                 VerticalAlignment="Center" Margin="0,0,10,0"/>
 
                             <StackPanel>

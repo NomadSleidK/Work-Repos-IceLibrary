@@ -63,6 +63,46 @@ namespace MyIceLibrary.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] AccessIcon {
+            get {
+                object obj = ResourceManager.GetObject("AccessIcon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] CopyIcon {
+            get {
+                object obj = ResourceManager.GetObject("CopyIcon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] DataBaseIcon {
+            get {
+                object obj = ResourceManager.GetObject("DataBaseIcon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] InfoIconB {
+            get {
+                object obj = ResourceManager.GetObject("InfoIconB", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] InfoSquare {
             get {
                 object obj = ResourceManager.GetObject("InfoSquare", resourceCulture);

@@ -30,11 +30,11 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        private readonly ObjectAccessHelper _objectAccessHelper;
+        private readonly AccessLoader _objectAccessHelper;
 
         public AccessLevelPageVM(IObjectsRepository objectsRepository)
         {
-            _objectAccessHelper = new ObjectAccessHelper(objectsRepository);
+            _objectAccessHelper = new AccessLoader(objectsRepository);
         }
         public ICommand LoadAccessLevelCommand => new RelayCommand<Guid>(LoadAccessLevel);
 
@@ -46,7 +46,7 @@ namespace MyIceLibrary.ViewModel.Pages
            
             foreach (var res in resultAccess)
             {
-                result.Add(_objectAccessHelper.ConvertRecordToAccesslevelInfo(res));
+                result.Add(_objectAccessHelper.ConvertAccessRecordToAccessLevelInfo(res));
             }
 
             CurrentObjectAttributesValue = new ObservableCollection<AccessLevelInfo>(result);
