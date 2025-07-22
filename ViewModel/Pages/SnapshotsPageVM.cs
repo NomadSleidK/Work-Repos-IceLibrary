@@ -44,7 +44,6 @@ namespace MyIceLibrary.ViewModel.Pages
             private set
             {
                 _isSelected = value;
-                //System.Windows.MessageBox.Show($"{_isSelected}");
                 OnPropertyChanged();
             }
         }
@@ -83,7 +82,6 @@ namespace MyIceLibrary.ViewModel.Pages
         public ICommand LoadFilesInfoCommand => new RelayCommand<Guid>(UpdateFilesInfo);
         public ICommand DownloadFilesCommand => new RelayCommand<TreeItem>(DownloadFiles);
         public ICommand LoadObjectInfoCommand => new RelayCommand<TreeItem>(LoadObjectInfoToGrid);
-        //public ICommand DeleteFileCommand => new RelayCommand<TreeItem>(DeleteFile);
         public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
 
         private async void UpdateFilesInfo(Guid objectGuid)
@@ -94,7 +92,7 @@ namespace MyIceLibrary.ViewModel.Pages
             var snapshots = dataObject.PreviousFileSnapshots;
 
             _originTree = _treeBuilder.CreateSnapshotsTree(snapshots.ToArray());
-            TreeItems = _originTree.DeepCopy();
+            TreeItems = new ObservableCollection<TreeItem>(_originTree);
         }
 
         private async void FilteredBoxExecuteEnter(string parameter)

@@ -1,0 +1,218 @@
+﻿<UserControl x:Class="MyIceLibrary.View.Pages.CreateAccessPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
+             xmlns:local="clr-namespace:MyIceLibrary.View.Pages"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Label
+            Grid.Row="0" Grid.Column="0"                             
+            Content="Выберите организационную единицу в дереве и установите его права доступа"
+            Style="{DynamicResource TitleLabel}"/>
+
+        <GridSplitter Grid.Row="1" Grid.Column="1"
+            Width="3"
+            Background="Gray"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Stretch"/>
+
+        <Grid
+            Grid.Row="1" Grid.Column="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBox 
+                Grid.Row="1" Grid.Column="0"
+                HorizontalAlignment="Stretch"
+                Margin="10 10 10 10"
+                Height="20">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter"
+                        Command="{Binding FilteredBoxExecuteEnterCommand}"
+                        CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <TreeView 
+                Grid.Row="2" Grid.Column="0"
+                Style="{DynamicResource NormalTreeView}"
+
+                ItemsSource="{Binding TreeItems}">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectedElementCommand}" 
+                            CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="FontWeight" Value="UltraBold"/>
+                                <Setter Property="Background" Value="{DynamicResource NormalForeground}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                                <Setter Property="FontWeight" Value="UltraBold"/>
+                                <Setter Property="Background" Value="Orange"/>
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock
+                            Text="{Binding Name}" 
+                            Style="{DynamicResource NormalTextBlock}">
+                            
+                        </TextBlock>
+                    </HierarchicalDataTemplate>
+
+                </TreeView.ItemTemplate>
+
+            </TreeView>
+
+        </Grid>
+
+        <Grid
+            Grid.Row="1" Grid.Column="2">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Label
+                Grid.Row="0" Grid.Column="0"                             
+                Content="Субъект"
+                Style="{DynamicResource TitleLabel}"               
+                FontFamily="{DynamicResource TitleFontFamily}"/>
+
+            <Label
+                Grid.Row="1" Grid.Column="0"                          
+                Content="{Binding SelectedUnitName}"
+                Style="{DynamicResource InfoLabel}"               
+                FontFamily="{DynamicResource MediumFontFamily}"/>
+
+            <Label
+                Grid.Row="2" Grid.Column="0"                              
+                Content="Разрешения"
+                Style="{DynamicResource TitleLabel}"               
+                FontFamily="{DynamicResource TitleFontFamily}"/>
+            
+            <StackPanel
+                Grid.Row="3" Grid.Column="0"
+                Margin="10 10 10 10"
+                Orientation="Vertical">
+
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="View" IsChecked="{Binding IsViewChecked, Mode=TwoWay}" Margin="10"/>
+                    <CheckBox Content="Edit" IsChecked="{Binding IsEditChecked, Mode=TwoWay}" Margin="10"/>
+                    <CheckBox Content="Create" IsChecked="{Binding IsCreateChecked, Mode=TwoWay}" Margin="10"/>                    
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="Freeze" IsChecked="{Binding IsFreezeChecked, Mode=TwoWay}" Margin="10"/>
+                    <CheckBox Content="Agreement" IsChecked="{Binding IsAgreementChecked, Mode=TwoWay}" Margin="10"/>
+                    <CheckBox Content="Share" IsChecked="{Binding IsShareChecked, Mode=TwoWay}" Margin="10"/>
+                </StackPanel>
+
+            </StackPanel>
+
+            <Label
+                Grid.Row="4" Grid.Column="0"                              
+                Content="Годен до"
+                Style="{DynamicResource TitleLabel}"               
+                FontFamily="{DynamicResource TitleFontFamily}"/>
+
+            <DatePicker 
+                Grid.Row="5" Grid.Column="0"
+                Margin="10 10 10 10"
+                x:Name="ValidThroughDate"
+                 SelectedDate="{Binding SelectedValidThroughDate, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <ComboBox
+                Grid.Row="6" Grid.Column="0"
+                Margin="10 10 10 10"
+                SelectedItem="{Binding SelectedInheritance}"
+                ItemsSource="{Binding InheritanceSource}">
+
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
+            </ComboBox>
+
+            <ComboBox
+                Grid.Row="7" Grid.Column="0"
+                Margin="10 10 10 10"
+                SelectedItem="{Binding SelectedAccessType}"
+                ItemsSource="{Binding AccessTypeSource}">
+
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
+            </ComboBox>
+
+            <Button 
+                Grid.Row="22" Grid.Column="0"
+                Content="СОЗДАТЬ"
+                Style="{DynamicResource DownloadButton}"
+                Command="{Binding CreateButtonClickCommand}"/>
+
+        </Grid>
+
+    </Grid>
+</UserControl>

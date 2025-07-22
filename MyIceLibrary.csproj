@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\RelayCommand.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Helper\FileManager.cs" />
     <Compile Include="Helper\ObjectAccessHelper.cs" />
     <Compile Include="Helper\ObjectCreator.cs" />
@@ -128,8 +129,10 @@
     <Compile Include="Model\FileInfo.cs" />
     <Compile Include="Model\MainInfoValue.cs" />
     <Compile Include="Model\ObjectChild.cs" />
+    <Compile Include="Model\ParentInfo.cs" />
     <Compile Include="Model\PersonInfo.cs" />
     <Compile Include="ViewModel\AccessTransferVM.cs" />
+    <Compile Include="ViewModel\Pages\CreateAccessPageVM.cs" />
     <Compile Include="ViewModel\Pages\PeoplesPageVM.cs" />
     <Compile Include="Model\TreeItem.cs" />
     <Compile Include="Model\TypeInfo.cs" />
@@ -180,6 +183,9 @@
     </Compile>
     <Compile Include="View\Pages\ChildrenPage.xaml.cs">
       <DependentUpon>ChildrenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\CreateAccessPage.xaml.cs">
+      <DependentUpon>CreateAccessPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\CreatorPage.xaml.cs">
       <DependentUpon>CreatorPage.xaml</DependentUpon>
@@ -251,6 +257,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Pages\ChildrenPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\CreateAccessPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

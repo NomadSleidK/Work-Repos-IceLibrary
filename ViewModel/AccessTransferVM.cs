@@ -1,9 +1,11 @@
 ﻿using Ascon.Pilot.SDK;
 using Ascon.Pilot.Theme.Controls;
 using MyIceLibrary.Command;
+using MyIceLibrary.Extensions;
 using MyIceLibrary.Helper;
 using MyIceLibrary.Model;
 using MyIceLibrary.View;
+using MyIceLibrary.View.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +14,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using static MyIceLibrary.ViewModel.Pages.AccessTransferVM;
 
 namespace MyIceLibrary.ViewModel.Pages
 {
@@ -49,6 +50,17 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
+        private ObservableCollection<TreeItem> _treeItems;
+        public ObservableCollection<TreeItem> TreeItems
+        {
+            get => _treeItems;
+            set
+            {
+                _treeItems = value;
+                OnPropertyChanged();
+            }
+        }
+
         private ParentInfo _selectedParent;
         public ParentInfo SelectedParent
         {
@@ -56,16 +68,14 @@ namespace MyIceLibrary.ViewModel.Pages
             set
             {
                 _selectedParent = value;
+
+                CheckOnElementsOnTree(_treeItems[0], false);
+                TreeItems = new ObservableCollection<TreeItem>( _treeItems);
+
                 OnPropertyChanged();
             }
         }
         #endregion
-
-        public class ParentInfo
-        {
-            public string Name { get; set; }
-            public Guid ObjectGuid { get; set; }
-        }
 
         private readonly IObjectsRepository _objectsRepository;
         private readonly DialogWindow _dialogWindow;
@@ -73,6 +83,9 @@ namespace MyIceLibrary.ViewModel.Pages
         private readonly ObjectLoader _objectLoader;
         private readonly IObjectModifier _objectModifier;
         private readonly ObjectAccessHelper _objectAccessHelper;
+
+        private readonly CreateAccessPageVM _createAccessPage;
+
 
         private Guid _currntObjectGuid;
 
@@ -84,45 +97,121 @@ namespace MyIceLibrary.ViewModel.Pages
             _objectLoader = new ObjectLoader(objectsRepository);
             _objectAccessHelper = new ObjectAccessHelper(objectsRepository);
 
+            _createAccessPage = new CreateAccessPageVM(objectsRepository, objectModifier);
+
             _dialogWindow = WindowHelper.CreateWindowWithUserControl<AccessTransferUserControl>();
+
             _dialogWindow.DataContext = this;
+            _dialogWindow.ShowInTaskbar = true;
+            _dialogWindow.Title = "Передать права наверх";
+            _createAccessPage.OnAccessCreated += UpdateAccessItems;
         }
 
-        public ICommand OpenWindowCommand => new RelayCommand<Guid>(OpenWindow);
-        public ICommand ButtonClickCommand => new RelayCommand<object>(_ => Buttoncick());
+        public ICommand OpenWindowCommand => new RelayCommand<Guid>(OpenWindowAsync);
+        public ICommand CopyAccessToParentObjectsCommand => new RelayCommand<object>(_ => CopyAccessToParentObjectsAsync());
+        public ICommand RemoveAccessFromParentObjectsCommand => new RelayCommand<object>(_ => RemoveAccessFromParentObjects());
+        public ICommand OpenAddAccessDialogWindowCommand => new RelayCommand<object>(_ => OpenAddAccessDialogWindow());
 
-        private async void OpenWindow(Guid objectGuid)
+        private async void OpenWindowAsync(Guid objectGuid)
         {
             _dialogWindow.Show();
             _currntObjectGuid = objectGuid;
 
-            //var access = _objectAccessHelper.GetObjectAccess(objectGuid);
+            var dataObject = await _objectLoader.Load(objectGuid);
 
-            ParentObjects = new ObservableCollection<ParentInfo>(await GetParentsAsync(objectGuid));
-            AccessItems = new ObservableCollection<AccessCheckBox>(await LoadObjectAccessInfo(objectGuid));
+            if (objectGuid.IsRoot() && objectGuid.IsEmpty())
+            {
+                var parents = await GetParentsInfoAsync(dataObject.ParentId);
+
+                ParentObjects = new ObservableCollection<ParentInfo>(parents.Reverse());
+                
+                UpdateAccessItems();
+
+                TreeItems = new ObservableCollection<TreeItem>(await CreateParentsTreeAsync(parents.ToArray()));
+            }
+            else
+            {
+                ParentObjects = new ObservableCollection<ParentInfo>(new List<ParentInfo>());
+                TreeItems = new ObservableCollection<TreeItem>(new List<TreeItem>());
+            }
         }
 
+        private async void UpdateAccessItems()
+        {
+            AccessItems = new ObservableCollection<AccessCheckBox>(await LoadObjectAccessInfoAsync(_currntObjectGuid));
+        }
 
+        private void OpenAddAccessDialogWindow()
+        {
+            _createAccessPage.OpenWindowCommand.Execute(_currntObjectGuid);
+        }
 
-        private async Task<IEnumerable<ParentInfo>> GetParentsAsync(Guid objectGuid)
+        private void CheckOnElementsOnTree(TreeItem treeItem, bool objectFind)
+        {
+            try
+            {
+                if (!objectFind)
+                {
+                    treeItem.IsSelected = false;
+                }
+                else
+                {
+                    treeItem.IsSelected = true;
+                }
+
+                if (((ParentInfo) treeItem.DataObject).ObjectGuid == _selectedParent.ObjectGuid && !objectFind)
+                {
+                    objectFind = true;
+                    treeItem.IsSelected = true;
+                }
+
+                if (treeItem.Children != null && treeItem.Children.Count > 0)
+                {
+                    CheckOnElementsOnTree(treeItem.Children[0], objectFind);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private async Task<IEnumerable<ParentInfo>> GetParentsInfoAsync(Guid objectGuid)
         {
             var parentsInfo = new List<ParentInfo>();
 
-            if (objectGuid != new Guid("00000001-0001-0001-0001-000000000001") && objectGuid != Guid.Empty)
+            if (objectGuid.IsRoot() && objectGuid.IsEmpty())
             {
                 var dataObject = await _objectLoader.Load(objectGuid);
 
                 parentsInfo.Add(new ParentInfo() { Name = dataObject.DisplayName, ObjectGuid = dataObject.Id});
                 
-                parentsInfo.AddRange(await GetParentsAsync(dataObject.ParentId));
+                parentsInfo.AddRange(await GetParentsInfoAsync(dataObject.ParentId));
             }
 
             return parentsInfo;
         }
 
+        private async Task<IEnumerable<TreeItem>> CreateParentsTreeAsync(ParentInfo[] parentInfo)
+        {
+            var tree = new List<TreeItem>();
 
+            foreach (var parent in parentInfo)
+            {
+                tree = new List<TreeItem>(){ new TreeItem()
+                {
+                    Name = parent.Name, 
+                    Children = tree,
+                    DataObject = parent,
+                    IsExpanded = true,
+                    IsSelected = false}
+                };
+            }
 
-        private async Task<IEnumerable<AccessCheckBox>> LoadObjectAccessInfo(Guid objectGuid)
+            return tree;
+        }
+
+        private async Task<IEnumerable<AccessCheckBox>> LoadObjectAccessInfoAsync(Guid objectGuid)
         {
             var dataObject = await _objectLoader.Load(objectGuid);
             var accessInfo = await _objectAccessHelper.GetObjectAccess(objectGuid);
@@ -153,17 +242,11 @@ namespace MyIceLibrary.ViewModel.Pages
            return (content);
         }
 
-        private async Task Buttoncick()
+        private async void CopyAccessToParentObjectsAsync()
         {
-            if (SelectedParent == null)
-            {
-                System.Windows.MessageBox.Show("! Выберите объект до которого нужно передать доступ !");
-                return;
-            }
-
             try
             {
-                var parents = ParentObjects.ToList();
+                var parents = GetSelectedParents(TreeItems[0]);
 
                 foreach (var accessRecord in AccessItems)
                 {
@@ -172,9 +255,15 @@ namespace MyIceLibrary.ViewModel.Pages
 
                         foreach (var parent in parents)
                         {
-                            await AddAccessToObject(accessRecord.AccessRecord, parent.ObjectGuid);
-                        }
+                            var unitFind = await IsObjectHasOrgUnitIdAsync(accessRecord.AccessRecord.OrgUnitId, parent.ObjectGuid);
 
+                            if (unitFind.unitFind)
+                            {
+                                await RemoveAccessRecordByOrgUnitIdAsync(accessRecord.AccessRecord, parent.ObjectGuid);
+                            }
+
+                            await AddAccessToObjectAsync(accessRecord.AccessRecord, parent.ObjectGuid);
+                        }
                     }
                 }
             }
@@ -188,17 +277,131 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        private async Task AddAccessToObject(IAccessRecord accessRecord, Guid targetObject)
+        private IEnumerable<ParentInfo> GetSelectedParents(TreeItem treeItem)
+        {
+            var parents = new List<ParentInfo>();
+
+            if (treeItem.IsSelected)
+            {
+                parents.Add((ParentInfo)treeItem.DataObject);
+            }
+
+            if (treeItem.Children != null && treeItem.Children.Count > 0)
+            {
+                parents.AddRange(GetSelectedParents(treeItem.Children[0]));
+            }
+
+            return parents;
+        }
+
+        private async Task AddAccessToObjectAsync(IAccessRecord accessRecord, Guid targetObject)
         {
             var objectInfo = await _objectLoader.Load(targetObject);
 
-            var builder = _objectModifier.EditById(objectInfo.ParentId);
+            var builder = _objectModifier.EditById(objectInfo.Id);
 
-            builder.AddAccessRecords(accessRecord.OrgUnitId, accessRecord.Access.AccessLevel,
-                accessRecord.Access.ValidThrough, accessRecord.Access.Inheritance,
-                accessRecord.Access.Type, accessRecord.Access.TypeIds);
+            builder.AddAccessRecords(
+                accessRecord.OrgUnitId, 
+                accessRecord.Access.AccessLevel,
+                accessRecord.Access.ValidThrough, 
+                accessRecord.Access.Inheritance,
+                accessRecord.Access.Type, 
+                accessRecord.Access.TypeIds);
 
             _objectModifier.Apply();
+        }
+   
+        private async void RemoveAccessFromParentObjects()
+        {
+            foreach (var accessRecord in AccessItems)
+            {
+                if (accessRecord.IsSelected)
+                {
+                    await RemoveAccessRecordByOrgUnitIdAsync(accessRecord.AccessRecord, _currntObjectGuid);
+                }
+            }
+
+            await RemoveAccessByAccessLevelAsync();
+
+            AccessItems = new ObservableCollection<AccessCheckBox>(await LoadObjectAccessInfoAsync(_currntObjectGuid));
+        }
+
+        private async Task RemoveAccessByAccessLevelAsync()
+        {
+            try
+            {
+                var parents = GetSelectedParents(TreeItems[0]);
+
+                foreach (var accessRecord in AccessItems)
+                {
+                    if (accessRecord.IsSelected)
+                    {
+                        foreach (var parent in parents)
+                        {
+                            var findUnit = await IsObjectHasOrgUnitIdAsync(accessRecord.AccessRecord.OrgUnitId, parent.ObjectGuid);
+
+                            if (findUnit.unitFind &&
+                                accessRecord.AccessRecord.Access.AccessLevel == findUnit.unitAccessRecord.Access.AccessLevel)
+                            {
+                                await RemoveAccessRecordByOrgUnitIdAsync(accessRecord.AccessRecord, parent.ObjectGuid);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Ошиюка: {ex}");
+            }
+            finally
+            {
+                System.Windows.MessageBox.Show($"Права успешно удалены");
+            }
+        }
+
+        private async Task RemoveAccessRecordByOrgUnitIdAsync(IAccessRecord accessRecord, Guid targetObject)
+        {
+            var objectInfo = await _objectLoader.Load(targetObject);
+
+            var builder = _objectModifier.EditById(objectInfo.Id);
+
+            builder.RemoveAccessRecords(x => RemoveAccessRecordFunc(x, accessRecord.OrgUnitId));
+
+            _objectModifier.Apply();
+        }
+
+        private bool RemoveAccessRecordFunc(IAccessRecord accessRecord, int targetOrgUnitId)
+        {
+            bool result = false;
+
+            if (accessRecord.OrgUnitId == targetOrgUnitId)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        private async Task<(bool unitFind, IAccessRecord unitAccessRecord)> IsObjectHasOrgUnitIdAsync(int orgUnitId, Guid objectGuid)
+        {
+            var dataObject = await _objectLoader.Load(objectGuid);
+            var accessRecords = dataObject.Access2;
+
+            bool unitFind = false;
+            IAccessRecord accessRecord = null;
+
+            foreach ( var record in accessRecords)
+            {
+                if (record.OrgUnitId == orgUnitId)
+                {
+                    unitFind = true;
+                    accessRecord = record;
+
+                    break;
+                }
+            }
+
+            return (unitFind, accessRecord);
         }
     }
 }

@@ -6,6 +6,7 @@
              xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
              xmlns:local="clr-namespace:MyIceLibrary.View.Pages"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:pages="clr-namespace:MyIceLibrary.View.Pages"          
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -25,26 +26,20 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
 
         </Grid.ColumnDefinitions>
 
-        
         <Grid Grid.Row="0" Grid.Column="0">
-            
-            
-        </Grid>
-        
-        
-        <Grid Grid.Row="0" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <ComboBox Grid.Row="0" Grid.Column="0"
+            <ComboBox
+                Grid.Row="0" Grid.Column="0"
+                Margin="10"
                 SelectedItem="{Binding SelectedParent}"
                 ItemsSource="{Binding ParentObjects}">
 
@@ -53,26 +48,95 @@
                         <TextBlock Text="{Binding Name}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
-                
+
             </ComboBox>
+
+            <TreeView
+                Grid.Row="1" Grid.Column="0"
+                x:Name="MyTreeView"
+                Margin="10"
+                ItemsSource="{Binding TreeItems}">
+
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal">
+                            
+                            <CheckBox 
+                                IsChecked="{Binding IsSelected, Mode=TwoWay}" 
+                                VerticalAlignment="Center"
+                                Margin="0,0,5,0"/>
+                            
+                            <TextBlock 
+                                Text="{Binding Name}" 
+                                       
+                           VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+
+            <TextBlock Text="Нет элементов для передачи прав"
+                Grid.Row="1" Grid.Column="0"    
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontStyle="Italic"
+                Foreground="Gray">
+                
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=MyTreeView}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
             <Button 
                 Grid.Row="2" Grid.Column="0"
                 Content="Скопировать"
+                Style="{DynamicResource DownloadButton}"
+                Command="{Binding CopyAccessToParentObjectsCommand}"/>
+
+            <Button 
+                Grid.Row="3" Grid.Column="0"
+                Content="Удалить"
                 Style="{DynamicResource DeleteButton}"
-                Command="{Binding ButtonClickCommand}"/>
+                Command="{Binding RemoveAccessFromParentObjectsCommand}"/>  
 
         </Grid>
 
 
-        <Grid Grid.Row="0" Grid.Column="4">
+        <Grid Grid.Row="0" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
 
-            <ListView ItemsSource="{Binding AccessItems}">
+            <Label 
+                Grid.Row="0" Grid.Column="0"         
+                Content="ДОСТУПЫ"
+                Style="{DynamicResource InfoLabel}"/>
+
+            <ListView ItemsSource="{Binding AccessItems}"
+                Grid.Row="1" Grid.Column="0"
+                Margin="10">
+
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="5">
-                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" 
-                          VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"               
+                                VerticalAlignment="Center" Margin="0,0,10,0"/>
 
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
@@ -82,6 +146,12 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+
+            <Button 
+                Grid.Row="2" Grid.Column="0"
+                Content="Создать доступ"
+                Style="{DynamicResource DownloadButton}"
+                Command="{Binding OpenAddAccessDialogWindowCommand}"/>
 
         </Grid>
 

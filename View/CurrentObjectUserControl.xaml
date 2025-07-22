@@ -68,20 +68,6 @@
                             Style="{DynamicResource TitleLabel}"               
                             FontFamily="{DynamicResource TitleFontFamily}"/>
 
-                        <!--<Label
-                            x:Name="ParentNameLabel"
-                            Grid.Row="3" Grid.Column="0"
-                            Style="{DynamicResource LinkLabel}"
-                            
-                            Visibility="{Binding ParentLabelVisibility}"
-                            Content="{Binding ParentObjectName}">
-
-                            <Label.InputBindings>
-                                <MouseBinding MouseAction="LeftClick" Command="{Binding GoToParentCommand}"/>
-                            </Label.InputBindings>
-
-                        </Label>-->
-
                         <TextBlock
                             x:Name="TextBlockLink"
                             Grid.Row="3" Grid.Column="0"

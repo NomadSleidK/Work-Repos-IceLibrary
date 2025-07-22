@@ -67,7 +67,7 @@ namespace MyIceLibrary.ViewModel.Pages
         private void LoadAccessTree()
         {
             _originalTree = _treeBuilder.CreateOrganisationUnitTreeTopToButtomAsync();
-            TreeItems = new ObservableCollection<TreeItem>(_originalTree.DeepCopy()); ;
+            TreeItems = new ObservableCollection<TreeItem>(_originalTree);
         }
 
         private async void FilteredBoxExecuteEnter(string parameter)
