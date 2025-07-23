@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 
 namespace MyIceLibrary.ViewModel.Pages
 {
@@ -22,13 +21,13 @@ namespace MyIceLibrary.ViewModel.Pages
         }
         #endregion
 
-        private ObservableCollection<TypeInfo> _typesinfo;
+        private ObservableCollection<TypeInfo> _typesInfo;
         public ObservableCollection<TypeInfo> TypesInfo
         {
-            get => _typesinfo;
+            get => _typesInfo;
             set
             {
-                _typesinfo = value;
+                _typesInfo = value;
                 OnPropertyChanged();
             }
         }

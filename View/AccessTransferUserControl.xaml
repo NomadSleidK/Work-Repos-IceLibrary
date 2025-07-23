@@ -102,7 +102,6 @@
                             
                             <CheckBox 
                                 IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                Command="{Binding DataContext.UpdateCopeDeleteButtonsEnabledCommand, RelativeSource={RelativeSource AncestorType=TreeView}}"
                                 VerticalAlignment="Center"
                                 Margin="0,0,5,0"/>
                             
@@ -134,7 +133,6 @@
             <Button 
                 Grid.Row="2" Grid.Column="0"
                 Content="Скопировать доступы на выбранные элементы"
-                IsEnabled="{Binding CopyButtonEnabled}"
                 Style="{DynamicResource DownloadButton}"
                 Command="{Binding CopyAccessToParentObjectsCommand}"/>
 
@@ -142,12 +140,11 @@
                 Grid.Row="3" Grid.Column="0"
                 Margin="10 10 10 5"
                 Orientation="Horizontal">
-                
+
                 <CheckBox
                     VerticalAlignment="Center"
                     Margin="10 0 5 0"
-                    IsChecked="{Binding DeleteAccessOnCurrentObject, Mode=TwoWay}"
-                    Command="{Binding UpdateCopeDeleteButtonsEnabledCommand}"/>
+                    IsChecked="{Binding DeleteAccessOnCurrentObject, Mode=TwoWay}"/>
                 <TextBlock    
                     Text="Удалить доступ(ы) на текщем объекте"
                     Style="{StaticResource DescriptionTextBlock }"/>
@@ -157,9 +154,8 @@
             <Button 
                 Grid.Row="4" Grid.Column="0"
                 Content="Удалить доступы с выбранных элементов"
-                IsEnabled="{Binding DeleteButtonEnabled}"
                 Style="{DynamicResource DeleteButton}"
-                Command="{Binding RemoveAccessFromParentObjectsCommand}"/>  
+                Command="{Binding RemoveAccessFromObjectsCommand}"/>  
 
         </Grid>
 
@@ -191,7 +187,6 @@
                         <StackPanel Orientation="Horizontal" Margin="5">
                             <CheckBox
                                 IsChecked="{Binding IsSelected, Mode=TwoWay}" 
-                                Command="{Binding DataContext.UpdateCopeDeleteButtonsEnabledCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
                                 VerticalAlignment="Center" Margin="0,0,10,0"/>
 
                             <StackPanel>

@@ -30,106 +30,109 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBox 
-            Grid.Row="0" Grid.Column="0"
-            x:Name="SearchTextBox"
-            Style="{DynamicResource SearchTextBox}">
-            
-            <TextBox.InputBindings>
-                <KeyBinding Key="Enter"
-                    Command="{Binding FilteredBoxExecuteEnterCommand}"
-                    CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>       
-            </TextBox.InputBindings>
-        </TextBox>
-
-        <TextBlock
-            Grid.Row="0" Grid.Column="0"
-            Text="Поиск...">
-
-            <TextBlock.Style>
-                <Style TargetType="TextBlock" BasedOn="{StaticResource SearchMessage}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
-
-        <TreeView
-            x:Name="MainTreeView"
-            Grid.Row="1" Grid.Column="0"
-            Style="{DynamicResource NormalTreeView}"
-            ItemsSource="{Binding TreeItems}">
-
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectedItemChanged">
-                    <i:InvokeCommandAction Command="{Binding LoadObjectInfoCommand}" 
-                    CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="TreeViewItem">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="true">
-                            <Setter Property="FontWeight" Value="UltraBold"/>
-                            <Setter Property="Background" Value="Orange"/>
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                </Style>
-
-            </TreeView.ItemContainerStyle>
-
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <TextBlock
-                        Text="{Binding Name}" 
-                        Style="{DynamicResource NormalTextBlock}">
-
-                    </TextBlock>
-                </HierarchicalDataTemplate>
-
-            </TreeView.ItemTemplate>
-
-        </TreeView>
-
-        <TextBlock
-            Grid.Row="1" Grid.Column="0"                   
-            Text="Нет снапшотов">
-
-            <TextBlock.Style>
-                <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Items.Count, ElementName=MainTreeView}" Value="0">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
-
-        <Grid Grid.Row="2" Grid.Column="0">
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Text="Снапшоты. Выберите объект чтобы узнать о нем подробней"
+                Grid.Row="0" Grid.Column="0"
+                Style="{StaticResource MediumTitleInfoTextBlock}"/>
+
+            <TextBox 
+                Grid.Row="1" Grid.Column="0"
+                x:Name="SearchTextBox"
+                Style="{DynamicResource SearchTextBox}">
+            
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter"
+                        Command="{Binding FilteredBoxExecuteEnterCommand}"
+                        CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>       
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <TextBlock
+                Grid.Row="1" Grid.Column="0"
+                Text="Поиск...">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource SearchMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TreeView
+                x:Name="MainTreeView"
+                Grid.Row="2" Grid.Column="0"
+                Style="{DynamicResource NormalTreeView}"
+                ItemsSource="{Binding TreeItems}">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding LoadObjectInfoCommand}" 
+                        CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=TreeView}}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                                <Setter Property="FontWeight" Value="UltraBold"/>
+                                <Setter Property="Background" Value="Orange"/>
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                    </Style>
+
+                </TreeView.ItemContainerStyle>
+
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock
+                            Text="{Binding Name}" 
+                            Style="{DynamicResource NormalTextBlock}">
+
+                        </TextBlock>
+                    </HierarchicalDataTemplate>
+
+                </TreeView.ItemTemplate>
+
+            </TreeView>
+
+            <TextBlock
+                Grid.Row="2" Grid.Column="0"                   
+                Text="Нет снапшотов">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=MainTreeView}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
             <Button
-                Grid.Row="0" Grid.Column="0" 
+                Grid.Row="3" Grid.Column="0" 
                 Content="СКАЧАТЬ ВЫБРАННЫй ФАЙЛЫ"
                 Style="{DynamicResource DownloadButton}"
                 Command="{Binding DownloadFilesCommand}"
                 CommandParameter="{Binding SelectedItem, ElementName=MainTreeView}"/>
-
         </Grid>
 
         <GridSplitter Grid.Row="1" Grid.Column="1"
@@ -138,34 +141,42 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"/>
 
-        <Label
-            Content="ИНФОРМАЦИЯ Об ОБЪЕКТЕ"
-            Grid.Row="0" Grid.Column="2"
-            Style="{DynamicResource TitleLabel}"/>
-        
-        <DataGrid
-            x:Name="FilesDataGrid"
-            Grid.Row="1" Grid.Column="2" 
-            Style="{DynamicResource NormalDataGrid}"
-            ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <TextBlock
+                Text="Информация об объекте"
+                Grid.Row="0" Grid.Column="0"
+                Style="{StaticResource MediumTitleInfoTextBlock}"/>
+
+            <DataGrid
+                x:Name="FilesDataGrid"
+                Grid.Row="1" Grid.Column="0" 
+                Style="{DynamicResource NormalDataGrid}"
+                ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
     
-            ItemsSource="{Binding SelectedObjectInfo}"/>
+                ItemsSource="{Binding SelectedObjectInfo}"/>
 
-        <TextBlock
-            Grid.Row="1" Grid.Column="2"                   
-            Text="Снапшот не выбран">
+            <TextBlock
+                Grid.Row="1" Grid.Column="0"                   
+                Text="Снапшот не выбран">
 
-            <TextBlock.Style>
-                <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Items.Count, ElementName=FilesDataGrid}" Value="0">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=FilesDataGrid}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+        </Grid>
 
     </Grid>
 </UserControl>

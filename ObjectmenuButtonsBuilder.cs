@@ -31,8 +31,6 @@ namespace MyIceLibrary
         private readonly IPilotDialogService _pilotDialogService;
         private readonly IFileProvider _fileProvider;
 
-        private MainMenuDataGridVM _mainMenuDataGridVM;
-
         #region IMenu <ObjectsViewContext>
 
         [ImportingConstructor]
@@ -63,19 +61,10 @@ namespace MyIceLibrary
         {
             try
             {
-                if (name == INFO_BUTTON_NAME)
+                if (name == INFO_BUTTON_NAME && context.SelectedObjects.ToArray().Length > 0)
                 {
-                    if (context.SelectedObjects.ToArray().Length > 1)
-                    {
-                        _mainMenuDataGridVM = new MainMenuDataGridVM(_objectModifier, _objectsRepository, _pilotDialogService, _fileProvider);
-                        _mainMenuDataGridVM.OpenFormCommand.Execute(context.SelectedObjects.ToArray());
-                    }
-                    else if (context.SelectedObjects.ToArray().Length == 1)
-                    {
-                        CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectModifier, _objectsRepository, _fileProvider);
-                        currentObjectFormVM.OpenCommand.Execute(context.SelectedObjects.ToArray()[0]);
-                    }
-                    
+                    CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_objectModifier, _objectsRepository, _fileProvider);
+                    currentObjectFormVM.OpenCommand.Execute(context.SelectedObjects.ToArray()[0]);
                 }
                 else if (name == COPY_BUTTON_NAME)
                 {

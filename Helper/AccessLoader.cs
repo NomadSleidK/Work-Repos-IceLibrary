@@ -3,7 +3,6 @@ using MyIceLibrary.Extensions;
 using MyIceLibrary.Model;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace MyIceLibrary.Helper
@@ -56,17 +55,83 @@ namespace MyIceLibrary.Helper
             return result;
         }
 
-        public struct ObjectAccess
-        {
-            public ReadOnlyCollection<IAccessRecord> AccessRecord { get; set; }
-            public bool IsSecret { get; set; }
-        }
-
         public async Task<IEnumerable<IAccessRecord>> GetObjectAccess(Guid currentObjectGuid)
         {
             var access = await GetAccessFromAllObjectsAsync(currentObjectGuid);
 
             return await GetAccessForCurrentObject(new Stack<ObjectAccess>(access));
+        }
+
+        public AccessLevelInfo ConvertAccessRecordToAccessLevelInfo(IAccessRecord currentAccessRecord)
+        {
+            var organizationUnit = _objectsRepository.GetOrganisationUnit(currentAccessRecord.OrgUnitId);
+            var accessInfo = new AccessLevelInfo()
+            {
+                PersonName = organizationUnit.Title,
+                None = false,
+                Create = false,
+                Edit = false,
+                View = false,
+                Freeze = false,
+                Agreement = false,
+                Share = false,
+                ViewCreate = false,
+                ViewEdit = false,
+                ViewEditAgrement = false,
+                Full = false
+            };
+
+            if (organizationUnit.Kind() == OrganizationUnitKind.Position && organizationUnit.Person() != -1)
+            {
+                accessInfo.PersonName = _objectsRepository.GetPerson(organizationUnit.Person()).DisplayName;
+            }
+
+            AccessLevel level = currentAccessRecord.Access.AccessLevel;
+
+            foreach (AccessLevel value in Enum.GetValues(typeof(AccessLevel)))
+            {
+                if (value != AccessLevel.None && (level & value) == value)
+                {
+                    switch (value)
+                    {
+                        case AccessLevel.None:
+                            accessInfo.None = true;
+                            break;
+                        case AccessLevel.Create:
+                            accessInfo.Create = true;
+                            break;
+                        case AccessLevel.Edit:
+                            accessInfo.Edit = true;
+                            break;
+                        case AccessLevel.View:
+                            accessInfo.View = true;
+                            break;
+                        case AccessLevel.Freeze:
+                            accessInfo.Freeze = true;
+                            break;
+                        case AccessLevel.Agreement:
+                            accessInfo.Agreement = true;
+                            break;
+                        case AccessLevel.Share:
+                            accessInfo.Share = true;
+                            break;
+                        case AccessLevel.ViewCreate:
+                            accessInfo.ViewCreate = true;
+                            break;
+                        case AccessLevel.ViewEdit:
+                            accessInfo.ViewEdit = true;
+                            break;
+                        case AccessLevel.ViewEditAgrement:
+                            accessInfo.ViewEditAgrement = true;
+                            break;
+                        case AccessLevel.Full:
+                            accessInfo.Full = true;
+                            break;
+                    }
+                }
+            }
+
+            return accessInfo;
         }
 
         private async Task<IEnumerable<IAccessRecord>> GetAccessForCurrentObject(Stack<ObjectAccess> accessStack)
@@ -144,78 +209,6 @@ namespace MyIceLibrary.Helper
             }
 
             return accessInheritance;
-        }
-
-        public AccessLevelInfo ConvertAccessRecordToAccessLevelInfo(IAccessRecord currentAccessRecord)
-        {
-            var organizationUnit = _objectsRepository.GetOrganisationUnit(currentAccessRecord.OrgUnitId);
-            var accessInfo = new AccessLevelInfo()
-            {
-                PersonName = organizationUnit.Title,
-                None = false,
-                Create = false,
-                Edit = false,
-                View = false,
-                Freeze = false,
-                Agreement = false,
-                Share = false,
-                ViewCreate = false,
-                ViewEdit = false,
-                ViewEditAgrement = false,
-                Full = false
-            };
-
-            if (organizationUnit.Kind() == OrganizationUnitKind.Position && organizationUnit.Person() != -1)
-            {
-                accessInfo.PersonName = _objectsRepository.GetPerson(organizationUnit.Person()).DisplayName;
-            }
-
-            AccessLevel level = currentAccessRecord.Access.AccessLevel;
-
-            foreach (AccessLevel value in Enum.GetValues(typeof(AccessLevel)))
-            {
-                if (value != AccessLevel.None && (level & value) == value)
-                {
-                    switch (value)
-                    {
-                        case AccessLevel.None:
-                            accessInfo.None = true;
-                            break;
-                        case AccessLevel.Create:
-                            accessInfo.Create = true;
-                            break;
-                        case AccessLevel.Edit:
-                            accessInfo.Edit = true;
-                            break;
-                        case AccessLevel.View:
-                            accessInfo.View = true;
-                            break;
-                        case AccessLevel.Freeze:
-                            accessInfo.Freeze = true;
-                            break;
-                        case AccessLevel.Agreement:
-                            accessInfo.Agreement = true;
-                            break;
-                        case AccessLevel.Share:
-                            accessInfo.Share = true;
-                            break;
-                        case AccessLevel.ViewCreate:
-                            accessInfo.ViewCreate = true;
-                            break;
-                        case AccessLevel.ViewEdit:
-                            accessInfo.ViewEdit = true;
-                            break;
-                        case AccessLevel.ViewEditAgrement:
-                            accessInfo.ViewEditAgrement = true;
-                            break;
-                        case AccessLevel.Full:
-                            accessInfo.Full = true;
-                            break;
-                    }
-                }
-            }
-
-            return accessInfo;
         }
     }
 }

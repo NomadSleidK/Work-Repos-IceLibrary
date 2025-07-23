@@ -139,7 +139,7 @@ namespace MyIceLibrary.ViewModel
         private void UpdateWindow()
         {
             CurrentObjectMainInfoPageVM.LoadMainInfoCommand.Execute(_dataObject);
-            SelectedObjectInfoTabControlVM.UpdateInfoCommand.Execute(_dataObject);
+            SelectedObjectInfoTabControlVM.UpdateInfoCommand.Execute(_dataObject.Id);
             SelectedObjectPathObjectTreePageVM.LoadPageCommand.Execute(_dataObject.Id);
             SelectedObjectSnapshotsPageVM.LoadFilesInfoCommand.Execute(_dataObject.Id);
 

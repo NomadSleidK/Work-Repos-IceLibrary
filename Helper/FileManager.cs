@@ -1,6 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,7 +19,6 @@ namespace MyIceLibrary.Helper
             _fileProvider = fileProvider;
         }
 
-
         public void DeleteFiles(Guid[] guids, Guid objectGuid)
         {
             foreach (var fileGuid in guids)
@@ -35,7 +33,6 @@ namespace MyIceLibrary.Helper
         {
             if (guids.Length > 0)
             {
-                //var filesInfo = selectedItems?.Cast<Model.FileInfo>().ToList();
                 var files = new List<IFile>();
 
                 var snapshots = (await _objectLoader.Load(objectGuid)).PreviousFileSnapshots;

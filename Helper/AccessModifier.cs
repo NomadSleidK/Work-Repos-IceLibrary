@@ -39,24 +39,28 @@ namespace MyIceLibrary.Helper
             _objectModifier.Apply();
         }
 
-        public async Task RemoveAccessFromParentObjectsAsync(AccessCheckBox[] accessItems, ParentInfo[] parents,
-            Guid currentObjectGuid, bool deleteAccessInCurrentObject)
+        public async Task RemoveAccessFromObjectAsync(AccessCheckBox[] accessItems, Guid currentObjectGuid)
+        {
+            foreach (var accessRecord in accessItems)
+            {
+                if (accessRecord.IsSelected)
+                {
+                    await RemoveAccessRecordByOrgUnitIdAsync(accessRecord.AccessRecord, currentObjectGuid);
+                }
+            }
+        }
+
+        public async Task RemoveAccessFromParentObjectsAsync(AccessCheckBox[] accessItems, ParentInfo[] parents, Guid currentObjectGuid, bool deleteAccessInCurrentObject)
         {
             if (deleteAccessInCurrentObject)
             {
-                foreach (var accessRecord in accessItems)
-                {
-                    if (accessRecord.IsSelected)
-                    {
-                        await RemoveAccessRecordByOrgUnitIdAsync(accessRecord.AccessRecord, currentObjectGuid);
-                    }
-                }
+                await RemoveAccessFromObjectAsync(accessItems, currentObjectGuid);
             }    
 
-            await RemoveAccessByAccessLevelAsync(accessItems, parents);
+            await RemoveAccessOnParentAsync(accessItems, parents);
         }
 
-        private async Task RemoveAccessByAccessLevelAsync(AccessCheckBox[] accessItems, ParentInfo[] parents)
+        private async Task RemoveAccessOnParentAsync(AccessCheckBox[] accessItems, ParentInfo[] parents)
         {
             try
             {

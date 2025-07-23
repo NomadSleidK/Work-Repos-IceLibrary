@@ -1,7 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
-using Ascon.Pilot.Theme.Controls;
 using MyIceLibrary.Command;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

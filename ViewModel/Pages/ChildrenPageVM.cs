@@ -1,7 +1,6 @@
 ﻿using Ascon.Pilot.SDK;
 using MyIceLibrary.Command;
 using MyIceLibrary.Model;
-using SixLabors.ImageSharp.ColorSpaces;
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -36,7 +35,6 @@ namespace MyIceLibrary.ViewModel.Pages
         }
         #endregion
 
-        private readonly IObjectsRepository _objectsRepository;
         private readonly IObjectModifier _modifier;
         private readonly ObjectLoader _objectLoader;
 
@@ -46,11 +44,10 @@ namespace MyIceLibrary.ViewModel.Pages
         {
             _objectLoader = new ObjectLoader(objectsRepository);
             _modifier = modifier;
-            _objectsRepository = objectsRepository;
         }
 
         public ICommand LoadChildrenCommand => new RelayCommand<Guid>(LoadChildren);
-        public ICommand DeleteSelectedCommand => new RelayCommand<IList>(DeleteSelectedItems);
+        public ICommand DeleteSelectedCommand => new RelayCommand<IList>(DeleteSelectedItems, o => o != null && o.Count > 0);
 
         private async void LoadChildren(Guid dataObjectId)
         {

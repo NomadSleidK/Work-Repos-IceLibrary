@@ -101,6 +101,7 @@
 
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem">
+
                         <Style.Triggers>
 
                             <DataTrigger Binding="{Binding IsSelected}" Value="true">
@@ -186,41 +187,35 @@
                     <CheckBox
                         Content="Просмотр"
                         IsChecked="{Binding IsViewChecked, Mode=TwoWay}"
-                        Command="{Binding UpdateCreateButtonEnabledCommand}"
-                        Margin="10"/>
+                        Margin="5 3 5 3"/>
                     
                     <CheckBox
                         Content="Редактирование атрибутов и файлов"
                         IsChecked="{Binding IsEditChecked, Mode=TwoWay}"
-                        Command="{Binding UpdateCreateButtonEnabledCommand}"
-                        Margin="10"/>
-                    
+                        Margin="5 3 5 3"/>
+
                     <CheckBox
                         Content="Создание"
                         IsChecked="{Binding IsCreateChecked, Mode=TwoWay}"
-                        Command="{Binding UpdateCreateButtonEnabledCommand}"
-                        Margin="10"/>   
-                    
+                        Margin="5 3 5 3"/>
+
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <CheckBox
                         Content="Заморозка"
                         IsChecked="{Binding IsFreezeChecked, Mode=TwoWay}"
-                        Command="{Binding UpdateCreateButtonEnabledCommand}"
-                        Margin="10"/>
-                    
+                        Margin="5 3 5 3"/>
+
                     <CheckBox
                         Content="Согласование"
                         IsChecked="{Binding IsAgreementChecked, Mode=TwoWay}"
-                        Command="{Binding UpdateCreateButtonEnabledCommand}"
-                        Margin="10"/>
-                    
+                        Margin="5 3 5 3"/>
+
                     <CheckBox
                         Content="Делегирование прав доступа"
                         IsChecked="{Binding IsShareChecked, Mode=TwoWay}"
-                        Command="{Binding UpdateCreateButtonEnabledCommand}"
-                        Margin="10"/>
+                        Margin="5 3 5 3"/>
                 </StackPanel>
 
             </StackPanel>
@@ -234,7 +229,7 @@
                 Grid.Row="5" Grid.Column="0"
                 Margin="10 0 10 0"
                 x:Name="ValidThroughDate"
-                 SelectedDate="{Binding SelectedValidThroughDate, UpdateSourceTrigger=PropertyChanged}"/>
+                SelectedDate="{Binding SelectedValidThroughDate, UpdateSourceTrigger=PropertyChanged}"/>
 
             <TextBlock
                 Grid.Row="6" Grid.Column="0"                              
@@ -279,7 +274,6 @@
                 Grid.Row="11" Grid.Column="0"
                 Content="Создать доступ"
                 Style="{DynamicResource DownloadButton}"
-                IsEnabled="{Binding CreateButtonEnabled}"
                 Command="{Binding CreateButtonClickCommand}"/>
 
         </Grid>

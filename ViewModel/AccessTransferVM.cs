@@ -35,7 +35,6 @@ namespace MyIceLibrary.ViewModel.Pages
             {
                 _accessItems = value;
 
-                UpdateButtonsEnabled();
                 OnPropertyChanged();
             }
         }
@@ -73,31 +72,6 @@ namespace MyIceLibrary.ViewModel.Pages
                 CheckOnElementsOnTree(_treeItems[0], false);
                 TreeItems = new ObservableCollection<TreeItem>( _treeItems);
 
-                UpdateButtonsEnabled();
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _copyButtonEnabled;
-        public bool CopyButtonEnabled
-        {
-            get => _copyButtonEnabled;
-            set
-            {
-                _copyButtonEnabled = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _deleteButtonEnabled;
-        public bool DeleteButtonEnabled
-        {
-            get => _deleteButtonEnabled;
-            set
-            {
-                _deleteButtonEnabled = value;
-
                 OnPropertyChanged();
             }
         }
@@ -116,7 +90,6 @@ namespace MyIceLibrary.ViewModel.Pages
         #endregion
 
         private readonly IObjectsRepository _objectsRepository;
-        private readonly IObjectModifier _objectModifier;
 
         private readonly ObjectLoader _objectLoader;
         private readonly AccessLoader _accessLoader;
@@ -131,7 +104,6 @@ namespace MyIceLibrary.ViewModel.Pages
         public AccessTransferVM(IObjectsRepository objectsRepository, IObjectModifier objectModifier)
         {
             _objectsRepository = objectsRepository;
-            _objectModifier = objectModifier;
 
             _objectLoader = new ObjectLoader(objectsRepository);
             _accessLoader = new AccessLoader(objectsRepository);
@@ -141,13 +113,12 @@ namespace MyIceLibrary.ViewModel.Pages
             _createAccessPage.OnAccessCreated += UpdateAccessItems;
         }
 
-        public ICommand OpenWindowCommand => new RelayCommand<Guid>(OpenWindowAsync);
-        public ICommand CopyAccessToParentObjectsCommand => new RelayCommand<object>(_ => CopyAccessToParentObjectsAsync());
-        public ICommand RemoveAccessFromParentObjectsCommand => new RelayCommand<object>(_ => RemoveAccessFromParentObjectsAsync());
+        public ICommand OpenWindowCommand => new RelayCommand<Guid>(OpenWindow);
+        public ICommand CopyAccessToParentObjectsCommand => new RelayCommand<object>(_ => CopyAccessToParentObjectsAsync(), o => HasSelectedParent() && HasAnySelectedAccess());
+        public ICommand RemoveAccessFromObjectsCommand => new RelayCommand<object>(_ => RemoveAccessFromObjectsAsync(), o => (HasSelectedParent() && HasAnySelectedAccess()) || (DeleteAccessOnCurrentObject && HasAnySelectedAccess()));
         public ICommand OpenAddAccessDialogWindowCommand => new RelayCommand<object>(_ => OpenAddAccessDialogWindow());
-        public ICommand UpdateCopeDeleteButtonsEnabledCommand => new RelayCommand<object>(_ => UpdateButtonsEnabled());
 
-        private async void OpenWindowAsync(Guid objectGuid)
+        private async void OpenWindow(Guid objectGuid)
         {
             _dialogWindow = WindowHelper.CreateWindowWithUserControl<AccessTransferUserControl>(this, true, "Передать права наверх");
             _dialogWindow.Show();
@@ -178,10 +149,9 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        private void UpdateButtonsEnabled()
-        {
-            bool hasSelectedParent = (_treeItems.Count > 0)? GetSelectedParents(TreeItems[0]).ToArray().Length > 0 : false;
 
+        private bool HasAnySelectedAccess()
+        {
             bool hasAnySelectedAccess = false;
 
             foreach (var access in AccessItems)
@@ -193,8 +163,12 @@ namespace MyIceLibrary.ViewModel.Pages
                 }
             }
 
-            DeleteButtonEnabled = (hasSelectedParent && hasAnySelectedAccess) || (DeleteAccessOnCurrentObject && hasAnySelectedAccess);
-            CopyButtonEnabled = hasSelectedParent && hasAnySelectedAccess;
+            return hasAnySelectedAccess;
+        }
+
+        private bool HasSelectedParent()
+        {
+            return (_treeItems != null && _treeItems.Count > 0) ? GetSelectedParents(TreeItems[0]).ToArray().Length > 0 : false;
         }
 
         private async void UpdateAccessItems()
@@ -356,17 +330,25 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        private async void RemoveAccessFromParentObjectsAsync()
+        private async void RemoveAccessFromObjectsAsync()
         {
-            var selectedParents = GetSelectedParents(TreeItems[0]);
+            if (TreeItems != null && TreeItems.Count > 0)
+            {
+                var selectedParents = GetSelectedParents(TreeItems[0]);
 
-            await _accessModifier.RemoveAccessFromParentObjectsAsync(
-                AccessItems.ToArray(), 
-                selectedParents.ToArray(), 
-                _currentObjectGuid, 
-                DeleteAccessOnCurrentObject);
-            
+                await _accessModifier.RemoveAccessFromParentObjectsAsync(
+                    AccessItems.ToArray(),
+                    selectedParents.ToArray(),
+                    _currentObjectGuid,
+                    DeleteAccessOnCurrentObject);
+            }
+            else
+            {
+                await _accessModifier.RemoveAccessFromObjectAsync(AccessItems.ToArray(), _currentObjectGuid);
+            }
+
             UpdateAccessItems();
+
         }
         #endregion
     }

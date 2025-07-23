@@ -17,7 +17,7 @@ namespace MyIceLibrary.Helper
             _objectsRepository = objectsRepository;
         }
 
-        public async Task<ObservableCollection<TreeItem>> CreateObjectTreeButtonToTopAsync(IDataObject dataObject, ObservableCollection<TreeItem> mainTreeItems)
+        public async Task<ObservableCollection<TreeItem>> CreateObjectTreeBottomToTopAsync(IDataObject dataObject, ObservableCollection<TreeItem> mainTreeItems)
         {
             TreeItem treeItem;
 
@@ -46,7 +46,7 @@ namespace MyIceLibrary.Helper
                 ObjectLoader objectLoader = new ObjectLoader(_objectsRepository);
 
                 var dataObjects = await objectLoader.Load(dataObject.ParentId);
-                mainTreeItems = await CreateObjectTreeButtonToTopAsync(dataObjects, mainTreeItems);
+                mainTreeItems = await CreateObjectTreeBottomToTopAsync(dataObjects, mainTreeItems);
             }
 
             return mainTreeItems;
@@ -79,7 +79,7 @@ namespace MyIceLibrary.Helper
             {
                 treeItems = new ObservableCollection<TreeItem>(originTreeItems.DeepCopy().ToList());
             }
-
+            input = parameter;
             return treeItems;
         }
 
@@ -156,8 +156,8 @@ namespace MyIceLibrary.Helper
                 Name = unit.Title,
                 IsExpanded = true,
                 IsSelected = false,
-                Children = new List<TreeItem>(),
                 DataObject = unit,
+                Children = new List<TreeItem>(),
             };
 
             if (unit.Kind() == OrganizationUnitKind.Position)

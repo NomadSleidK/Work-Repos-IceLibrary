@@ -1,5 +1,4 @@
-﻿using Ascon.Pilot.SDK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -19,7 +18,8 @@ namespace MyIceLibrary.Model
             {
                 Name = this.Name,
                 DataObject = this.DataObject,
-                IsExpanded = this.IsExpanded
+                IsExpanded = this.IsExpanded,
+                IsSelected = this.IsSelected,
             };
 
             if (Children != null)

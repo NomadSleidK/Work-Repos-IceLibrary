@@ -1,11 +1,9 @@
 ﻿using Ascon.Pilot.SDK;
 using MyIceLibrary.Command;
-using MyIceLibrary.Model;
 using MyIceLibrary.ViewModel.Pages;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace MyIceLibrary.ViewModel
@@ -92,37 +90,26 @@ namespace MyIceLibrary.ViewModel
 
         #endregion
 
-        private IObjectsRepository _objectsRepository;
-
         public InfoTabControlVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IFileProvider fileProvider)
         {
-            _objectsRepository = objectsRepository;
-
-            SelectedElementAttributesVM = new AttributesPageVM();
+            SelectedElementAttributesVM = new AttributesPageVM(objectsRepository);
             SelectedElementChildrenPageVM = new ChildrenPageVM(modifier, objectsRepository);
-            SelectedElementTypePageVM = new TypePageVM();
-            SelectedElementCreatorPageVM = new CreatorPageVM();
+            SelectedElementTypePageVM = new TypePageVM(objectsRepository);
+            SelectedElementCreatorPageVM = new CreatorPageVM(objectsRepository);
             SelectedElementFilesPageVM = new FilesPageVM(objectsRepository, modifier, fileProvider);
             SelectedElementAccessLevelPageVM = new AccessLevelPageVM(objectsRepository);
         }
 
-        public ICommand UpdateInfoCommand => new RelayCommand<IDataObject>(UpdateInfo);
+        public ICommand UpdateInfoCommand => new RelayCommand<Guid>(UpdateInfo);
 
-        private void UpdateInfo(IDataObject dataObject)
+        private void UpdateInfo(Guid objectGuid)
         {
-            var dataObjects = _objectsRepository.SubscribeObjects(new Guid[] { dataObject.Id });
-            ObserverFindObjectById observer = new ObserverFindObjectById(Update);
-            dataObjects.Subscribe(observer);
-        }
-
-        private void Update(IDataObject dataObject)
-        {
-            SelectedElementChildrenPageVM.LoadChildrenCommand.Execute(dataObject.Id);
-            SelectedElementAttributesVM.LoadAttributesCommand.Execute(dataObject);
-            SelectedElementTypePageVM.LoadTypeInfoCommand.Execute(dataObject);
-            SelectedElementCreatorPageVM.LoadCreatorInfoCommand.Execute(dataObject);
-            SelectedElementFilesPageVM.LoadFilesInfoCommand.Execute(dataObject.Id);
-            SelectedElementAccessLevelPageVM.LoadAccessLevelCommand.Execute(dataObject.Id);
+            SelectedElementChildrenPageVM.LoadChildrenCommand.Execute(objectGuid);
+            SelectedElementAttributesVM.LoadAttributesCommand.Execute(objectGuid);
+            SelectedElementTypePageVM.LoadTypeInfoCommand.Execute(objectGuid);
+            SelectedElementCreatorPageVM.LoadCreatorInfoCommand.Execute(objectGuid);
+            SelectedElementFilesPageVM.LoadFilesInfoCommand.Execute(objectGuid);
+            SelectedElementAccessLevelPageVM.LoadAccessLevelCommand.Execute(objectGuid);
         }
     }
 }

@@ -3,13 +3,11 @@ using Ascon.Pilot.Theme.Controls;
 using MyIceLibrary.Command;
 using MyIceLibrary.Helper;
 using MyIceLibrary.Model;
-using MyIceLibrary.View;
 using MyIceLibrary.View.Pages;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 namespace MyIceLibrary.ViewModel.Pages
@@ -53,7 +51,6 @@ namespace MyIceLibrary.ViewModel.Pages
                 OnPropertyChanged();
             }
         }
-
 
         private bool _isShareChecked;
         public bool IsShareChecked
@@ -151,8 +148,6 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        //___________________________________________________________________________
-
         private ObservableCollection<InheritanceType> _inheritanceSource;
         public ObservableCollection<InheritanceType> InheritanceSource
         {
@@ -175,7 +170,6 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        //___________________________________________________________________________
         private ObservableCollection<AccessTypeInfo> _accessTypeSource;
         public ObservableCollection<AccessTypeInfo> AccessTypeSource
         {
@@ -197,36 +191,8 @@ namespace MyIceLibrary.ViewModel.Pages
                 OnPropertyChanged();
             }
         }
-
-        //___________________________________________________________________________
-        public class InheritanceType
-        {
-            public AccessInheritance Type { get; set; }
-            public string Name { get; set; }
-        }
-
-        public class AccessTypeInfo
-        {
-            public AccessType Type { get; set; }
-            public string Name { get; set; }
-        }
-
-        //___________________________________________________________________________
-        private bool _createButtonEnabled;
-        public bool CreateButtonEnabled
-        {
-            get => _createButtonEnabled;
-            set
-            {
-                _createButtonEnabled = value;
-
-                OnPropertyChanged();
-            }
-        }
         #endregion
 
-
-        private readonly IObjectsRepository _objectsRepository;
         private readonly ObjectLoader _objectLoader;
         private readonly IObjectModifier _objectModifier;
 
@@ -239,7 +205,6 @@ namespace MyIceLibrary.ViewModel.Pages
 
         public CreateAccessPageVM(IObjectsRepository objectsRepository, IObjectModifier objectModifier)
         {
-            _objectsRepository = objectsRepository;
             _objectModifier = objectModifier;
 
             _treeBuilder = new ObjectsTreeBuilder(objectsRepository);
@@ -265,13 +230,12 @@ namespace MyIceLibrary.ViewModel.Pages
             SelectedValidThroughDate = DateTime.MaxValue;
         }
 
-        public ICommand OpenWindowCommand => new RelayCommand<Guid>(OpenWindowAsync);
+        public ICommand OpenWindowCommand => new RelayCommand<Guid>(OpenWindow);
         public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(SelectedElementChange);
         public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
-        public ICommand CreateButtonClickCommand => new RelayCommand<string>(_ => CreateButtonClick());
-        public ICommand UpdateCreateButtonEnabledCommand => new RelayCommand<string>(_ => UpdateCreateButtonEnabled());
+        public ICommand CreateButtonClickCommand => new RelayCommand<string>(_ => CreateButtonClick(), o => _selectedUnit != null && GetSelectedAccessLevel() != AccessLevel.None );
 
-        private void OpenWindowAsync(Guid objectGuid)
+        private void OpenWindow(Guid objectGuid)
         {
             _currentObjectGuid = objectGuid;
 
@@ -280,7 +244,6 @@ namespace MyIceLibrary.ViewModel.Pages
             _dialogWindowAddAccess.Show();
 
             LoadAccessTree();
-            UpdateCreateButtonEnabled();
         }
 
         private void LoadAccessTree()
@@ -291,25 +254,17 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private async void FilteredBoxExecuteEnter(string parameter)
         {
-            TreeItems = await _treeBuilder.FilteredTreeItemsAsync(parameter, _originalTree);
+            var result = await _treeBuilder.FilteredTreeItemsAsync(parameter, _originalTree);
+            TreeItems = result;
         }
 
         private void SelectedElementChange(TreeItem selectedTab)
         {
-            if (_selectedUnit != null)
-            {
-                _selectedUnit.IsSelected = false;
-            }
-
             if (selectedTab != null)
-            {                
+            {
                 _selectedUnit = selectedTab;
-                _selectedUnit.IsSelected = true;
-
                 SelectedUnitName = selectedTab.Name;
             }
-
-            UpdateCreateButtonEnabled();
         }
 
         private AccessLevel GetSelectedAccessLevel()
@@ -324,11 +279,6 @@ namespace MyIceLibrary.ViewModel.Pages
             if (IsShareChecked) level |= AccessLevel.Share;
 
             return level;
-        }
-
-        private void UpdateCreateButtonEnabled()
-        {
-            CreateButtonEnabled = _selectedUnit != null && GetSelectedAccessLevel() != AccessLevel.None;
         }
 
         private async void CreateButtonClick()

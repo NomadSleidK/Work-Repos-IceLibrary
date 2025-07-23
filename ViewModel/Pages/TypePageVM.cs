@@ -1,6 +1,7 @@
 ﻿using Ascon.Pilot.SDK;
 using MyIceLibrary.Command;
 using MyIceLibrary.Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -34,12 +35,18 @@ namespace MyIceLibrary.ViewModel.Pages
         }
         #endregion
 
-        public TypePageVM() { }
+        private readonly ObjectLoader _objectLoader;
 
-        public ICommand LoadTypeInfoCommand => new RelayCommand<IDataObject>(LoadTypeInfo);
-
-        private void LoadTypeInfo(IDataObject dataObject)
+        public TypePageVM(IObjectsRepository objectsRepository)
         {
+            _objectLoader = new ObjectLoader(objectsRepository);
+        }
+
+        public ICommand LoadTypeInfoCommand => new RelayCommand<Guid>(LoadTypeInfo);
+
+        private async void LoadTypeInfo(Guid objectGuid)
+        {
+            var dataObject = await _objectLoader.Load(objectGuid);
             var typeInfo = new List<CurrentObjectInfo>();
 
             typeInfo.Add(new CurrentObjectInfo() { Name = "Id", Value = dataObject.Type.Id});

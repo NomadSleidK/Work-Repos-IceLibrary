@@ -78,7 +78,7 @@ namespace MyIceLibrary.ViewModel.Pages
             if (TreeItems != null)
                 TreeItems.Clear();
 
-            _originTreeItems = await _objectsTreeBuilder.CreateObjectTreeButtonToTopAsync(dataObject, TreeItems);
+            _originTreeItems = await _objectsTreeBuilder.CreateObjectTreeBottomToTopAsync(dataObject, TreeItems);
 
             TreeItems = new ObservableCollection<TreeItem>(_originTreeItems.DeepCopy());
         }
@@ -90,7 +90,7 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private void SelectTreeElement(TreeItem selectedTab)
         {
-            SelectedObjectInfoTabControlVM.UpdateInfoCommand.Execute(selectedTab.DataObject as IDataObject);
+            SelectedObjectInfoTabControlVM.UpdateInfoCommand.Execute((selectedTab.DataObject as IDataObject).Id);
         }
     }
 }

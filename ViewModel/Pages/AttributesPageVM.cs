@@ -29,12 +29,19 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        public ICommand LoadAttributesCommand => new RelayCommand<IDataObject>(LoadObjectAttributes);
+        private readonly ObjectLoader _objectLoader;
 
-        public AttributesPageVM() { }
-
-        private void LoadObjectAttributes(IDataObject dataObject)
+        public AttributesPageVM(IObjectsRepository objectsRepository)
         {
+            _objectLoader = new ObjectLoader(objectsRepository);
+        }
+
+        public ICommand LoadAttributesCommand => new RelayCommand<Guid>(LoadObjectAttributes);
+
+        private async void LoadObjectAttributes(Guid objectGuid)
+        {
+            var dataObject = await _objectLoader.Load(objectGuid);
+
             try
             {
                 List<AttributeValue> attributes = new List<AttributeValue>();

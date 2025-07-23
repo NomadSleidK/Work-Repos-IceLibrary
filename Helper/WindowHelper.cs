@@ -1,6 +1,5 @@
 ﻿using Ascon.Pilot.Theme.Controls;
 using System;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace MyIceLibrary.Helper
@@ -10,7 +9,7 @@ namespace MyIceLibrary.Helper
         public static DialogWindow CreateWindowWithUserControl<T>(object dataContext, bool showInTaskbar, string title) where T : UserControl, new()
         {
             DialogWindow window = new DialogWindow();
-            
+
             try
             {
                 window.Content = new T();
@@ -20,7 +19,7 @@ namespace MyIceLibrary.Helper
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error creating UserControl: {ex.Message}");
+                System.Windows.MessageBox.Show($"Error creating UserControl: {ex.Message}");
             }
 
             return window;

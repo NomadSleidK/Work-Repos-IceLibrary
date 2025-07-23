@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
+using MyIceLibrary.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +9,9 @@ namespace MyIceLibrary.Helper
 {
     public class ObjectCreator
     {
-        public class ChildParentRatio
-        {
-            public Guid ChildId { get; set; }
-            public Guid ParentId { get; set; }
-        }
-
         private readonly IObjectsRepository _objectsRepository;
         private readonly IObjectModifier _objectModifier;
         private readonly IFileProvider _fileProvider;
-
 
         public ObjectCreator(IObjectsRepository objectsRepository, IObjectModifier objectModifier, IFileProvider fileProvider)
         {

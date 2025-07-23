@@ -38,19 +38,10 @@ namespace MyIceLibrary
         {
             try
             {
-                if (name == CUSTOM_BUTTON_NAME)
+                if (name == CUSTOM_BUTTON_NAME && context.SelectedTasks.ToArray().Length > 1)
                 {
-                    if (context.SelectedTasks.ToArray().Length > 1)
-                    {
-                        MainMenuDataGridVM mainMenuDataGridVM = new MainMenuDataGridVM(_modifier, _objectsRepository, _pilotDialogService, _fileProvider);
-                        mainMenuDataGridVM.OpenFormCommand.Execute(context.SelectedTasks.ToArray());
-                    }
-                    else if (context.SelectedTasks.ToArray().Length == 1)
-                    {
-                        CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository, _fileProvider);
-                        currentObjectFormVM.OpenCommand.Execute(context.SelectedTasks.ToArray()[0]);
-                    }
-
+                    CurrentObjectFormVM currentObjectFormVM = new CurrentObjectFormVM(_modifier, _objectsRepository, _fileProvider);
+                    currentObjectFormVM.OpenCommand.Execute(context.SelectedTasks.ToArray()[0]);
                 }
             }
             catch (Exception ex)

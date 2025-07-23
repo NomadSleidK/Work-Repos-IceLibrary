@@ -80,23 +80,6 @@
                                 </ToggleButton.InputBindings>
                             </ToggleButton>
 
-
-
-                            <!--<TextBlock
-                                x:Name="TextBlockLink"
-                                Style="{StaticResource }"
-                                Visibility="{Binding ParentLabelVisibility}"
-                                Text="{Binding ParentObjectName}">
-
-                                <Hyperlink Style="{DynamicResource PseudoHyperlinkStyle}">
-                                    
-                                </Hyperlink>
-                                
-                                <TextBlock.InputBindings>
-                                        <MouseBinding MouseAction="LeftClick" Command="{Binding GoToParentCommand}"/>
-                                    </TextBlock.InputBindings>
-                                </TextBlock>-->                                
-                                
                         </StackPanel>
                        
 

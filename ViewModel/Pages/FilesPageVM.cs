@@ -52,8 +52,8 @@ namespace MyIceLibrary.ViewModel.Pages
         }
 
         public ICommand LoadFilesInfoCommand => new RelayCommand<Guid>(UpdateFilesInfo);
-        public ICommand DeleteFilesCommand => new RelayCommand<IList>(DeleteFiles);
-        public ICommand DownloadFilesCommand => new RelayCommand<IList>(DownloadFiles);
+        public ICommand DeleteFilesCommand => new RelayCommand<IList>(DeleteFiles, o => o != null && o.Count > 0);
+        public ICommand DownloadFilesCommand => new RelayCommand<IList>(DownloadFiles, o => o != null && o.Count > 0);
 
         private async void UpdateFilesInfo(Guid objectGuid)
         {
