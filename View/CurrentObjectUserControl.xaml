@@ -7,7 +7,7 @@
              xmlns:controls="clr-namespace:Ascon.Pilot.Theme.Controls;assembly=Ascon.Pilot.Theme"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:MyIceLibrary"
-             xmlns:pages="clr-namespace:MyIceLibrary.View.Pages"          
+             xmlns:pages="clr-namespace:MyIceLibrary.View.Pages"    
              mc:Ignorable="d"
              Background="{DynamicResource NormalBackground}"
              d:DesignHeight="800" d:DesignWidth="1000">
@@ -17,6 +17,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/standardcontrols/togglebutton.xaml"/>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+                <ResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -37,10 +38,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Row="0" Grid.Column="0" Margin="15 0 15 5">
+                    <Grid Grid.Row="0" Grid.Column="0">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
@@ -50,45 +49,64 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label
-                            Content="ОТКРЫТ ОБЪЕКТ:"
-                            Grid.Row="0" Grid.Column="0"                              
-                            Style="{DynamicResource TitleLabel}"/>
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                            <TextBlock
+                                Text="Открыт объект:"
+                                Style="{StaticResource MediumTitleInfoTextBlock}"/>
 
-                        <Label 
-                            x:Name="ObjectName"
-                            Grid.Row="1" Grid.Column="0"                                          
-                            Style="{DynamicResource InfoLabel}"
-                
-                            Content="{Binding CurrentObjectName}"/>
+                            <TextBlock 
+                                x:Name="ObjectName"
+                                Style="{StaticResource InfoTextBlock}"             
+                                Text="{Binding CurrentObjectName}"/>
 
-                        <Label
-                            Content="РОДИТЕЛЬСКИЙ ОБЪЕКТ:"
-                            Grid.Row="2" Grid.Column="0"              
-                            Style="{DynamicResource TitleLabel}"               
-                            FontFamily="{DynamicResource TitleFontFamily}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                            <TextBlock
+                                Text="Родительский объект:"
+                                Style="{StaticResource MediumTitleInfoTextBlock}"/>
+
+                            <ToggleButton
+                                x:Name="TextBlockLink"
+                                Content="{Binding ParentObjectName}"
+                                Style="{StaticResource PseudoHyperlinkToggleButtonStyle}"
+                                Visibility="{Binding ParentLabelVisibility}"
+                                Foreground="Blue"
+                                VerticalAlignment="Stretch"
+                                Margin="{StaticResource DefaultControlMargin}">
+
+                                <ToggleButton.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick" Command="{Binding GoToParentCommand}"/>
+                                </ToggleButton.InputBindings>
+                            </ToggleButton>
+
+
+
+                            <!--<TextBlock
+                                x:Name="TextBlockLink"
+                                Style="{StaticResource }"
+                                Visibility="{Binding ParentLabelVisibility}"
+                                Text="{Binding ParentObjectName}">
+
+                                <Hyperlink Style="{DynamicResource PseudoHyperlinkStyle}">
+                                    
+                                </Hyperlink>
+                                
+                                <TextBlock.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick" Command="{Binding GoToParentCommand}"/>
+                                    </TextBlock.InputBindings>
+                                </TextBlock>-->                                
+                                
+                        </StackPanel>
+                       
 
                         <TextBlock
-                            x:Name="TextBlockLink"
-                            Grid.Row="3" Grid.Column="0"
-                            Style="{DynamicResource LinkTextBlock}"
-    
-                            Visibility="{Binding ParentLabelVisibility}"
-                            Text="{Binding ParentObjectName}">
-
-                            <TextBlock.InputBindings>
-                                <MouseBinding MouseAction="LeftClick" Command="{Binding GoToParentCommand}"/>
-                            </TextBlock.InputBindings>
-                        </TextBlock>
-
-                        
-                        <Label
-                            Content="ОБЩАЯ ИНФОРМАЦИЯ:"
-                            Grid.Row="4" Grid.Column="0"                         
-                            Style="{DynamicResource TitleLabel}"/>
+                            Text="Общая информация:"
+                            Grid.Row="2" Grid.Column="0"                         
+                            Style="{StaticResource MediumTitleInfoTextBlock}"/>
 
                         <pages:MainInfoPage
-                            Grid.Row="5" Grid.Column="0"
+                            Grid.Row="3" Grid.Column="0"
                             DataContext="{Binding CurrentObjectMainInfoPageVM}"/>
 
                     </Grid>
@@ -105,15 +123,15 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <Label 
-                            Content="АТРИБУТЫ:" 
+                        <TextBlock 
+                            Text="Полная информация об объекте:" 
                             Grid.Row="0" Grid.Column="0"
-                            Style="{DynamicResource TitleLabel}"/>
+                            Style="{StaticResource MediumTitleInfoTextBlock}"/>
 
                         <pages:InfoTabControl
-                            Grid.Row="1" Grid.Column="0"
-                
-                        DataContext="{Binding SelectedObjectInfoTabControlVM}"/>
+                            Grid.Row="1" Grid.Column="0"                
+                            DataContext="{Binding SelectedObjectInfoTabControlVM}"/>
+                        
                     </Grid>
                     
                 </Grid>

@@ -12,28 +12,46 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+                <ResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.1"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.1"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.1"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="0.1"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
         <DataGrid
-        Grid.Row="1" Grid.Column="1" 
-        Style="{DynamicResource NormalDataGrid}"
-        ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
+            Grid.Row="1" Grid.Column="1"
+            x:Name="MainDataGrid"
+            Style="{DynamicResource NormalDataGrid}"
+            ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
 
-        ItemsSource="{Binding CurrentObjectCreatorInfo}"/>
+            ItemsSource="{Binding CurrentObjectCreatorInfo}"/>
+
+        <TextBlock
+            Grid.Row="1" Grid.Column="1"    
+            Text="Нет данных о создателе">
+
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Items.Count, ElementName=MainDataGrid}" Value="0">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
     </Grid>
 </UserControl>

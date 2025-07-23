@@ -14,14 +14,16 @@
             <ResourceDictionary.MergedDictionaries>
                 <tools:SharedResourceDictionary Source="/Ascon.Pilot.Theme;component/Themes/standardcontrols/togglebutton.xaml"/>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+                <ResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Grid.Row="0" Grid.Column="1">
-
+    <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -29,7 +31,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid>
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -39,25 +41,42 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label
-                Content="ОРГАНИЗАЦИОННАЯ СТРУКТУРА БАЗЫ"
+            <TextBlock
+                Text="Дерево организационной структуры. Выберите элемент чтобы узнать о нем подробней"
                 Grid.Row="0" Grid.Column="0"                              
-                Style="{DynamicResource TitleLabel}"/> 
-            
-            <TextBox 
+                Style="{StaticResource DescriptionTextBlock}"/>
+
+            <TextBox
                 Grid.Row="1" Grid.Column="0"
-                HorizontalAlignment="Stretch"
-                Margin="10 5 10 5"
-                Height="20">
+                x:Name="SearchTextBox"              
+                Style="{DynamicResource SearchTextBox}">
+                
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter"
                         Command="{Binding FilteredBoxExecuteEnterCommand}"
                         CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
                 </TextBox.InputBindings>
-            </TextBox>                       
-            
+            </TextBox>
+
+            <TextBlock
+                Grid.Row="1" Grid.Column="0"
+                Text="Поиск...">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource SearchMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
             <TreeView 
                 Grid.Row="2" Grid.Column="0"
+                x:Name="MainTreeView"
                 Style="{DynamicResource NormalTreeView}"
 
                 ItemsSource="{Binding TreeItems}">
@@ -72,14 +91,7 @@
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem">
                         <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="FontWeight" Value="UltraBold"/>
-                                <Setter Property="Background" Value="{DynamicResource NormalForeground}"/>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="False">
-                                <Setter Property="FontWeight" Value="Normal"/>
-                                <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
-                            </Trigger>
+                            
                             <DataTrigger Binding="{Binding IsSelected}" Value="true">
                                 <Setter Property="FontWeight" Value="UltraBold"/>
                                 <Setter Property="Background" Value="Orange"/>
@@ -101,18 +113,35 @@
 
                 </TreeView.ItemTemplate>
 
-            </TreeView>            
-            
+            </TreeView>
+
+            <TextBlock
+                Text="Объекты организационной структуры не найдены"
+                Grid.Row="2" Grid.Column="0">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=MainTreeView}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+
         </Grid>
 
         <GridSplitter
-            Grid.Row="0" Grid.Column="1"
+            Grid.Row="1" Grid.Column="1"
             Width="3"
             Background="Gray"
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"/>
 
-        <Grid Grid.Row="0" Grid.Column="2">
+        <Grid Grid.Row="1" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -121,18 +150,34 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label
-                Content="ИНФОРМАЦИЯ О ВЫБРАННОМ ЭЛЕМЕНТЕ"
+            <TextBlock
+                Text="Информация о выбранном элементе"
                 Grid.Row="0" Grid.Column="0"                              
-                Style="{DynamicResource TitleLabel}"/>
+                Style="{StaticResource MediumTitleInfoTextBlock}"/>
 
             <DataGrid
-                Grid.Row="1" Grid.Column="0" 
-                Margin="10 10 10 10"
+                Grid.Row="1" Grid.Column="0"
+                x:Name="InfoDataGrid"
                 Style="{DynamicResource NormalDataGrid}"
                 ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
         
                 ItemsSource="{Binding SelectedObjectInfo}"/>
+
+            <TextBlock
+                Text="объект не выбран"
+                Grid.Row="1" Grid.Column="0">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=InfoDataGrid}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
         </Grid>
     </Grid>

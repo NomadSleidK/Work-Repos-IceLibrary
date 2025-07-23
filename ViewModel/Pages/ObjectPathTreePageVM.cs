@@ -67,7 +67,7 @@ namespace MyIceLibrary.ViewModel.Pages
         }
 
         public ICommand LoadPageCommand => new RelayCommand<Guid>(LoadPage);
-        public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(SelectTreeElement);
+        public ICommand SelectedElementCommand => new RelayCommand<TreeItem>(SelectTreeElement, o => (o != null));
         public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
 
         private async void LoadPage(Guid objectGuid)

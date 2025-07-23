@@ -48,6 +48,17 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
+        private bool _downloadButtonEnabled;
+        public bool DownloadButtonEnabled
+        {
+            get => _downloadButtonEnabled;
+            private set
+            {
+                _downloadButtonEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<CurrentObjectInfo> _selectedObjectInfo;
         public ObservableCollection<CurrentObjectInfo> SelectedObjectInfo
         {
@@ -69,6 +80,8 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private Guid _currentObjectGuid;
         private ObservableCollection<TreeItem> _originTree;
+        private TreeItem _selectedTreeItem;
+
         public SnapshotsPageVM(IObjectsRepository objectsRepository, IObjectModifier objectModifier, IFileProvider fileProvider)
         {
             _objectsRepository = objectsRepository;
@@ -80,7 +93,7 @@ namespace MyIceLibrary.ViewModel.Pages
         }
 
         public ICommand LoadFilesInfoCommand => new RelayCommand<Guid>(UpdateFilesInfo);
-        public ICommand DownloadFilesCommand => new RelayCommand<TreeItem>(DownloadFiles);
+        public ICommand DownloadFilesCommand => new RelayCommand<TreeItem>(DownloadFiles, o => o != null && o.DataObject as IFile != null);
         public ICommand LoadObjectInfoCommand => new RelayCommand<TreeItem>(LoadObjectInfoToGrid);
         public ICommand FilteredBoxExecuteEnterCommand => new RelayCommand<string>(FilteredBoxExecuteEnter);
 
@@ -93,6 +106,11 @@ namespace MyIceLibrary.ViewModel.Pages
 
             _originTree = _treeBuilder.CreateSnapshotsTree(snapshots.ToArray());
             TreeItems = new ObservableCollection<TreeItem>(_originTree);
+        }
+
+        private void UpdateButtonsEnablde()
+        {
+            DownloadButtonEnabled = _selectedTreeItem.DataObject as IFile != null;
         }
 
         private async void FilteredBoxExecuteEnter(string parameter)
@@ -122,13 +140,14 @@ namespace MyIceLibrary.ViewModel.Pages
         //    UpdateFilesInfo(_currentObjectGuid);
         //}
 
-        private void LoadObjectInfoToGrid(TreeItem selectedItems)
+        private void LoadObjectInfoToGrid(TreeItem selectedItem)
         {
+            _selectedTreeItem = selectedItem;
             var info = new List<CurrentObjectInfo>();
 
-            if (selectedItems.DataObject as IFile != null)
+            if (selectedItem.DataObject as IFile != null)
             {
-                var file = selectedItems.DataObject as IFile;
+                var file = selectedItem.DataObject as IFile;
 
                 info.Add(new CurrentObjectInfo() { Name = "Имя", Value = file.Name});
                 info.Add(new CurrentObjectInfo() { Name = "Id", Value = file.Id });
@@ -138,9 +157,9 @@ namespace MyIceLibrary.ViewModel.Pages
                 info.Add(new CurrentObjectInfo() { Name = "Создан", Value = file.Created.ToString("dd-MM-yyyy HH:mm:ss") });
                 info.Add(new CurrentObjectInfo() { Name = "Accessed", Value = file.Accessed.ToString("dd-MM-yyyy HH:mm:ss") });
             }
-            else if (selectedItems.DataObject as IFilesSnapshot != null)
+            else if (selectedItem.DataObject as IFilesSnapshot != null)
             {
-                var snapshot = selectedItems.DataObject as IFilesSnapshot;
+                var snapshot = selectedItem.DataObject as IFilesSnapshot;
 
                 info.Add(new CurrentObjectInfo() { Name = "Дата создания", Value = snapshot.Created.ToString("dd-MM-yyyy HH:mm:ss") });
                 info.Add(new CurrentObjectInfo() { Name = "Создатель", Value = _objectsRepository.GetPerson(snapshot.CreatorId).DisplayName });

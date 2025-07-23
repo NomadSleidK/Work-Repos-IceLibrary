@@ -1,6 +1,5 @@
 ﻿using Ascon.Pilot.SDK;
 using Ascon.Pilot.Theme.Controls;
-using MathNet.Numerics.Distributions;
 using MyIceLibrary.Command;
 using MyIceLibrary.Extensions;
 using MyIceLibrary.Helper;
@@ -79,13 +78,37 @@ namespace MyIceLibrary.ViewModel.Pages
             }
         }
 
-        private bool _copyDeleteEnabled;
-        public bool CopyDeleteButtonsEnabled
+        private bool _copyButtonEnabled;
+        public bool CopyButtonEnabled
         {
-            get => _copyDeleteEnabled;
+            get => _copyButtonEnabled;
             set
             {
-                _copyDeleteEnabled = value;
+                _copyButtonEnabled = value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _deleteButtonEnabled;
+        public bool DeleteButtonEnabled
+        {
+            get => _deleteButtonEnabled;
+            set
+            {
+                _deleteButtonEnabled = value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _deleteAccessOnCurrentObject;
+        public bool DeleteAccessOnCurrentObject
+        {
+            get => _deleteAccessOnCurrentObject;
+            set
+            {
+                _deleteAccessOnCurrentObject = value;
 
                 OnPropertyChanged();
             }
@@ -170,7 +193,8 @@ namespace MyIceLibrary.ViewModel.Pages
                 }
             }
 
-            CopyDeleteButtonsEnabled = hasSelectedParent && hasAnySelectedAccess;
+            DeleteButtonEnabled = (hasSelectedParent && hasAnySelectedAccess) || (DeleteAccessOnCurrentObject && hasAnySelectedAccess);
+            CopyButtonEnabled = hasSelectedParent && hasAnySelectedAccess;
         }
 
         private async void UpdateAccessItems()
@@ -334,9 +358,13 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private async void RemoveAccessFromParentObjectsAsync()
         {
-            var parents = GetSelectedParents(TreeItems[0]);
+            var selectedParents = GetSelectedParents(TreeItems[0]);
 
-            await _accessModifier.RemoveAccessFromParentObjectsAsync(AccessItems.ToArray(), parents.ToArray(), _currentObjectGuid, true);
+            await _accessModifier.RemoveAccessFromParentObjectsAsync(
+                AccessItems.ToArray(), 
+                selectedParents.ToArray(), 
+                _currentObjectGuid, 
+                DeleteAccessOnCurrentObject);
             
             UpdateAccessItems();
         }

@@ -7,22 +7,20 @@
              xmlns:local="clr-namespace:MyIceLibrary.View.Pages"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+                <ResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.1"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="1"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.1"/>
@@ -32,39 +30,50 @@
 
         <DataGrid
             x:Name="FilesDataGrid"
-            Grid.Row="1" Grid.Column="1" 
+            Grid.Row="0" Grid.Column="1" 
             Style="{DynamicResource NormalDataGrid}"
             ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
             
             ItemsSource="{Binding CurrentObjectFilesInfo}"/>
 
-        <Grid Grid.Row="3" Grid.Column="1">
+        <TextBlock
+            Grid.Row="0" Grid.Column="1"    
+            Text="Файлы не найдены">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Items.Count, ElementName=FilesDataGrid}" Value="0">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <Grid Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Button
-                Grid.Row="0" Grid.Column="1" 
-                Content="СКАЧАТЬ ВЫБРАННЫЕ ФАЙЛЫ"
+                Grid.Row="0" Grid.Column="0"
+                Content="Скачать выбранные файлы"
                 Style="{DynamicResource DownloadButton}"
                 Command="{Binding DownloadFilesCommand}"
-                CommandParameter="{Binding SelectedItems, ElementName=FilesDataGrid}"/>             
-            
+                CommandParameter="{Binding SelectedItems, ElementName=FilesDataGrid}"/>
+
             <Button
-                Grid.Row="0" Grid.Column="2" 
-                Content="УДАЛИТЬ ВЫБРАННЫЕ ФАЙЛЫ"
+                Grid.Row="0" Grid.Column="2"
+                Content="Удалить выбранные файлы"
                 Style="{DynamicResource DeleteButton}"
                 Command="{Binding DeleteFilesCommand}"
                 CommandParameter="{Binding SelectedItems, ElementName=FilesDataGrid}"/>
 
         </Grid>
-        
 
     </Grid>
 </UserControl>

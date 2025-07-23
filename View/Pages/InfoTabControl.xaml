@@ -8,7 +8,7 @@
              xmlns:pages="clr-namespace:MyIceLibrary.View.Pages"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,40 +18,40 @@
     </UserControl.Resources>
 
     <Grid>
-        
+
         <TabControl Style="{DynamicResource NormalTabControl}">
-            
-            <TabItem Header="Attributes">
+
+            <TabItem Header="Атрибуты">
                 <pages:AttributesPage
                     DataContext="{Binding SelectedElementAttributesVM}"/>
             </TabItem>
-            
-            <TabItem Header="Children">
+
+            <TabItem Header="Дочерние элементы">
                 <pages:ChildrenPage
                     DataContext="{Binding SelectedElementChildrenPageVM}"/>
             </TabItem>
-            
-            <TabItem Header="Type">
+
+            <TabItem Header="Тип">
                 <pages:TypePage
                     DataContext="{Binding SelectedElementTypePageVM}"/>
-            </TabItem> 
-            
-            <TabItem Header="Creator">
+            </TabItem>
+
+            <TabItem Header="Создатель">
                 <pages:CreatorPage
                     DataContext="{Binding SelectedElementCreatorPageVM}"/>
             </TabItem>
 
-            <TabItem Header="Files">
+            <TabItem Header="Файлы">
                 <pages:FilesPage
                     DataContext="{Binding SelectedElementFilesPageVM}"/>
             </TabItem>
 
-            <TabItem Header="Access">
+            <TabItem Header="Доступы">
                 <pages:AccessLevelPage
                     DataContext="{Binding SelectedElementAccessLevelPageVM}"/>
             </TabItem>
 
-        </TabControl>    
-            
+        </TabControl>
+
     </Grid>
 </UserControl>

@@ -77,16 +77,19 @@ namespace MyIceLibrary.ViewModel.Pages
 
         private void OnTabSelected(TreeItem selectedTab)
         {
-
-            IOrganisationUnit unit = selectedTab.DataObject as IOrganisationUnit;
-            if (unit.Person() != -1)
+            if (selectedTab != null)
             {
-                SelectedObjectInfo = GetPersonInfo(unit);
+                IOrganisationUnit unit = selectedTab.DataObject as IOrganisationUnit;
+                if (unit.Person() != -1)
+                {
+                    SelectedObjectInfo = GetPersonInfo(unit);
+                }
+                else
+                {
+                    SelectedObjectInfo = GetUnitInfo(unit);
+                }
             }
-            else
-            {
-                SelectedObjectInfo = GetUnitInfo(unit);
-            }
+            
         }
 
         private ObservableCollection<CurrentObjectInfo> GetPersonInfo(IOrganisationUnit unit)

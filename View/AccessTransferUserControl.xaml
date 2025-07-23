@@ -14,13 +14,16 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+                <ResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -29,10 +32,23 @@
 
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0">
+        <TextBlock
+            Grid.Row="0" Grid.Column="0"          
+    
+            Text="Выберите элемент(ы) из дерева, которым нужно передать права"
+            Style="{StaticResource DescriptionTextBlock }"/>
+
+        <TextBlock
+            Grid.Row="0" Grid.Column="2"          
+    
+            Text="Выберите доступ(ы), которые хотите передать объектам наверх"
+            Style="{StaticResource DescriptionTextBlock }"/>
+        
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
@@ -50,19 +66,13 @@
                 </ComboBox.ItemTemplate>
 
             </ComboBox>
-            
+
             <TextBlock 
-                Margin="20,0,0,0" 
                 Grid.Row="0" Grid.Column="0"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Left"
-                Text="Выбрать объект..."
-                IsHitTestVisible="False"
-                Foreground="{DynamicResource NormalForeground}"
-                Background="{DynamicResource NormalBackground}">
-                
+                Text="Выбрать объект...">
+
                 <TextBlock.Style>
-                    <Style TargetType="TextBlock">
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource SearchMessage}">
                         <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding SelectedParent}" Value="{x:Null}">
@@ -105,15 +115,12 @@
                 </TreeView.ItemTemplate>
             </TreeView>
 
-            <TextBlock Text="Нет элементов для передачи прав"
-                Grid.Row="1" Grid.Column="0"    
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontStyle="Italic"
-                Foreground="Gray">
-                
+            <TextBlock
+                Grid.Row="1" Grid.Column="0"                   
+                Text="Нет элементов для передачи прав">
+
                 <TextBlock.Style>
-                    <Style TargetType="TextBlock">
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
                         <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Items.Count, ElementName=MyTreeView}" Value="0">
@@ -126,27 +133,43 @@
 
             <Button 
                 Grid.Row="2" Grid.Column="0"
-                Content="Скопировать"
-                IsEnabled="{Binding CopyDeleteButtonsEnabled}"
+                Content="Скопировать доступы на выбранные элементы"
+                IsEnabled="{Binding CopyButtonEnabled}"
                 Style="{DynamicResource DownloadButton}"
                 Command="{Binding CopyAccessToParentObjectsCommand}"/>
 
-            <Button 
+            <StackPanel
                 Grid.Row="3" Grid.Column="0"
-                Content="Удалить"
-                IsEnabled="{Binding CopyDeleteButtonsEnabled}"
+                Margin="10 10 10 5"
+                Orientation="Horizontal">
+                
+                <CheckBox
+                    VerticalAlignment="Center"
+                    Margin="10 0 5 0"
+                    IsChecked="{Binding DeleteAccessOnCurrentObject, Mode=TwoWay}"
+                    Command="{Binding UpdateCopeDeleteButtonsEnabledCommand}"/>
+                <TextBlock    
+                    Text="Удалить доступ(ы) на текщем объекте"
+                    Style="{StaticResource DescriptionTextBlock }"/>
+                
+            </StackPanel>
+
+            <Button 
+                Grid.Row="4" Grid.Column="0"
+                Content="Удалить доступы с выбранных элементов"
+                IsEnabled="{Binding DeleteButtonEnabled}"
                 Style="{DynamicResource DeleteButton}"
                 Command="{Binding RemoveAccessFromParentObjectsCommand}"/>  
 
         </Grid>
 
-        <GridSplitter Grid.Row="0" Grid.Column="1"
+        <GridSplitter Grid.Row="1" Grid.Column="1"
             Width="3"
             Background="Gray"
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"/>
 
-        <Grid Grid.Row="0" Grid.Column="2">
+        <Grid Grid.Row="1" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -154,10 +177,10 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <Label 
+            <TextBlock 
                 Grid.Row="0" Grid.Column="0"         
-                Content="ДОСТУПЫ"
-                Style="{DynamicResource InfoLabel}"/>
+                Text="Доступы на текущем объекте"
+                Style="{StaticResource TitleInfoTextBlock}"/>
 
             <ListView ItemsSource="{Binding AccessItems}"
                 Grid.Row="1" Grid.Column="0"
@@ -182,7 +205,7 @@
 
             <Button 
                 Grid.Row="2" Grid.Column="0"
-                Content="Создать доступ"
+                Content="Создать новый доступ"
                 Style="{DynamicResource DownloadButton}"
                 Command="{Binding OpenAddAccessDialogWindowCommand}"/>
 

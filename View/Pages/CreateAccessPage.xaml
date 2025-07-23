@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+                <ResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -24,16 +25,23 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Label
-            Grid.Row="0" Grid.Column="0"                             
-            Content="Выберите и нажмите на организационную единицу в дереве, установите права доступа"
-            Style="{DynamicResource TitleLabel}"/>
+        <TextBlock
+            Grid.Row="0" Grid.Column="0"          
+            
+            Text="Выберите элемент из дерева чтобы установить субъект для доступа"
+            Style="{StaticResource DescriptionTextBlock }"/>
 
+        <TextBlock
+            Grid.Row="0" Grid.Column="2"          
+    
+            Text="Установите права и настройки доступа для субъекта"
+            Style="{StaticResource DescriptionTextBlock }"/>
+        
         <GridSplitter Grid.Row="1" Grid.Column="1"
             Width="3"
             Background="Gray"
@@ -52,9 +60,7 @@
             <TextBox 
                 Grid.Row="1" Grid.Column="0"
                 x:Name="SearchTextBox"
-                HorizontalAlignment="Stretch"
-                Margin="10 10 10 10"
-                Height="20">
+                Style="{DynamicResource SearchTextBox}">
 
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter"
@@ -65,15 +71,10 @@
 
             <TextBlock
                 Grid.Row="1" Grid.Column="0"
-                Margin="25 0 0 0"
-                VerticalAlignment="Center"
-                IsHitTestVisible="False"
-                Text="Поиск..."
-                Foreground="{DynamicResource NormalForeground}"
-                Background="{DynamicResource NormalBackground}">
+                Text="Поиск...">
 
                 <TextBlock.Style>
-                    <Style TargetType="TextBlock">
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource SearchMessage}">
                         <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
@@ -85,7 +86,7 @@
             </TextBlock>
 
             <TreeView 
-                x:Name="MyTreeView"
+                x:Name="MainTreeView"
                 Grid.Row="2" Grid.Column="0"
                 Style="{DynamicResource NormalTreeView}"
 
@@ -98,17 +99,10 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <!--<TreeView.ItemContainerStyle>
+                <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem">
                         <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="FontWeight" Value="UltraBold"/>
-                                <Setter Property="Background" Value="{DynamicResource NormalForeground}"/>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="False">
-                                <Setter Property="FontWeight" Value="Normal"/>
-                                <Setter Property="Background" Value="{DynamicResource NormalBackground}"/>
-                            </Trigger>
+
                             <DataTrigger Binding="{Binding IsSelected}" Value="true">
                                 <Setter Property="FontWeight" Value="UltraBold"/>
                                 <Setter Property="Background" Value="Orange"/>
@@ -117,22 +111,6 @@
                         </Style.Triggers>
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                     </Style>
-                </TreeView.ItemContainerStyle>-->
-
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="TreeViewItem">
-                        <!-- Привязка IsExpanded -->
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-
-                        <!-- Стиль при выделении через TreeItem.IsSelected -->
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsSelected}" Value="true">
-                                <Setter Property="FontWeight" Value="UltraBold"/>
-                                <Setter Property="Background" Value="Orange"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
                 </TreeView.ItemContainerStyle>
 
                 <TreeView.ItemTemplate>
@@ -140,7 +118,7 @@
                         <TextBlock
                             Text="{Binding Name}" 
                             Style="{DynamicResource NormalTextBlock}">
-                            
+
                         </TextBlock>
                     </HierarchicalDataTemplate>
 
@@ -148,18 +126,15 @@
 
             </TreeView>
 
-            <TextBlock Text="Объекты организационной структуры не найдены"
+            <TextBlock
                 Grid.Row="2" Grid.Column="0"    
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontStyle="Italic"
-                Foreground="Gray">
-
+                Text="Объекты организационной структуры не найдены">
+                
                 <TextBlock.Style>
-                    <Style TargetType="TextBlock">
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
                         <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Items.Count, ElementName=MyTreeView}" Value="0">
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=MainTreeView}" Value="0">
                                 <Setter Property="Visibility" Value="Visible"/>
                             </DataTrigger>
                         </Style.Triggers>
@@ -187,24 +162,21 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <Label
+            <TextBlock
                 Grid.Row="0" Grid.Column="0"                             
-                Content="Субъект"
-                Style="{DynamicResource TitleLabel}"               
-                FontFamily="{DynamicResource TitleFontFamily}"/>
+                Text="Субъект"
+                Style="{StaticResource TitleInfoTextBlock }"/>
 
-            <Label
+            <TextBlock
                 Grid.Row="1" Grid.Column="0"                          
-                Content="{Binding SelectedUnitName}"
-                Style="{DynamicResource InfoLabel}"               
-                FontFamily="{DynamicResource MediumFontFamily}"/>
+                Text="{Binding SelectedUnitName}"
+                Style="{StaticResource InfoTextBlock }"/>
 
-            <Label
+            <TextBlock
                 Grid.Row="2" Grid.Column="0"                              
-                Content="Разрешения"
-                Style="{DynamicResource TitleLabel}"               
-                FontFamily="{DynamicResource TitleFontFamily}"/>
-            
+                Text="Разрешения"
+                Style="{StaticResource TitleInfoTextBlock }"/>
+
             <StackPanel
                 Grid.Row="3" Grid.Column="0"
                 Margin="10 10 10 10"
@@ -253,11 +225,10 @@
 
             </StackPanel>
 
-            <Label
+            <TextBlock
                 Grid.Row="4" Grid.Column="0"                              
-                Content="Годен до"
-                Style="{DynamicResource TitleLabel}"               
-                FontFamily="{DynamicResource TitleFontFamily}"/>
+                Text="Годен до"
+                Style="{StaticResource TitleInfoTextBlock }"/>
 
             <DatePicker 
                 Grid.Row="5" Grid.Column="0"
@@ -265,11 +236,10 @@
                 x:Name="ValidThroughDate"
                  SelectedDate="{Binding SelectedValidThroughDate, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Label
+            <TextBlock
                 Grid.Row="6" Grid.Column="0"                              
-                Content="Тип наследования"
-                Style="{DynamicResource TitleLabel}"               
-                FontFamily="{DynamicResource TitleFontFamily}"/>
+                Text="Тип наследования"
+                Style="{StaticResource TitleInfoTextBlock }"/>         
             
             <ComboBox
                 Grid.Row="7" Grid.Column="0"
@@ -285,10 +255,10 @@
 
             </ComboBox>
 
-            <Label
+            <TextBlock
                 Grid.Row="8" Grid.Column="0"                              
-                Content="Тип доступа"
-                Style="{DynamicResource TitleLabel}"               
+                Text="Тип доступа"
+                Style="{StaticResource TitleInfoTextBlock }"               
                 FontFamily="{DynamicResource TitleFontFamily}"/>
             
             <ComboBox
@@ -307,7 +277,7 @@
 
             <Button 
                 Grid.Row="11" Grid.Column="0"
-                Content="СОЗДАТЬ"
+                Content="Создать доступ"
                 Style="{DynamicResource DownloadButton}"
                 IsEnabled="{Binding CreateButtonEnabled}"
                 Command="{Binding CreateButtonClickCommand}"/>

@@ -66,6 +66,7 @@ namespace MyIceLibrary.Helper
                 for (int i = 0; i < items.Count; i++)
                 {
                     var result = await CheckChildrenElementsAsync(items[i], input);
+
                     if (result.isFind || result.treeItem.Children?.Count > 0)
                     {
                         filteredItems.Add(result.treeItem);
@@ -154,6 +155,7 @@ namespace MyIceLibrary.Helper
             {
                 Name = unit.Title,
                 IsExpanded = true,
+                IsSelected = false,
                 Children = new List<TreeItem>(),
                 DataObject = unit,
             };
@@ -164,6 +166,7 @@ namespace MyIceLibrary.Helper
                 {
                     Name = _objectsRepository.GetPerson(unit.Person()).DisplayName,
                     IsExpanded = true,
+                    IsSelected = false,
                     DataObject = unit,
                     Children = null
                 });

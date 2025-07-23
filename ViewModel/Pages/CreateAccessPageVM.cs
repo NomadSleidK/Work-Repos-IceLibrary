@@ -286,7 +286,7 @@ namespace MyIceLibrary.ViewModel.Pages
         private void LoadAccessTree()
         {
             _originalTree = _treeBuilder.CreateOrganisationUnitTreeTopToButtomAsync();
-            TreeItems = new ObservableCollection<TreeItem>(_originalTree);
+            TreeItems = new ObservableCollection<TreeItem>(_originalTree.DeepCopy());
         }
 
         private async void FilteredBoxExecuteEnter(string parameter)
@@ -366,6 +366,5 @@ namespace MyIceLibrary.ViewModel.Pages
                 _dialogWindowAddAccess.Close();
             }
         }
-
     }
 }

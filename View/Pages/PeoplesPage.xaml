@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+                <ResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -39,22 +40,38 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label
-                Content="ПОЛЬЗОВАТЕЛИ. выберите пользователя"
+            <TextBlock
+                Text="Выберите пользователя для просмотра информации"
                 Grid.Row="0" Grid.Column="0"
-                Style="{DynamicResource TitleLabel}"/>
+                Style="{StaticResource DescriptionTextBlock}"/>
 
             <TextBox 
                 Grid.Row="1" Grid.Column="0"
-                HorizontalAlignment="Stretch"
-                Margin="10 0 10 0"
-                Height="20">
+                x:Name="SearchTextBox"
+                Style="{DynamicResource SearchTextBox}">
+
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter"
-                            Command="{Binding FilteredBoxExecuteEnterCommand}"
-                            CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
+                        Command="{Binding FilteredBoxExecuteEnterCommand}"
+                        CommandParameter="{Binding Text, RelativeSource={RelativeSource AncestorType=TextBox}}"/>
                 </TextBox.InputBindings>
             </TextBox>
+
+            <TextBlock
+                Grid.Row="1" Grid.Column="0"
+                Text="Поиск...">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource SearchMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
             <DataGrid
                 x:Name="PeopleDataGrid"
@@ -73,6 +90,23 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </DataGrid>
+
+            <TextBlock
+                Text="Пользователи не найдены"
+                Grid.Row="2" Grid.Column="0">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=PeopleDataGrid}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
         </Grid>
 
         <GridSplitter
@@ -91,21 +125,36 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
-            <Label
-                Content="ДАННЫЕ О ПОЛЬЗОВАТЕЛЕ"
+            <TextBlock
+                Text="Данные о пользователе"
                 Grid.Row="0" Grid.Column="0"
-                Style="{DynamicResource TitleLabel}"/>
+                Style="{StaticResource MediumTitleInfoTextBlock}"/>
 
             <DataGrid
                 x:Name="InfoDataGrid"
                 Grid.Row="1" Grid.Column="0"
-                Margin="10 10 10 10"
                 Style="{DynamicResource NormalDataGrid}"
                 ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
     
                 ItemsSource="{Binding CurrentObjectFilesInfo}">
 
             </DataGrid>
+
+            <TextBlock
+                Text="Пользователь не выбран"
+                Grid.Row="1" Grid.Column="0">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Items.Count, ElementName=InfoDataGrid}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
         </Grid>
 
     </Grid>

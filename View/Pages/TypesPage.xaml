@@ -12,6 +12,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <tools:SharedResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
+                <ResourceDictionary Source="/MyIceLibrary.ext2;component/View/Style/IceLibraryStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -23,21 +24,21 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.1"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="0.1"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
-        <Label
-            Content="ИНФОРМАЦИЯ О ТИПАХ ДАННЫЙ В БАЗЕ"
+        <TextBlock
+            Text="Информация о типах данных в базе"
             Grid.Row="0" Grid.Column="1"
-            Style="{DynamicResource TitleLabel}"/>
+            Style="{StaticResource MediumTitleInfoTextBlock}"/>
         
         <TextBox 
             Grid.Row="1" Grid.Column="1"
-            HorizontalAlignment="Stretch"
-            Margin="10 10 10 10"
-            Height="20">
+            x:Name="SearchTextBox"
+            Style="{DynamicResource SearchTextBox}">
+            
             <TextBox.InputBindings>
                 <KeyBinding Key="Enter"
                     Command="{Binding FilteredBoxExecuteEnterCommand}"
@@ -45,8 +46,25 @@
             </TextBox.InputBindings>
         </TextBox>
 
+        <TextBlock
+            Grid.Row="1" Grid.Column="1"
+            Text="Поиск...">
+
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource SearchMessage}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
         <DataGrid
             Grid.Row="2" Grid.Column="1" 
+            x:Name="MainDataGrid"
             Style="{DynamicResource NormalDataGrid}"
             ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"         
             AutoGenerateColumns="False"
@@ -77,9 +95,26 @@
                      Binding="{Binding IsDeleted, Mode=OneWay}"/>
                 <DataGridTextColumn Header="IsProject"
                      Binding="{Binding IsProject, Mode=OneWay}"/>
-                <DataGridTextColumn Header="IsAdmin"
+                <DataGridTextColumn Header="IsService"
                      Binding="{Binding IsService, Mode=OneWay}"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <TextBlock
+            Text="Типы данных не найдены"
+            Grid.Row="2" Grid.Column="1">
+
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyElementMessage}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Items.Count, ElementName=MainDataGrid}" Value="0">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
     </Grid>
 </UserControl>
