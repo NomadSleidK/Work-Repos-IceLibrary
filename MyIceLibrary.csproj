@@ -18,10 +18,10 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Users\artem\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
+    <OutputPath>..\..\..\AppData\Local\ASCON\Pilot-ICE Enterprise\Development\MyIceLibrary\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>

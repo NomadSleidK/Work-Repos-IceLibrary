@@ -22,8 +22,8 @@ namespace MyIceLibrary
         private const string ACCESS_MODIFIER_BUTTON_NAME = "AccessModifierButton";
         private const string ACCESS_MODIFIER_BUTTON_HEADER = "Передать права наверх";
 
-        private IMenuItemBuilder _customButtonA;
-        private IMenuItemBuilder _customButtonC;
+        private IMenuItemBuilder _infoButton;
+        private IMenuItemBuilder _copyButton;
         private IMenuItemBuilder _accessTransfer;
 
         private readonly IObjectModifier _objectModifier;
@@ -44,17 +44,20 @@ namespace MyIceLibrary
 
         public void Build(IMenuBuilder builder, ObjectsViewContext context)
         {
-            _customButtonA = builder.AddItem(INFO_BUTTON_NAME, builder.Count);
-            _customButtonA.WithIcon(Properties.Resources.InfoIconB);
-            _customButtonA.WithHeader(INFO_BUTTON_HEADER);
+            if(_objectsRepository.GetCurrentPerson().IsAdmin)
+            {
+                _infoButton = builder.AddItem(INFO_BUTTON_NAME, builder.Count);
+                _infoButton.WithIcon(Properties.Resources.InfoIconB);
+                _infoButton.WithHeader(INFO_BUTTON_HEADER);
 
-            _customButtonC = builder.AddItem(COPY_BUTTON_NAME, builder.Count);
-            _customButtonC.WithIcon(Properties.Resources.CopyIcon);
-            _customButtonC.WithHeader(COPY_BUTTON_HEADER);
+                _copyButton = builder.AddItem(COPY_BUTTON_NAME, builder.Count);
+                _copyButton.WithIcon(Properties.Resources.CopyIcon);
+                _copyButton.WithHeader(COPY_BUTTON_HEADER);
 
-            _accessTransfer = builder.AddItem(ACCESS_MODIFIER_BUTTON_NAME, builder.Count);
-            _accessTransfer.WithIcon(Properties.Resources.AccessIcon);
-            _accessTransfer.WithHeader(ACCESS_MODIFIER_BUTTON_HEADER);
+                _accessTransfer = builder.AddItem(ACCESS_MODIFIER_BUTTON_NAME, builder.Count);
+                _accessTransfer.WithIcon(Properties.Resources.AccessIcon);
+                _accessTransfer.WithHeader(ACCESS_MODIFIER_BUTTON_HEADER);
+            }
         }
 
         public void OnMenuItemClick(string name, ObjectsViewContext context)

@@ -111,7 +111,7 @@ namespace MyIceLibrary.Model
                 dataPerson.Add(new CurrentObjectInfo() { Name = "Sid", Value = person.Sid });
                 dataPerson.Add(new CurrentObjectInfo() { Name = "IsAdmin", Value = person.IsAdmin });
                 dataPerson.Add(new CurrentObjectInfo() { Name = "IsDeleted", Value = person.IsDeleted });
-                dataPerson.Add(new CurrentObjectInfo() { Name = "CreatedUtc", Value = person.CreatedUtc.ToString("dd-MM-yyyy HH:mm:ss") });
+                dataPerson.Add(new CurrentObjectInfo() { Name = "CreatedUtc", Value = person.CreatedUtc.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss") });
                 dataPerson.Add(new CurrentObjectInfo() { Name = "Comment", Value = person.Comment });
 
                 CurrentObjectFilesInfo = new ObservableCollection<CurrentObjectInfo>(dataPerson);

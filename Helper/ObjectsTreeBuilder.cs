@@ -192,7 +192,7 @@ namespace MyIceLibrary.Helper
             {
                 var newTreeItem = new TreeItem()
                 {
-                    Name = fileSnapshot.Created.ToString("dd-MM-yyyy HH:mm:ss"),
+                    Name = fileSnapshot.Created.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss"),
                     DataObject = fileSnapshot,
                     Children = new List<TreeItem>(),
                     IsExpanded = true,

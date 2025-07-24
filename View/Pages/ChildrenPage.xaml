@@ -5,6 +5,7 @@
              xmlns:tools="clr-namespace:Ascon.Pilot.Theme.Tools;assembly=Ascon.Pilot.Theme"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MyIceLibrary.View.Pages"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -33,8 +34,38 @@
             Grid.Row="0" Grid.Column="1" 
             Style="{DynamicResource NormalDataGrid}"
             ColumnHeaderStyle="{DynamicResource NormalDataGridColumnHeader}"
-            
-            ItemsSource="{Binding CurrentObjectChildren}"/>
+            AutoGenerateColumns="False"
+            ItemsSource="{Binding CurrentObjectChildren}">
+
+            <DataGrid.Columns>
+
+                <DataGridTemplateColumn Header="Name">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ToggleButton
+                                Content="{Binding Name}"
+                                Style="{DynamicResource PseudoHyperlinkToggleButtonStyle}"
+                                Margin="10 0 0 0"
+                                Foreground="Blue"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
+
+            </DataGrid.Columns>
+
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction 
+                        Command="{Binding DoubleClickElementCommand}" 
+                        CommandParameter="{Binding SelectedItem,  ElementName=ChildrenDataGrid}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+        </DataGrid>
 
         <TextBlock
             Grid.Row="0" Grid.Column="1"    

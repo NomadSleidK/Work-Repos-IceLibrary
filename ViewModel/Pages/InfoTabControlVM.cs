@@ -93,7 +93,7 @@ namespace MyIceLibrary.ViewModel
         public InfoTabControlVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IFileProvider fileProvider)
         {
             SelectedElementAttributesVM = new AttributesPageVM(objectsRepository);
-            SelectedElementChildrenPageVM = new ChildrenPageVM(modifier, objectsRepository);
+            SelectedElementChildrenPageVM = new ChildrenPageVM(modifier, objectsRepository, fileProvider);
             SelectedElementTypePageVM = new TypePageVM(objectsRepository);
             SelectedElementCreatorPageVM = new CreatorPageVM(objectsRepository);
             SelectedElementFilesPageVM = new FilesPageVM(objectsRepository, modifier, fileProvider);

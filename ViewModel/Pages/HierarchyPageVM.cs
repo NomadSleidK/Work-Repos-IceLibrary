@@ -103,7 +103,7 @@ namespace MyIceLibrary.ViewModel.Pages
                 new CurrentObjectInfo() { Name = "ServiceInfo", Value = person.ServiceInfo },
                 new CurrentObjectInfo() { Name = "Sid", Value = person.Sid },
                 new CurrentObjectInfo() { Name = "IsAdmin", Value = person.IsAdmin },
-                new CurrentObjectInfo() { Name = "CreatedUtc", Value = person.CreatedUtc },
+                new CurrentObjectInfo() { Name = "CreatedUtc", Value = person.CreatedUtc.ToLocalTime() },
 
             };
 

@@ -128,15 +128,15 @@ namespace MyIceLibrary.ViewModel.Pages
                 info.Add(new CurrentObjectInfo() { Name = "Id", Value = file.Id });
                 info.Add(new CurrentObjectInfo() { Name = "Size", Value = file.Size });
                 info.Add(new CurrentObjectInfo() { Name = "Md5", Value = file.Md5 });
-                info.Add(new CurrentObjectInfo() { Name = "Modified", Value = file.Modified });
-                info.Add(new CurrentObjectInfo() { Name = "Created", Value = file.Created.ToString("dd-MM-yyyy HH:mm:ss") });
-                info.Add(new CurrentObjectInfo() { Name = "Accessed", Value = file.Accessed.ToString("dd-MM-yyyy HH:mm:ss") });
+                info.Add(new CurrentObjectInfo() { Name = "Modified", Value = file.Modified.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss") });
+                info.Add(new CurrentObjectInfo() { Name = "Created", Value = file.Created.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss") });
+                info.Add(new CurrentObjectInfo() { Name = "Accessed", Value = file.Accessed.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss") });
             }
             else if (selectedItem?.DataObject as IFilesSnapshot != null)
             {
                 var snapshot = selectedItem.DataObject as IFilesSnapshot;
 
-                info.Add(new CurrentObjectInfo() { Name = "Created", Value = snapshot.Created.ToString("dd-MM-yyyy HH:mm:ss") });
+                info.Add(new CurrentObjectInfo() { Name = "Created", Value = snapshot.Created.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss") });
                 info.Add(new CurrentObjectInfo() { Name = "CreatorId", Value = _objectsRepository.GetPerson(snapshot.CreatorId).DisplayName });
                 info.Add(new CurrentObjectInfo() { Name = "Reason", Value = snapshot.Reason });
                 info.Add(new CurrentObjectInfo() { Name = "Files Count", Value = snapshot.Files.Count });

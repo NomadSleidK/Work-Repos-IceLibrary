@@ -10,8 +10,8 @@ namespace MyIceLibrary
     [Export(typeof(IMenu<TasksViewContext2>))]
     public class TaskToolbarButtonsBuilder : IMenu<TasksViewContext2>
     {
-        private const string CUSTOM_BUTTON_NAME = "CustomProperties";
-        private const string CUSTOM_BUTTON_HEADER = "My Object Info";
+        private const string CUSTOM_BUTTON_NAME = "TaskInfoButton";
+        private const string CUSTOM_BUTTON_HEADER = "Информация об объекте";
 
         private readonly IObjectModifier _modifier;
         private readonly IObjectsRepository _objectsRepository;
@@ -29,9 +29,12 @@ namespace MyIceLibrary
 
         public void Build(IMenuBuilder builder, TasksViewContext2 context)
         {
-            var customButtonA = builder.AddItem(CUSTOM_BUTTON_NAME, 0);
-            customButtonA.WithIcon(Properties.Resources.InfoSquare);
-            customButtonA.WithHeader(CUSTOM_BUTTON_HEADER);
+            if (_objectsRepository.GetCurrentPerson().IsAdmin)
+            {
+                var infoButton = builder.AddItem(CUSTOM_BUTTON_NAME, 0);
+                infoButton.WithIcon(Properties.Resources.InfoSquare);
+                infoButton.WithHeader(CUSTOM_BUTTON_HEADER);
+            }          
         }
 
         public void OnMenuItemClick(string name, TasksViewContext2 context)

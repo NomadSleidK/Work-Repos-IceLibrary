@@ -52,7 +52,7 @@ namespace MyIceLibrary.ViewModel.Pages
                     {
                         DisplayName = dataObject.DisplayName,
                         ID = dataObject.Id,
-                        Created = dataObject.Created,
+                        Created = dataObject.Created.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss"),
                         Creator = _objectsRepository.GetPerson(dataObject.Creator.Id).DisplayName,
                         Type = dataObject.Type.Name,
                     }

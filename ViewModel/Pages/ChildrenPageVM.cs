@@ -36,29 +36,35 @@ namespace MyIceLibrary.ViewModel.Pages
         #endregion
 
         private readonly IObjectModifier _modifier;
+        private readonly IObjectsRepository _objectsRepository;
+        private readonly IFileProvider _fileProvider;
+
         private readonly ObjectLoader _objectLoader;
 
-        private Guid _currentObject;
+        private Guid _currentObjectGuid;
 
-        public ChildrenPageVM(IObjectModifier modifier, IObjectsRepository objectsRepository)
+        public ChildrenPageVM(IObjectModifier modifier, IObjectsRepository objectsRepository, IFileProvider fileProvider)
         {
             _objectLoader = new ObjectLoader(objectsRepository);
             _modifier = modifier;
+            _objectsRepository = objectsRepository;
+            _fileProvider = fileProvider;
         }
 
         public ICommand LoadChildrenCommand => new RelayCommand<Guid>(LoadChildren);
         public ICommand DeleteSelectedCommand => new RelayCommand<IList>(DeleteSelectedItems, o => o != null && o.Count > 0);
+        public ICommand DoubleClickElementCommand => new RelayCommand<ObjectChild>(DoubleClickElement, o => o != null);
 
         private async void LoadChildren(Guid dataObjectId)
         {
             try
             {
-                _currentObject = dataObjectId;
+                _currentObjectGuid = dataObjectId;
 
                 CurrentObjectChildren = new ObservableCollection<ObjectChild>();
                 var childrenCollection = CurrentObjectChildren;
 
-                var currentObject = await _objectLoader.Load(_currentObject);
+                var currentObject = await _objectLoader.Load(_currentObjectGuid);
                 var childrenObjects = await _objectLoader.Load(currentObject.Children);
 
                 foreach (var child in childrenObjects)
@@ -73,6 +79,13 @@ namespace MyIceLibrary.ViewModel.Pages
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
+        }
+
+        private async void DoubleClickElement(ObjectChild personInfo)
+        {
+            var newWindow = new CurrentObjectFormVM(_modifier, _objectsRepository, _fileProvider);
+            var dataObject = await _objectLoader.Load(personInfo.Id);
+            newWindow.OpenCommand.Execute(dataObject);
         }
 
         private void DeleteSelectedItems(IList selectedItems)
@@ -93,7 +106,7 @@ namespace MyIceLibrary.ViewModel.Pages
 
                 CurrentObjectChildren = new ObservableCollection<ObjectChild>();
 
-                LoadChildren(_currentObject);
+                LoadChildren(_currentObjectGuid);
             }
             catch (Exception ex)
             {

@@ -52,7 +52,7 @@ namespace MyIceLibrary.ViewModel.Pages
         }
 
         public ICommand LoadFilesInfoCommand => new RelayCommand<Guid>(UpdateFilesInfo);
-        public ICommand DeleteFilesCommand => new RelayCommand<IList>(DeleteFiles, o => o != null && o.Count > 0);
+        public ICommand DeleteFilesCommand => new RelayCommand<IList>(DeleteFiles, o => o != null && o.Count > 0 && _objectsRepository.GetCurrentPerson().IsAdmin);
         public ICommand DownloadFilesCommand => new RelayCommand<IList>(DownloadFiles, o => o != null && o.Count > 0);
 
         private async void UpdateFilesInfo(Guid objectGuid)
@@ -70,7 +70,7 @@ namespace MyIceLibrary.ViewModel.Pages
                 { 
                     Id = file.Id,
                     Name = file.Name,
-                    Created = file.Created,
+                    Created = file.Created.ToLocalTime(),
                     Accessed = file.Accessed,
                     Size = file.Size,
                     Md5 = file.Md5,

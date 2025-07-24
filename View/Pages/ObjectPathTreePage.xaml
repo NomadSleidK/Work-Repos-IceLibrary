@@ -151,7 +151,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock
-                Text="Данные о выбранном объекте:"
+                Text="Данные о выбранном объекте"
                 Grid.Row="0" Grid.Column="0"
                 Style="{StaticResource MediumTitleInfoTextBlock}"/>
 
